@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AGP Competition 2026 - Participant Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .vibrate-on-touch:active {
+            transform: scale(0.95);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e5eeff;
+            border-radius: 10px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#131b2e",
+                        "surface-tint": "#565e74",
+                        "on-secondary-fixed-variant": "#005236",
+                        "primary-fixed-dim": "#bec6e0",
+                        "error": "#ba1a1a",
+                        "tertiary": "#000000",
+                        "on-primary-container": "#7c839b",
+                        "secondary-container": "#6cf8bb",
+                        "secondary-fixed": "#6ffbbe",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#d3e4fe",
+                        "surface-container": "#e5eeff",
+                        "primary": "#000000",
+                        "on-tertiary-container": "#a87d00",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface": "#f8f9ff",
+                        "background": "#f8f9ff",
+                        "tertiary-fixed": "#ffdf9f",
+                        "on-secondary-fixed": "#002113",
+                        "on-secondary-container": "#00714d",
+                        "inverse-surface": "#213145",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#45464d",
+                        "tertiary-container": "#261a00",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "on-tertiary-fixed": "#261a00",
+                        "on-background": "#0b1c30",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "secondary-fixed-dim": "#4edea3",
+                        "surface-container-low": "#eff4ff",
+                        "on-surface": "#0b1c30",
+                        "surface-dim": "#cbdbf5",
+                        "outline": "#76777d",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#dae2fd",
+                        "primary-container": "#131b2e",
+                        "surface-bright": "#f8f9ff",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "inverse-primary": "#bec6e0",
+                        "surface-container-high": "#dce9ff",
+                        "on-error": "#ffffff",
+                        "secondary": "#006c49",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c6c6cd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "md": "16px",
+                        "gutter": "16px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "sm": "8px",
+                        "margin-desktop": "32px",
+                        "margin-mobile": "16px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "number-data": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "number-data": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="bg-primary-container docked full-width top-0 z-50 border-b border-outline-variant/20 shadow-sm">
+<div class="flex justify-between items-center w-full px-md md:px-margin-desktop h-16 max-w-7xl mx-auto">
+<div class="flex flex-col">
+<span class="text-headline-md font-headline-md font-bold text-on-primary">AGP COMPETITION 2026</span>
+<div class="flex items-center space-x-2">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary-fixed-dim opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+<span class="text-[10px] font-label-md tracking-wider text-secondary uppercase">STATUS: LIVE (CLOUD SYNC)</span>
+</div>
+</div>
+<div class="flex items-center gap-4 text-on-primary">
+<button class="material-symbols-outlined cursor-pointer hover:bg-surface-container-highest/20 p-2 rounded-full transition-colors" data-icon="rss_feed">rss_feed</button>
+<button class="material-symbols-outlined cursor-pointer hover:bg-surface-container-highest/20 p-2 rounded-full transition-colors" data-icon="account_circle">account_circle</button>
+</div>
+</div>
+</header>
+<!-- Sub-navigation Tabs -->
+<nav class="bg-white sticky top-16 z-40 border-b border-outline-variant">
+<div class="flex items-center px-md md:px-margin-desktop space-x-8 h-12 max-w-7xl mx-auto overflow-x-auto no-scrollbar">
+<a class="text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:text-primary transition-colors py-3 border-b-2 border-transparent" href="#">Urutan Tampil</a>
+<a class="text-secondary font-bold text-label-md font-label-md whitespace-nowrap py-3 border-b-2 border-secondary" href="#">Barak &amp; Transit</a>
+<a class="text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:text-primary transition-colors py-3 border-b-2 border-transparent" href="#">Pengumuman Juara</a>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 max-w-7xl w-full mx-auto p-md md:p-margin-desktop pb-24">
+<!-- Dashboard Header Section -->
+<section class="mb-lg">
+<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg text-on-surface mb-2">Lokasi Kontingen</h1>
+<p class="text-body-md text-on-surface-variant">Informasi penempatan barak dan ruang transit untuk seluruh peserta.</p>
+</section>
+<!-- Search & Filter Area -->
+<div class="mb-gutter flex flex-col md:flex-row gap-4">
+<div class="relative flex-1 group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-secondary transition-colors" data-icon="search">search</span>
+<input class="w-full pl-12 pr-4 py-3 bg-white border border-outline-variant rounded-xl focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none transition-all font-body-md" id="contingentSearch" placeholder="Cari nama sekolah atau kontingen..." type="text"/>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-4 py-3 bg-white border border-outline-variant rounded-xl hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="filter_list">filter_list</span>
+<span class="text-label-md font-label-md">Filter</span>
+</button>
+</div>
+</div>
+<!-- Bento Grid Layout for Barak/Transit -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter" id="contingentList">
+<!-- Entry 1 -->
+<div class="bg-white border border-outline-variant rounded-xl p-lg flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="bg-secondary-container/30 p-3 rounded-lg">
+<span class="material-symbols-outlined text-on-secondary-container" data-icon="school">school</span>
+</div>
+<span class="bg-surface-container-high px-3 py-1 rounded-full text-label-md font-label-md text-on-surface-variant uppercase tracking-tighter">Region 1</span>
+</div>
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface mb-1">SMAN 2 Subang</h3>
+<p class="text-body-sm text-on-surface-variant flex items-center gap-1 mb-6">
+<span class="material-symbols-outlined text-[16px]" data-icon="pin_drop">pin_drop</span>
+                        Pusat Kota
+                    </p>
+<div class="space-y-3">
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/10">
+<span class="block text-label-md font-label-md text-on-surface-variant uppercase text-[10px]">Lokasi Utama</span>
+<span class="text-body-md font-medium text-on-surface">Barak A / Ruang Kelas X-1</span>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant/50 flex justify-between items-center">
+<span class="text-label-md font-label-md text-secondary uppercase">Transit Ready</span>
+<button class="material-symbols-outlined text-outline hover:text-primary" data-icon="arrow_forward_ios">arrow_forward_ios</button>
+</div>
+</div>
+<!-- Entry 2 -->
+<div class="bg-white border border-outline-variant rounded-xl p-lg flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="bg-secondary-container/30 p-3 rounded-lg">
+<span class="material-symbols-outlined text-on-secondary-container" data-icon="corporate_fare">corporate_fare</span>
+</div>
+<span class="bg-surface-container-high px-3 py-1 rounded-full text-label-md font-label-md text-on-surface-variant uppercase tracking-tighter">Region 2</span>
+</div>
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface mb-1">SMK Pemda 1</h3>
+<p class="text-body-sm text-on-surface-variant flex items-center gap-1 mb-6">
+<span class="material-symbols-outlined text-[16px]" data-icon="pin_drop">pin_drop</span>
+                        Kawasan Industri
+                    </p>
+<div class="space-y-3">
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/10">
+<span class="block text-label-md font-label-md text-on-surface-variant uppercase text-[10px]">Lokasi Utama</span>
+<span class="text-body-md font-medium text-on-surface">Barak B / Ruang Kelas X-2</span>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant/50 flex justify-between items-center">
+<span class="text-label-md font-label-md text-secondary uppercase">Transit Ready</span>
+<button class="material-symbols-outlined text-outline hover:text-primary" data-icon="arrow_forward_ios">arrow_forward_ios</button>
+</div>
+</div>
+<!-- Entry 3 -->
+<div class="bg-white border border-outline-variant rounded-xl p-lg flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="bg-secondary-container/30 p-3 rounded-lg">
+<span class="material-symbols-outlined text-on-secondary-container" data-icon="stars">stars</span>
+</div>
+<span class="bg-surface-container-high px-3 py-1 rounded-full text-label-md font-label-md text-on-surface-variant uppercase tracking-tighter">Region 1</span>
+</div>
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface mb-1">SMA Alfa Centauri</h3>
+<p class="text-body-sm text-on-surface-variant flex items-center gap-1 mb-6">
+<span class="material-symbols-outlined text-[16px]" data-icon="pin_drop">pin_drop</span>
+                        Pusat Kota
+                    </p>
+<div class="space-y-3">
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/10">
+<span class="block text-label-md font-label-md text-on-surface-variant uppercase text-[10px]">Lokasi Utama</span>
+<span class="text-body-md font-medium text-on-surface">Barak A / Ruang Kelas X-3</span>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant/50 flex justify-between items-center">
+<span class="text-label-md font-label-md text-secondary uppercase">Transit Ready</span>
+<button class="material-symbols-outlined text-outline hover:text-primary" data-icon="arrow_forward_ios">arrow_forward_ios</button>
+</div>
+</div>
+<!-- Visualization / Map Placeholder Card -->
+<div class="col-span-1 lg:col-span-2 relative min-h-[300px] overflow-hidden rounded-xl border border-outline-variant">
+<div class="absolute inset-0 z-0" data-alt="A clean, minimalist 3D isometric architectural floor plan showing school classrooms designated as bunkhouses and transit rooms. The aesthetic uses soft Slate-50 tones with emerald green highlights indicating room availability. The layout is professional, corporate, and clearly marked with labels like Barak A and Barak B." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAIeBUW0vKyy_NJrDAxjFld5_JSAs3Tbc4aMrCzZyUltuMfnQC6pWFgfq7UTycxn29trxKjp5VBOBzcrk0Ds6vooDsN0BCxqASqzi4yIa-T98KZFQ4Y5D3vK5oQNSbNJx-tK7CR7aAJeW9LhdB3HsLisZAIDqbs4yw0243VZ0EVt8m1EhTc4QoANpGJXzwFFBQU-CN9ZFG4_ptm3jetThpIjQ2g8e67GjGkQ1EW8MWdO1Kn4MJOVxKwCQANlDzBwsf8897E3BjmyFBr')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/80 to-transparent z-10"></div>
+<div class="absolute bottom-6 left-6 z-20 text-white">
+<span class="bg-secondary px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest mb-2 inline-block">Peta Lokasi</span>
+<h4 class="text-headline-md font-headline-md">Denah Sekolah Tuan Rumah</h4>
+<p class="text-body-sm opacity-80 max-w-sm">Lihat navigasi visual gedung untuk mempermudah mobilisasi antar ruangan. Data diperbarui secara real-time via cloud.</p>
+</div>
+<button class="absolute bottom-6 right-6 z-20 bg-white text-on-background px-4 py-2 rounded-lg font-label-md text-label-md flex items-center gap-2 hover:bg-secondary-fixed transition-colors">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+                    Buka Peta
+                </button>
+</div>
+<!-- Info Card -->
+<div class="bg-primary-container text-on-primary rounded-xl p-lg flex flex-col justify-center items-center text-center space-y-4">
+<div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl" data-icon="cloud_done">cloud_done</span>
+</div>
+<div>
+<h4 class="text-headline-md font-headline-md">Bantuan Panitia</h4>
+<p class="text-body-sm opacity-70 px-4">Terhubung langsung dengan server pusat. Kesulitan menemukan lokasi? Hubungi LO atau gunakan tombol darurat.</p>
+</div>
+<button class="w-full bg-secondary-container text-on-secondary-container py-3 rounded-lg font-bold hover:opacity-90 transition-opacity">
+                    Panggil LO
+                </button>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-surface border-t border-outline-variant shadow-lg flex justify-around items-center px-margin-mobile py-2 rounded-t-xl">
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 vibrate-on-touch">
+<span class="material-symbols-outlined" data-icon="event_note">event_note</span>
+<span class="text-label-md-mobile font-label-md-mobile">Schedule</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 vibrate-on-touch">
+<span class="material-symbols-outlined" data-icon="directions_bus">directions_bus</span>
+<span class="text-label-md-mobile font-label-md-mobile">Transit</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 vibrate-on-touch">
+<span class="material-symbols-outlined" data-icon="emoji_events">emoji_events</span>
+<span class="text-label-md-mobile font-label-md-mobile">Results</span>
+</button>
+</nav>
+<script>
+        // Simple search filter logic
+        document.getElementById('contingentSearch').addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('#contingentList > div:not(.col-span-1)');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('h3')?.innerText.toLowerCase() || '';
+                const location = card.querySelector('.text-body-md')?.innerText.toLowerCase() || '';
+                
+                if (title.includes(term) || location.includes(term)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Touch interactions
+        const buttons = document.querySelectorAll('.vibrate-on-touch');
+        buttons.forEach(btn => {
+            btn.addEventListener('touchstart', () => {
+                if (window.navigator && window.navigator.vibrate) {
+                    window.navigator.vibrate(5);
+                }
+            });
+        });
+    </script>
+</body></html>

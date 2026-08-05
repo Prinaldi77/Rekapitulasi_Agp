@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AGP Competition 2026 - Participant Portal</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .vibrate-on-touch:active {
+            animation: vibrate 0.1s linear infinite;
+        }
+        @keyframes vibrate {
+            0% { transform: translate(0); }
+            25% { transform: translate(-1px, 1px); }
+            50% { transform: translate(1px, -1px); }
+            75% { transform: translate(-1px, -1px); }
+            100% { transform: translate(1px, 1px); }
+        }
+        .pulse-green {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-fixed": "#131b2e",
+                      "surface-tint": "#565e74",
+                      "on-secondary-fixed-variant": "#005236",
+                      "primary-fixed-dim": "#bec6e0",
+                      "error": "#ba1a1a",
+                      "tertiary": "#000000",
+                      "on-primary-container": "#7c839b",
+                      "secondary-container": "#6cf8bb",
+                      "secondary-fixed": "#6ffbbe",
+                      "on-error-container": "#93000a",
+                      "error-container": "#ffdad6",
+                      "surface-variant": "#d3e4fe",
+                      "surface-container": "#e5eeff",
+                      "primary": "#000000",
+                      "on-tertiary-container": "#a87d00",
+                      "inverse-on-surface": "#eaf1ff",
+                      "surface": "#f8f9ff",
+                      "background": "#f8f9ff",
+                      "tertiary-fixed": "#ffdf9f",
+                      "on-secondary-fixed": "#002113",
+                      "on-secondary-container": "#00714d",
+                      "inverse-surface": "#213145",
+                      "on-secondary": "#ffffff",
+                      "on-surface-variant": "#45464d",
+                      "tertiary-container": "#261a00",
+                      "tertiary-fixed-dim": "#f9bd22",
+                      "on-tertiary-fixed": "#261a00",
+                      "on-background": "#0b1c30",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "secondary-fixed-dim": "#4edea3",
+                      "surface-container-low": "#eff4ff",
+                      "on-surface": "#0b1c30",
+                      "surface-dim": "#cbdbf5",
+                      "outline": "#76777d",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-highest": "#d3e4fe",
+                      "surface-container-lowest": "#ffffff",
+                      "primary-fixed": "#dae2fd",
+                      "primary-container": "#131b2e",
+                      "surface-bright": "#f8f9ff",
+                      "on-tertiary-fixed-variant": "#5c4300",
+                      "inverse-primary": "#bec6e0",
+                      "surface-container-high": "#dce9ff",
+                      "on-error": "#ffffff",
+                      "secondary": "#006c49",
+                      "on-primary": "#ffffff",
+                      "outline-variant": "#c6c6cd"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "md": "16px",
+                      "gutter": "16px",
+                      "lg": "24px",
+                      "xl": "32px",
+                      "sm": "8px",
+                      "margin-desktop": "32px",
+                      "margin-mobile": "16px",
+                      "base": "4px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "label-md": ["Inter"],
+                      "number-data": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "headline-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "number-data": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+      </script>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-24">
+<!-- Top Navigation Bar -->
+<header class="bg-primary-container text-on-primary-fixed sticky top-0 z-50 flex justify-between items-center w-full px-md md:px-margin-desktop h-20 border-b border-outline-variant">
+<div class="flex flex-col">
+<h1 class="text-headline-md font-bold text-white tracking-tight">AGP COMPETITION 2026</h1>
+<div class="flex items-center space-x-2 mt-1">
+<div class="w-2.5 h-2.5 rounded-full bg-secondary pulse-green"></div>
+<span class="text-label-md font-label-md text-secondary-fixed uppercase tracking-widest">Live Cloud Sync Active</span>
+</div>
+</div>
+<div class="flex items-center space-x-md">
+<span class="material-symbols-outlined text-white cursor-pointer hover:opacity-80">rss_feed</span>
+<span class="material-symbols-outlined text-white cursor-pointer hover:opacity-80">account_circle</span>
+</div>
+</header>
+<!-- Main Navigation Tabs -->
+<nav class="bg-surface sticky top-20 z-40 px-md md:px-margin-desktop border-b border-outline-variant">
+<div class="flex space-x-lg overflow-x-auto no-scrollbar">
+<a class="py-md text-secondary font-bold border-b-2 border-secondary whitespace-nowrap text-label-md flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">event_note</span>
+                Urutan Tampil
+            </a>
+<a class="py-md text-on-surface-variant hover:bg-surface-container-low transition-colors whitespace-nowrap text-label-md flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">directions_bus</span>
+                Barak &amp; Transit
+            </a>
+<a class="py-md text-on-surface-variant hover:bg-surface-container-low transition-colors whitespace-nowrap text-label-md flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">emoji_events</span>
+                Pengumuman Juara
+            </a>
+</div>
+</nav>
+<!-- Content Canvas -->
+<main class="p-md space-y-lg max-w-screen-md mx-auto">
+<!-- Filters Section -->
+<section class="grid grid-cols-2 gap-sm">
+<div class="flex flex-col space-y-1">
+<label class="text-body-sm font-semibold text-on-surface-variant ml-1">Level Sekolah</label>
+<div class="relative">
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 text-body-md appearance-none focus:outline-none focus:border-secondary">
+<option>Semua Level</option>
+<option>SD / MI</option>
+<option>SMP / MTs</option>
+<option selected="">SMA / SMK / MA</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<div class="flex flex-col space-y-1">
+<label class="text-body-sm font-semibold text-on-surface-variant ml-1">Kategori Lomba</label>
+<div class="relative">
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 text-body-md appearance-none focus:outline-none focus:border-secondary">
+<option>Semua Kategori</option>
+<option selected="">LKBB</option>
+<option>Fashion Show</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div>
+</section>
+<!-- Live Status Cards -->
+<section class="space-y-md">
+<!-- NOW CARD -->
+<div class="relative bg-surface-container-lowest border-2 border-error rounded-xl p-md overflow-hidden shadow-sm">
+<div class="absolute top-0 right-0 bg-error text-white text-label-md px-4 py-1 rounded-bl-xl font-bold animate-pulse">
+                    LIVE NOW
+                </div>
+<div class="flex items-start space-x-md">
+<div class="flex flex-col items-center justify-center bg-error-container text-on-error-container w-16 h-16 rounded-lg font-bold">
+<span class="text-label-md">URUT</span>
+<span class="text-headline-md leading-none">04</span>
+</div>
+<div class="flex-1">
+<h2 class="text-headline-md font-bold text-error">SMAN 1 Katapang</h2>
+<p class="text-on-surface-variant font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">military_tech</span>
+                            LKBB Utama - SMA Level
+                        </p>
+<div class="mt-3 flex items-center text-body-sm text-on-surface-variant font-semibold">
+<span class="material-symbols-outlined text-[18px] mr-1">timer</span>
+                            Waktu Tampil: 10:15 - 10:25
+                        </div>
+</div>
+</div>
+</div>
+<!-- NEXT CARD -->
+<div class="bg-surface-container-lowest border-2 border-outline-variant rounded-xl p-md shadow-sm">
+<div class="flex items-start space-x-md opacity-90">
+<div class="flex flex-col items-center justify-center bg-surface-container-high text-on-surface-variant w-16 h-16 rounded-lg font-bold">
+<span class="text-label-md">URUT</span>
+<span class="text-headline-md leading-none">05</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h2 class="text-headline-md font-bold text-on-surface">SMAN 2 Subang</h2>
+<span class="bg-surface-container-high text-on-surface-variant text-[10px] px-2 py-0.5 rounded font-bold uppercase">Ready</span>
+</div>
+<p class="text-on-surface-variant font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">military_tech</span>
+                            LKBB Utama - SMA Level
+                        </p>
+<div class="mt-3 flex items-center text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] mr-1">schedule</span>
+                            Estimasi: 10:27 (Transit Area)
+                        </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Upcoming List (Table-like Desktop, Card-like Mobile) -->
+<section class="space-y-sm">
+<h3 class="text-label-md font-bold text-on-surface-variant uppercase tracking-widest px-1">Upcoming Participants</h3>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
+<!-- List Item 1 -->
+<div class="flex items-center p-md border-b border-outline-variant hover:bg-surface-container-low transition-colors">
+<div class="w-10 h-10 flex items-center justify-center bg-surface-container rounded-lg text-on-surface font-bold mr-md">06</div>
+<div class="flex-1">
+<p class="font-bold text-on-surface">SMKN 1 Bandung</p>
+<p class="text-body-sm text-on-surface-variant">Kategori: LKBB</p>
+</div>
+<div class="text-right">
+<p class="text-number-data font-bold">10:40</p>
+<p class="text-[10px] uppercase text-on-surface-variant">Scheduled</p>
+</div>
+</div>
+<!-- List Item 2 -->
+<div class="flex items-center p-md border-b border-outline-variant hover:bg-surface-container-low transition-colors">
+<div class="w-10 h-10 flex items-center justify-center bg-surface-container rounded-lg text-on-surface font-bold mr-md">07</div>
+<div class="flex-1">
+<p class="font-bold text-on-surface">SMA Taruna Nusantara</p>
+<p class="text-body-sm text-on-surface-variant">Kategori: LKBB</p>
+</div>
+<div class="text-right">
+<p class="text-number-data font-bold">10:55</p>
+<p class="text-[10px] uppercase text-on-surface-variant">Scheduled</p>
+</div>
+</div>
+<!-- List Item 3 -->
+<div class="flex items-center p-md border-b border-outline-variant hover:bg-surface-container-low transition-colors">
+<div class="w-10 h-10 flex items-center justify-center bg-surface-container rounded-lg text-on-surface font-bold mr-md">08</div>
+<div class="flex-1">
+<p class="font-bold text-on-surface">SMAN 3 Cimahi</p>
+<p class="text-body-sm text-on-surface-variant">Kategori: LKBB</p>
+</div>
+<div class="text-right">
+<p class="text-number-data font-bold">11:10</p>
+<p class="text-[10px] uppercase text-on-surface-variant">Scheduled</p>
+</div>
+</div>
+<!-- View More -->
+<button class="w-full py-md text-secondary font-bold text-body-sm hover:bg-surface-container-high transition-colors">
+                    LIHAT SELURUH JADWAL
+                </button>
+</div>
+</section>
+<!-- Help Info Card -->
+<div class="bg-secondary-container/20 border border-secondary/30 rounded-xl p-md flex items-start space-x-md">
+<span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings: 'FILL' 1;">info</span>
+<div>
+<p class="text-body-sm font-bold text-on-secondary-container">Informasi Peserta</p>
+<p class="text-body-sm text-on-secondary-container/80">Harap berkumpul di area transit maksimal 2 nomor urut sebelum waktu tampil. Pembaruan jadwal dilakukan secara real-time melalui cloud untuk memastikan seluruh peserta mendapatkan informasi terbaru seketika.</p>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Mobile View) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-margin-mobile py-2 bg-surface dark:bg-surface-dim border-t border-outline-variant shadow-lg md:hidden">
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 vibrate-on-touch transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="event_note">event_note</span>
+<span class="text-label-md-mobile font-label-md-mobile">Schedule</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 vibrate-on-touch transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="directions_bus">directions_bus</span>
+<span class="text-label-md-mobile font-label-md-mobile">Transit</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 vibrate-on-touch transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="emoji_events">emoji_events</span>
+<span class="text-label-md-mobile font-label-md-mobile">Results</span>
+</a>
+</nav>
+<!-- Micro-interaction Script -->
+<script>
+        // Simple visual feedback for list items
+        document.querySelectorAll('.flex.items-center.p-md').forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.add('bg-secondary-container/10');
+                setTimeout(() => {
+                    this.classList.remove('bg-secondary-container/10');
+                }, 300);
+            });
+        });
+
+        // Time simulation update (static for UI demo, but showing readiness)
+        const updateLastSync = () => {
+            console.log("Portal synced via Cloud Gateway at: " + new Date().toLocaleTimeString());
+        };
+        setInterval(updateLastSync, 15000);
+    </script>
+</body></html>

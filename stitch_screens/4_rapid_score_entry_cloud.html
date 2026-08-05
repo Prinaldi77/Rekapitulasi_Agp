@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AGP Competition 2026 - Admin Dashboard</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#131b2e",
+                    "surface-tint": "#565e74",
+                    "on-secondary-fixed-variant": "#005236",
+                    "primary-fixed-dim": "#bec6e0",
+                    "error": "#ba1a1a",
+                    "tertiary": "#000000",
+                    "on-primary-container": "#7c839b",
+                    "secondary-container": "#6cf8bb",
+                    "secondary-fixed": "#6ffbbe",
+                    "on-error-container": "#93000a",
+                    "error-container": "#ffdad6",
+                    "surface-variant": "#d3e4fe",
+                    "surface-container": "#e5eeff",
+                    "primary": "#000000",
+                    "on-tertiary-container": "#a87d00",
+                    "inverse-on-surface": "#eaf1ff",
+                    "surface": "#f8f9ff",
+                    "background": "#f8f9ff",
+                    "tertiary-fixed": "#ffdf9f",
+                    "on-secondary-fixed": "#002113",
+                    "on-secondary-container": "#00714d",
+                    "inverse-surface": "#213145",
+                    "on-secondary": "#ffffff",
+                    "on-surface-variant": "#45464d",
+                    "tertiary-container": "#261a00",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "on-tertiary-fixed": "#261a00",
+                    "on-background": "#0b1c30",
+                    "on-primary-fixed-variant": "#3f465c",
+                    "secondary-fixed-dim": "#4edea3",
+                    "surface-container-low": "#eff4ff",
+                    "on-surface": "#0b1c30",
+                    "surface-dim": "#cbdbf5",
+                    "outline": "#76777d",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-highest": "#d3e4fe",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#dae2fd",
+                    "primary-container": "#131b2e",
+                    "surface-bright": "#f8f9ff",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "inverse-primary": "#bec6e0",
+                    "surface-container-high": "#dce9ff",
+                    "on-error": "#ffffff",
+                    "secondary": "#006c49",
+                    "on-primary": "#ffffff",
+                    "outline-variant": "#c6c6cd"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "md": "16px",
+                    "gutter": "16px",
+                    "lg": "24px",
+                    "xl": "32px",
+                    "sm": "8px",
+                    "margin-desktop": "32px",
+                    "margin-mobile": "16px",
+                    "base": "4px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "number-data": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "number-data": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .input-focus-ring:focus { outline: none; border-color: #006c49; box-shadow: 0 0 0 2px rgba(0, 108, 73, 0.2); }
+        .pulsing-dot { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface custom-scrollbar overflow-hidden">
+<!-- Layout Wrapper -->
+<div class="flex h-screen w-full">
+<!-- SideNavBar (Shared Component Anchor) -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-surface-container-lowest border-r border-outline-variant flex flex-col p-md space-y-sm z-30">
+<div class="mb-lg px-xs">
+<h1 class="text-headline-md font-headline-md font-bold text-on-surface">REKAP AGP</h1>
+<p class="text-body-sm text-on-surface-variant">Admin Portal</p>
+</div>
+<nav class="flex-1 space-y-xs">
+<a class="flex items-center space-x-md p-md text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg cursor-pointer active:scale-95">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center space-x-md p-md bg-secondary-container text-on-secondary-container rounded-lg font-bold cursor-pointer active:scale-95">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="text-label-md font-label-md">Input Score</span>
+</a>
+<a class="flex items-center space-x-md p-md text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg cursor-pointer active:scale-95">
+<span class="material-symbols-outlined">database</span>
+<span class="text-label-md font-label-md">Master Data</span>
+</a>
+<a class="flex items-center space-x-md p-md text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg cursor-pointer active:scale-95">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="text-label-md font-label-md">Schedule</span>
+</a>
+<a class="flex items-center space-x-md p-md text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg cursor-pointer active:scale-95">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="text-label-md font-label-md">Leaderboard</span>
+</a>
+</nav>
+<div class="pt-md border-t border-outline-variant space-y-xs">
+<div class="flex items-center space-x-md px-md py-sm mb-md">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a young male admin operator wearing a technical headset, soft studio lighting, sharp focus on eyes, clean modern office background with subtle blue gradients." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAK1c207B4rpTR4Pb8j21u77EUsFWpyqpv1pTFs6dIUQ0dqu17834xiFfGyJOtmWxV4YADzrKaHUZpA3kKc0qSdWkLK0K7e5_-ywfssNVLhpOlmf4ladAqpQSWiqnR41cCHCjrdvWTWYbqF6-jpjPSTqJSx45C3QUmAfvqgt3Ww4dUpdFEs5Kmzw0hyY5zCx2CXCMgSAOxOW8npkYxXTahJFs8O10x0n17CQ0_cdtmOy9QVTzqN_RFDs0h-8AISMGgJqiOlWbnmS_ht"/>
+</div>
+<div>
+<p class="text-label-md font-bold text-on-surface leading-tight">Divisi SMA</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest">Operator - LKBB</p>
+</div>
+</div>
+<a class="flex items-center space-x-md p-md text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg cursor-pointer">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+<a class="flex items-center space-x-md p-md text-error hover:bg-error-container/10 transition-all rounded-lg cursor-pointer">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-label-md font-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-[280px] h-screen overflow-y-auto flex flex-col">
+<!-- TopNavBar (Shared Component Anchor) -->
+<header class="flex justify-between items-center w-full px-margin-desktop h-16 bg-surface border-b border-outline-variant sticky top-0 z-20">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-secondary">analytics</span>
+<h2 class="text-headline-md font-headline-md font-bold text-on-surface">Score Entry Panel</h2>
+<div class="flex items-center gap-xs ml-lg bg-surface-container-low px-sm py-1 rounded-full border border-outline-variant">
+<span class="w-2 h-2 rounded-full bg-emerald-500 pulsing-dot"></span>
+<span class="text-label-md text-on-surface-variant font-medium">Cloud Active: LKBB SMA Series</span>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="hidden md:flex items-center gap-xs text-on-surface-variant bg-surface-container px-sm py-1.5 rounded-lg border border-outline-variant">
+<span class="material-symbols-outlined text-[18px]">keyboard</span>
+<span class="text-label-md">Hotkeys Enabled</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container-low p-2 rounded-full transition-colors">rss_feed</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container-low p-2 rounded-full transition-colors">account_circle</span>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="flex-1 p-lg bg-surface max-w-7xl mx-auto w-full space-y-lg">
+<!-- Quick Navigation / Context -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm flex flex-col justify-center">
+<label class="text-label-md font-label-md text-on-surface-variant uppercase mb-xs">Division &amp; Category</label>
+<p class="text-headline-md font-bold text-on-surface">SMA - LKBB Utama</p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm flex flex-col justify-center">
+<label class="text-label-md font-label-md text-on-surface-variant uppercase mb-xs">Active Competition</label>
+<p class="text-headline-md font-bold text-on-surface">AGP Regional 2026</p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm flex flex-col justify-center">
+<label class="text-label-md font-label-md text-on-surface-variant uppercase mb-xs">Entries Completed</label>
+<div class="flex items-baseline gap-xs">
+<span class="text-headline-md font-bold text-on-surface">24</span>
+<span class="text-body-sm text-on-surface-variant">/ 48 Teams</span>
+</div>
+</div>
+</div>
+<!-- Main Entry Section -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg items-start">
+<!-- Entry Form (High Density) -->
+<div class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl p-xl shadow-sm space-y-xl">
+<div class="flex justify-between items-end border-b border-outline-variant pb-md">
+<div>
+<h3 class="text-headline-md font-bold text-on-surface">Data Input Form</h3>
+<p class="text-body-sm text-on-surface-variant">Enter scores precisely. Press Shift+Enter to save and skip to next team.</p>
+</div>
+<span class="text-label-md bg-surface-container text-on-surface-variant px-md py-1 rounded-full font-bold">BATCH #02</span>
+</div>
+<form class="space-y-xl" id="score-form">
+<!-- Team Selection -->
+<div class="space-y-sm">
+<label class="text-body-sm font-semibold text-on-surface" for="team-select">SELECT TEAM (NO. URUT)</label>
+<div class="relative group">
+<select class="w-full h-14 pl-md pr-xl bg-surface border border-outline-variant rounded-lg text-headline-md font-bold text-on-surface appearance-none input-focus-ring cursor-pointer transition-all" id="team-select">
+<option value="05">[05] SMAN 1 KATAPANG - Bandung</option>
+<option value="06">[06] SMKN 2 CIREBON - Cirebon</option>
+<option value="07">[07] SMA TARUNA NUSANTARA - Magelang</option>
+<option value="08">[08] SMAN 3 SEMARANG - Semarang</option>
+</select>
+<span class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<!-- Scores Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<div class="space-y-sm">
+<div class="flex justify-between items-center">
+<label class="text-body-sm font-semibold text-on-surface">PBB SCORE</label>
+<span class="text-label-md text-on-surface-variant">MAX 100</span>
+</div>
+<input class="w-full h-20 text-center text-[32px] font-bold text-primary bg-surface border border-outline-variant rounded-lg input-focus-ring" max="100" min="0" step="0.01" type="number" value="92.50"/>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between items-center">
+<label class="text-body-sm font-semibold text-on-surface">DANTON SCORE</label>
+<span class="text-label-md text-on-surface-variant">MAX 100</span>
+</div>
+<input class="w-full h-20 text-center text-[32px] font-bold text-primary bg-surface border border-outline-variant rounded-lg input-focus-ring" max="100" min="0" step="0.01" type="number" value="88.00"/>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between items-center">
+<label class="text-body-sm font-semibold text-on-surface">VARIATION SCORE</label>
+<span class="text-label-md text-on-surface-variant">MAX 100</span>
+</div>
+<input class="w-full h-20 text-center text-[32px] font-bold text-primary bg-surface border border-outline-variant rounded-lg input-focus-ring" max="100" min="0" step="0.01" type="number" value="94.50"/>
+</div>
+</div>
+<!-- Additional Notes -->
+<div class="space-y-sm">
+<label class="text-body-sm font-semibold text-on-surface">DEDUCTIONS / PENALTY NOTES (OPTIONAL)</label>
+<textarea class="w-full p-md bg-surface border border-outline-variant rounded-lg input-focus-ring text-body-md" placeholder="e.g. Boundary violation, uniform discrepancy..." rows="2"></textarea>
+</div>
+<!-- Main Action -->
+<button class="w-full h-16 bg-secondary hover:bg-on-secondary-container text-white font-bold text-headline-md rounded-lg shadow-lg flex items-center justify-center gap-md transition-all active:scale-[0.98]" type="submit">
+<span class="material-symbols-outlined">save</span>
+                                SAVE &amp; NEXT (Shift+Enter)
+                            </button>
+</form>
+</div>
+<!-- Summary & Recent Activity -->
+<div class="lg:col-span-4 space-y-lg">
+<!-- Total Card -->
+<div class="bg-primary-container text-white rounded-xl p-xl shadow-xl border border-white/10 relative overflow-hidden">
+<div class="relative z-10">
+<label class="text-label-md font-bold text-on-primary-container uppercase tracking-[0.2em] mb-xs block">CURRENT TOTAL</label>
+<div class="flex items-baseline gap-sm">
+<span class="text-[56px] font-extrabold leading-none tracking-tight">275.00</span>
+<span class="text-headline-md text-on-primary-container">/ 300</span>
+</div>
+<div class="mt-lg pt-lg border-t border-white/10 flex justify-between items-center">
+<span class="text-body-sm opacity-70">Percentage Equivalent</span>
+<span class="text-headline-md font-bold text-secondary-fixed">91.6%</span>
+</div>
+</div>
+<!-- Background Decoration -->
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</div>
+</div>
+<!-- Recent Entries List -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<div class="p-md border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<h4 class="text-label-md font-bold uppercase tracking-wider text-on-surface">Recent Logs</h4>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">history</span>
+</div>
+<div class="divide-y divide-outline-variant">
+<!-- Log Row -->
+<div class="p-md flex justify-between items-center hover:bg-surface-container transition-colors">
+<div class="flex flex-col">
+<span class="text-label-md font-bold">[04] SMAN 2 BDG</span>
+<span class="text-[10px] text-on-surface-variant uppercase">2 mins ago</span>
+</div>
+<div class="text-right">
+<span class="text-label-md font-extrabold text-secondary">268.45</span>
+<div class="flex gap-1 justify-end">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary/40"></span>
+</div>
+</div>
+</div>
+<!-- Log Row -->
+<div class="p-md flex justify-between items-center hover:bg-surface-container transition-colors">
+<div class="flex flex-col">
+<span class="text-label-md font-bold">[03] SMA KRISTEN 1</span>
+<span class="text-[10px] text-on-surface-variant uppercase">5 mins ago</span>
+</div>
+<div class="text-right">
+<span class="text-label-md font-extrabold text-secondary">255.10</span>
+<div class="flex gap-1 justify-end">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary/40"></span>
+</div>
+</div>
+</div>
+<!-- Log Row -->
+<div class="p-md flex justify-between items-center hover:bg-surface-container transition-colors">
+<div class="flex flex-col">
+<span class="text-label-md font-bold">[02] SMK ANGKASA</span>
+<span class="text-[10px] text-on-surface-variant uppercase">12 mins ago</span>
+</div>
+<div class="text-right">
+<span class="text-label-md font-extrabold text-secondary">281.20</span>
+<div class="flex gap-1 justify-end">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary/40"></span>
+</div>
+</div>
+</div>
+</div>
+<div class="p-sm bg-surface-container-low text-center">
+<button class="text-label-md font-bold text-secondary uppercase tracking-widest hover:underline">View All Logs</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Global Footer for Keyboard Shortcuts -->
+<footer class="mt-auto bg-surface-container-high border-t border-outline-variant px-margin-desktop py-2 flex justify-between items-center">
+<div class="flex gap-lg">
+<div class="flex items-center gap-xs">
+<kbd class="px-2 py-0.5 bg-surface-container-lowest border border-outline-variant rounded text-[10px] font-bold shadow-sm">TAB</kbd>
+<span class="text-[11px] text-on-surface-variant">Next Field</span>
+</div>
+<div class="flex items-center gap-xs">
+<kbd class="px-2 py-0.5 bg-surface-container-lowest border border-outline-variant rounded text-[10px] font-bold shadow-sm">SHIFT + ENTER</kbd>
+<span class="text-[11px] text-on-surface-variant">Save &amp; Next</span>
+</div>
+<div class="flex items-center gap-xs">
+<kbd class="px-2 py-0.5 bg-surface-container-lowest border border-outline-variant rounded text-[10px] font-bold shadow-sm">ESC</kbd>
+<span class="text-[11px] text-on-surface-variant">Clear Entry</span>
+</div>
+</div>
+<div class="text-[11px] font-medium text-on-surface-variant flex items-center gap-sm">
+<span>Latency: <strong class="text-secondary">45ms</strong></span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>System Time: 14:22:10 WIB</span>
+</div>
+</footer>
+</main>
+</div>
+<script>
+        // Simple Interaction logic for demo
+        const form = document.getElementById('score-form');
+        const inputs = form.querySelectorAll('input[type="number"]');
+        const totalDisplay = document.querySelector('.text-[56px]');
+
+        function updateTotal() {
+            let total = 0;
+            inputs.forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+            totalDisplay.textContent = total.toFixed(2);
+        }
+
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                // Constraint validation
+                if(input.value > 100) input.value = 100;
+                if(input.value < 0) input.value = 0;
+                updateTotal();
+            });
+        });
+
+        // Global hotkey listener
+        window.addEventListener('keydown', (e) => {
+            if (e.shiftKey && e.key === 'Enter') {
+                e.preventDefault();
+                alert('Scores Saved for Team [05] SMAN 1 KATAPANG. Moving to next team...');
+                // Reset form or logic for next entry would go here
+            }
+        });
+    </script>
+</body></html>

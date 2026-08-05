@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AGP Competition 2026 - Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9ff;
+        }
+        /* Custom scrollbar for data-dense tables */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Status animation */
+        .pulse-emerald {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-fixed": "#131b2e",
+                      "surface-tint": "#565e74",
+                      "on-secondary-fixed-variant": "#005236",
+                      "primary-fixed-dim": "#bec6e0",
+                      "error": "#ba1a1a",
+                      "tertiary": "#000000",
+                      "on-primary-container": "#7c839b",
+                      "secondary-container": "#6cf8bb",
+                      "secondary-fixed": "#6ffbbe",
+                      "on-error-container": "#93000a",
+                      "error-container": "#ffdad6",
+                      "surface-variant": "#d3e4fe",
+                      "surface-container": "#e5eeff",
+                      "primary": "#000000",
+                      "on-tertiary-container": "#a87d00",
+                      "inverse-on-surface": "#eaf1ff",
+                      "surface": "#f8f9ff",
+                      "background": "#f8f9ff",
+                      "tertiary-fixed": "#ffdf9f",
+                      "on-secondary-fixed": "#002113",
+                      "on-secondary-container": "#00714d",
+                      "inverse-surface": "#213145",
+                      "on-secondary": "#ffffff",
+                      "on-surface-variant": "#45464d",
+                      "tertiary-container": "#261a00",
+                      "tertiary-fixed-dim": "#f9bd22",
+                      "on-tertiary-fixed": "#261a00",
+                      "on-background": "#0b1c30",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "secondary-fixed-dim": "#4edea3",
+                      "surface-container-low": "#eff4ff",
+                      "on-surface": "#0b1c30",
+                      "surface-dim": "#cbdbf5",
+                      "outline": "#76777d",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-highest": "#d3e4fe",
+                      "surface-container-lowest": "#ffffff",
+                      "primary-fixed": "#dae2fd",
+                      "primary-container": "#131b2e",
+                      "surface-bright": "#f8f9ff",
+                      "on-tertiary-fixed-variant": "#5c4300",
+                      "inverse-primary": "#bec6e0",
+                      "surface-container-high": "#dce9ff",
+                      "on-error": "#ffffff",
+                      "secondary": "#006c49",
+                      "on-primary": "#ffffff",
+                      "outline-variant": "#c6c6cd"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "md": "16px",
+                      "gutter": "16px",
+                      "lg": "24px",
+                      "xl": "32px",
+                      "sm": "8px",
+                      "margin-desktop": "32px",
+                      "margin-mobile": "16px",
+                      "base": "4px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "label-md": ["Inter"],
+                      "number-data": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "headline-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "number-data": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background overflow-hidden h-screen flex">
+<!-- SideNavBar (Shared Component) -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-surface-container-lowest border-r border-outline-variant flex flex-col p-md space-y-sm z-50">
+<div class="flex items-center gap-sm px-sm py-md">
+<div class="w-10 h-10 bg-primary-container rounded flex items-center justify-center text-white">
+<span class="material-symbols-outlined">shield</span>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-on-surface">Admin Portal</h1>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Super Admin</p>
+</div>
+</div>
+<nav class="flex-1 space-y-xs pt-md">
+<!-- Navigation Items Mapping from JSON -->
+<div class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer active:scale-95 rounded-lg font-body-sm">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</div>
+<div class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer active:scale-95 rounded-lg font-body-sm">
+<span class="material-symbols-outlined">database</span>
+<span class="text-label-md font-label-md">Master</span>
+</div>
+<div class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer active:scale-95 rounded-lg font-body-sm">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="text-label-md font-label-md">Input</span>
+</div>
+<div class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer active:scale-95 rounded-lg font-body-sm">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="text-label-md font-label-md">Schedule</span>
+</div>
+<!-- Active State: Leaderboard -->
+<div class="flex items-center gap-md px-md py-3 bg-secondary-container text-on-secondary-container rounded-lg font-bold cursor-pointer active:scale-95 transition-all">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="text-label-md font-label-md">Leaderboard</span>
+</div>
+</nav>
+<div class="border-t border-outline-variant pt-md space-y-xs">
+<div class="flex items-center gap-md px-md py-3 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer active:scale-95 rounded-lg font-body-sm">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</div>
+<div class="flex items-center gap-md px-md py-3 text-error hover:bg-error-container transition-all cursor-pointer active:scale-95 rounded-lg font-body-sm">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-label-md font-label-md">Logout</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-[280px] flex flex-col h-screen relative">
+<!-- TopAppBar (Shared Component Implementation) -->
+<header class="flex justify-between items-center w-full px-margin-desktop h-16 bg-surface border-b border-outline-variant z-40">
+<div class="flex items-center gap-md">
+<span class="text-headline-md font-headline-md font-bold text-on-surface">REKAP AGP - Admin</span>
+<span class="h-6 w-px bg-outline-variant mx-xs"></span>
+<div class="flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-secondary pulse-emerald"></span>
+<span class="text-label-md font-label-md text-secondary">CONNECTED TO CLOUD</span>
+</div>
+</div>
+<div class="flex items-center gap-xl">
+<div class="hidden md:flex items-center gap-lg">
+<span class="text-secondary font-bold border-b-2 border-secondary h-16 flex items-center cursor-pointer text-label-md font-label-md">Overview</span>
+<span class="text-on-surface-variant hover:bg-surface-container-low transition-colors px-xs h-16 flex items-center cursor-pointer text-label-md font-label-md">Analytics</span>
+<span class="text-on-surface-variant hover:bg-surface-container-low transition-colors px-xs h-16 flex items-center cursor-pointer text-label-md font-label-md">Verification</span>
+</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface cursor-pointer">cloud_sync</span>
+<div class="flex items-center gap-sm bg-surface-container-high px-sm py-xs rounded-full cursor-pointer">
+<img alt="Grand Master Profile" class="w-8 h-8 rounded-full border border-outline" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDd435kmKDdKOxVhL_dRd6yQFhQKTrpkeomhuXAuQmP8bRnQANT9HoJhMvRjtbpKNNpLm9xTW2Y9Pc0AwZc3O88Eo7KSXEQwvh6icjGZekmNG7SdjcH40o_jdBosdSmXITWQwk2KrBZVWJPsoejXtuG_-MV6lZZlsj6xfnjPrY-GP8XV0kuwyapdkA2jF3cuh8piKKMoqMdmssDTfnNb3C1CXalUKmvrvZiAmrv9bAmeia6bijX8CGq5GT8Wo8f7TjXiudlMTpRkZ-n"/>
+<span class="text-label-md font-label-md text-on-surface">Grand Master</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="flex-1 overflow-y-auto p-margin-desktop space-y-lg">
+<!-- Hero Header & Global Action -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
+<div>
+<h2 class="text-headline-lg font-headline-lg text-primary">Final Standings &amp; Awarding</h2>
+<p class="text-body-md font-body-md text-on-surface-variant mt-xs">Competition Year 2026 • Verified by Grand Master Panel</p>
+</div>
+<button class="bg-primary text-on-primary px-xl py-md rounded font-bold flex items-center gap-sm hover:opacity-90 active:scale-95 transition-all shadow-sm">
+<span class="material-symbols-outlined">description</span>
+<span class="text-label-md font-label-md">📄 GENERATE &amp; DOWNLOAD SK JUARA (PDF)</span>
+</button>
+</div>
+<!-- Bento Stats Summary -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<div class="bg-white border border-outline-variant p-lg rounded flex flex-col justify-between h-32">
+<span class="text-label-md font-label-md text-on-surface-variant uppercase">Total Participants</span>
+<div class="flex items-end justify-between">
+<span class="text-headline-lg font-headline-lg">1,284</span>
+<span class="text-secondary text-body-sm font-bold flex items-center"><span class="material-symbols-outlined text-sm">trending_up</span> 12%</span>
+</div>
+</div>
+<div class="bg-white border border-outline-variant p-lg rounded flex flex-col justify-between h-32">
+<span class="text-label-md font-label-md text-on-surface-variant uppercase">Categories Closed</span>
+<div class="flex items-end justify-between">
+<span class="text-headline-lg font-headline-lg">24 / 24</span>
+<span class="bg-secondary-container text-on-secondary-container px-sm py-1 rounded-full text-[10px] font-bold">100% COMPLETE</span>
+</div>
+</div>
+<div class="bg-white border border-outline-variant p-lg rounded flex flex-col justify-between h-32">
+<span class="text-label-md font-label-md text-on-surface-variant uppercase">Highest Total Score</span>
+<div class="flex items-end justify-between">
+<span class="text-headline-lg font-headline-lg">98.42</span>
+<span class="text-on-surface-variant text-body-sm">Team Delta Alpha</span>
+</div>
+</div>
+<div class="bg-white border border-outline-variant p-lg rounded flex flex-col justify-between h-32 bg-primary text-white">
+<span class="text-label-md font-label-md text-primary-fixed uppercase">Global Connection</span>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary-fixed fill">cloud_done</span>
+<span class="text-headline-md font-headline-md">ONLINE</span>
+</div>
+</div>
+</div>
+<!-- Leaderboard Table Container -->
+<div class="bg-white border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<div class="px-lg py-md border-b border-outline-variant bg-surface flex justify-between items-center">
+<div class="flex items-center gap-md">
+<h3 class="text-headline-md font-headline-md">Grand Finalist Rankings</h3>
+<div class="flex gap-xs">
+<span class="px-sm py-1 bg-surface-container-high rounded text-label-md font-label-md text-on-surface-variant border border-outline-variant">Esports</span>
+<span class="px-sm py-1 bg-surface-container-high rounded text-label-md font-label-md text-on-surface-variant border border-outline-variant">Athletics</span>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-body-md">search</span>
+<input class="pl-10 pr-4 py-2 border border-outline-variant rounded-lg text-body-sm focus:ring-2 focus:ring-secondary-container focus:border-secondary outline-none w-64" placeholder="Search team or rank..." type="text"/>
+</div>
+<button class="p-2 border border-outline-variant rounded hover:bg-surface-container-low">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Rank</th>
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Team Name</th>
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Category</th>
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Region</th>
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider text-right">Total Score</th>
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider text-center">Status</th>
+<th class="px-lg py-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider text-center">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Rank 1 -->
+<tr class="hover:bg-surface transition-colors">
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-bold text-lg border-2 border-white shadow-sm">
+                                            1
+                                        </div>
+<span class="material-symbols-outlined text-tertiary-fixed-dim fill">workspace_premium</span>
+</div>
+</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center text-white text-xs font-bold">DA</div>
+<div>
+<p class="font-bold text-on-surface">Delta Alpha Prime</p>
+<p class="text-[10px] text-on-surface-variant">ID: AGP-2026-001</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="text-body-sm font-body-sm">Tactical FPS</span>
+</td>
+<td class="px-lg py-md">
+<span class="text-body-sm font-body-sm">South East Asia</span>
+</td>
+<td class="px-lg py-md text-right">
+<span class="text-number-data font-bold text-secondary">98.42</span>
+</td>
+<td class="px-lg py-md text-center">
+<span class="px-2 py-1 bg-secondary-container text-on-secondary-container rounded text-[10px] font-bold">VERIFIED</span>
+</td>
+<td class="px-lg py-md text-center">
+<button class="p-1 hover:bg-surface-container-high rounded text-on-surface-variant">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Rank 2 -->
+<tr class="hover:bg-surface transition-colors">
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-outline-variant text-on-surface-variant flex items-center justify-center font-bold text-lg border-2 border-white shadow-sm">
+                                            2
+                                        </div>
+<span class="material-symbols-outlined text-outline fill">workspace_premium</span>
+</div>
+</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-8 h-8 rounded bg-on-primary-fixed-variant flex items-center justify-center text-white text-xs font-bold">NV</div>
+<div>
+<p class="font-bold text-on-surface">Nova Vanguard</p>
+<p class="text-[10px] text-on-surface-variant">ID: AGP-2026-042</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="text-body-sm font-body-sm">MOBA Master</span>
+</td>
+<td class="px-lg py-md">
+<span class="text-body-sm font-body-sm">East Asia</span>
+</td>
+<td class="px-lg py-md text-right">
+<span class="text-number-data font-bold text-on-surface">96.15</span>
+</td>
+<td class="px-lg py-md text-center">
+<span class="px-2 py-1 bg-secondary-container text-on-secondary-container rounded text-[10px] font-bold">VERIFIED</span>
+</td>
+<td class="px-lg py-md text-center">
+<button class="p-1 hover:bg-surface-container-high rounded text-on-surface-variant">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Rank 3 -->
+<tr class="hover:bg-surface transition-colors">
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-tertiary-container text-on-tertiary-fixed-variant flex items-center justify-center font-bold text-lg border-2 border-white shadow-sm">
+                                            3
+                                        </div>
+<span class="material-symbols-outlined text-on-tertiary-fixed-variant fill">workspace_premium</span>
+</div>
+</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-8 h-8 rounded bg-on-surface-variant flex items-center justify-center text-white text-xs font-bold">SM</div>
+<div>
+<p class="font-bold text-on-surface">Storm Makers</p>
+<p class="text-[10px] text-on-surface-variant">ID: AGP-2026-118</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="text-body-sm font-body-sm">Strategic RTS</span>
+</td>
+<td class="px-lg py-md">
+<span class="text-body-sm font-body-sm">Europe Central</span>
+</td>
+<td class="px-lg py-md text-right">
+<span class="text-number-data font-bold text-on-surface">94.88</span>
+</td>
+<td class="px-lg py-md text-center">
+<span class="px-2 py-1 bg-secondary-container text-on-secondary-container rounded text-[10px] font-bold">VERIFIED</span>
+</td>
+<td class="px-lg py-md text-center">
+<button class="p-1 hover:bg-surface-container-high rounded text-on-surface-variant">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer Pagination -->
+<div class="px-lg py-md bg-surface border-t border-outline-variant flex justify-between items-center text-label-md font-label-md text-on-surface-variant">
+<p>Showing 1-5 of 124 teams</p>
+<div class="flex gap-xs">
+<button class="px-3 py-1 border border-outline-variant rounded bg-white hover:bg-surface-container-low transition-colors">Previous</button>
+<button class="px-3 py-1 bg-primary text-white rounded">1</button>
+<button class="px-3 py-1 border border-outline-variant rounded bg-white hover:bg-surface-container-low transition-colors">2</button>
+<button class="px-3 py-1 border border-outline-variant rounded bg-white hover:bg-surface-container-low transition-colors">3</button>
+<span class="px-2">...</span>
+<button class="px-3 py-1 border border-outline-variant rounded bg-white hover:bg-surface-container-low transition-colors">Next</button>
+</div>
+</div>
+</div>
+<!-- Verification Footer Card -->
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-xl flex items-start gap-lg relative overflow-hidden">
+<div class="absolute right-0 top-0 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-[120px] leading-none">policy</span>
+</div>
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shrink-0">
+<span class="material-symbols-outlined fill">gavel</span>
+</div>
+<div class="space-y-xs">
+<h4 class="text-headline-md font-headline-md text-primary">Finalization Protocol</h4>
+<p class="text-body-md font-body-md text-on-surface-variant max-w-2xl">
+                        As a Grand Master, your verification locks the scoring system for the selected category. Ensure all match disputes are resolved before generating the SK Juara. This action is non-reversible and will be synced to the global cloud ledger immediately.
+                    </p>
+<div class="pt-md flex gap-md">
+<button class="bg-surface-container-highest px-lg py-sm rounded text-label-md font-label-md hover:bg-outline-variant transition-all">Cloud Audit Log</button>
+<button class="text-secondary font-bold text-label-md font-label-md hover:underline">View Competition Rules &amp; Bylaws</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Hidden on Desktop) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex md:hidden justify-around items-center px-margin-mobile py-2 bg-surface border-t border-outline-variant shadow-lg">
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-70">
+<span class="material-symbols-outlined">cloud</span>
+<span class="text-label-md-mobile font-label-md-mobile">Cloud</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-70">
+<span class="material-symbols-outlined">sync</span>
+<span class="text-label-md-mobile font-label-md-mobile">Sync</span>
+</div>
+<!-- Active Tab -->
+<div class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1">
+<span class="material-symbols-outlined">emoji_events</span>
+<span class="text-label-md-mobile font-label-md-mobile">Results</span>
+</div>
+</nav>
+<script>
+        // Simple micro-interaction for the generate button
+        const generateBtn = document.querySelector('button:has(.material-symbols-outlined)');
+        if(generateBtn && generateBtn.textContent.includes('GENERATE')) {
+            generateBtn.addEventListener('click', () => {
+                const originalText = generateBtn.innerHTML;
+                generateBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> <span class="text-label-md font-label-md">SYNCING TO CLOUD...</span>';
+                generateBtn.disabled = true;
+                
+                setTimeout(() => {
+                    generateBtn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> <span class="text-label-md font-label-md">DOWNLOAD READY</span>';
+                    setTimeout(() => {
+                        generateBtn.innerHTML = originalText;
+                        generateBtn.disabled = false;
+                    }, 3000);
+                }, 2000);
+            });
+        }
+
+        // Search highlight mock
+        const searchInput = document.querySelector('input[type="text"]');
+        if(searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const rows = document.querySelectorAll('tbody tr');
+                const term = e.target.value.toLowerCase();
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(term) ? '' : 'none';
+                });
+            });
+        }
+    </script>
+</body></html>

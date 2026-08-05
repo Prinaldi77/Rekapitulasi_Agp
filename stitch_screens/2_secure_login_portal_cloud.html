@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login | AGP Competition 2026</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#006c49",
+                    "on-primary-fixed": "#131b2e",
+                    "on-surface-variant": "#45464d",
+                    "tertiary": "#000000",
+                    "error": "#ba1a1a",
+                    "on-error-container": "#93000a",
+                    "primary": "#000000",
+                    "primary-container": "#131b2e",
+                    "surface-dim": "#cbdbf5",
+                    "on-background": "#0b1c30",
+                    "inverse-surface": "#213145",
+                    "secondary-container": "#6cf8bb",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-high": "#dce9ff",
+                    "outline-variant": "#c6c6cd",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#eff4ff",
+                    "on-tertiary-fixed": "#261a00",
+                    "on-primary-container": "#7c839b",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "surface-container-highest": "#d3e4fe",
+                    "secondary-fixed": "#6ffbbe",
+                    "on-secondary-fixed-variant": "#005236",
+                    "on-secondary-fixed": "#002113",
+                    "outline": "#76777d",
+                    "tertiary-fixed": "#ffdf9f",
+                    "on-secondary-container": "#00714d",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed-dim": "#4edea3",
+                    "on-primary": "#ffffff",
+                    "surface-variant": "#d3e4fe",
+                    "inverse-on-surface": "#eaf1ff",
+                    "surface-tint": "#565e74",
+                    "inverse-primary": "#bec6e0",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f8f9ff",
+                    "on-surface": "#0b1c30",
+                    "on-primary-fixed-variant": "#3f465c",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#bec6e0",
+                    "on-tertiary-container": "#a87d00",
+                    "surface": "#f8f9ff",
+                    "primary-fixed": "#dae2fd",
+                    "tertiary-container": "#261a00",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "background": "#f8f9ff",
+                    "surface-container": "#e5eeff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "margin-desktop": "32px",
+                    "margin-mobile": "16px",
+                    "sm": "8px",
+                    "gutter": "16px",
+                    "base": "4px",
+                    "xl": "32px",
+                    "lg": "24px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "number-data": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "number-data": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9ff;
+            overflow: hidden;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05);
+        }
+
+        .input-focus-ring:focus-within {
+            border-color: #000000;
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .mesh-gradient {
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(203, 219, 245, 0.2) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(229, 238, 255, 0.2) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(239, 244, 255, 0.2) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(211, 228, 254, 0.2) 0px, transparent 50%);
+        }
+
+        .pulse-emerald {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+
+        .transition-standard {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen mesh-gradient px-margin-mobile md:px-0">
+<!-- Background Decorative Element -->
+<div class="fixed top-0 left-0 w-full h-full opacity-20 pointer-events-none overflow-hidden z-0">
+<div class="absolute -top-24 -left-24 w-96 h-96 bg-secondary-container rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+<div class="absolute top-1/2 -right-24 w-72 h-72 bg-surface-container-high rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+</div>
+<!-- Login Container -->
+<main class="w-full max-w-[440px] relative z-10">
+<!-- Logo Area -->
+<div class="text-center mb-xl">
+<h1 class="font-headline-lg text-headline-lg text-on-background tracking-tight">
+                AGP COMPETITION 2026
+            </h1>
+<p class="font-label-md text-label-md text-on-primary-container mt-xs uppercase tracking-widest">
+                Cloud Management Portal
+            </p>
+</div>
+<!-- Login Card -->
+<div class="login-card rounded-xl p-lg md:p-xl space-y-lg">
+<div class="space-y-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface">Authentication Required</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Access cloud resources: Admin, Operator, &amp; Grand Master accounts.</p>
+</div>
+<form class="space-y-md" id="loginForm">
+<!-- User ID Field -->
+<div class="space-y-base">
+<label class="font-body-sm text-body-sm font-semibold text-on-surface" for="uid">Email Address</label>
+<div class="relative flex items-center border border-outline-variant rounded-lg bg-surface-container-lowest transition-standard input-focus-ring">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant" style="font-size: 20px;">mail</span>
+<input class="w-full pl-10 pr-md py-3 bg-transparent border-none focus:ring-0 font-body-md text-body-md text-on-surface placeholder:text-outline" id="uid" name="uid" placeholder="admin@agp-competition.com" required="" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-base">
+<div class="flex justify-between items-center">
+<label class="font-body-sm text-body-sm font-semibold text-on-surface" for="password">Password</label>
+<a class="font-label-md text-label-md text-secondary hover:underline" href="#">Forgot Password?</a>
+</div>
+<div class="relative flex items-center border border-outline-variant rounded-lg bg-surface-container-lowest transition-standard input-focus-ring">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant" style="font-size: 20px;">lock</span>
+<input class="w-full pl-10 pr-12 py-3 bg-transparent border-none focus:ring-0 font-body-md text-body-md text-on-surface placeholder:text-outline" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute right-3 text-on-surface-variant hover:text-on-surface cursor-pointer" onclick="togglePassword()" type="button">
+<span class="material-symbols-outlined" id="eye-icon" style="font-size: 20px;">visibility</span>
+</button>
+</div>
+</div>
+<!-- Security Access Info -->
+<div class="bg-surface-container-low rounded-lg p-md flex items-start gap-md">
+<span class="material-symbols-outlined text-secondary" style="font-size: 20px;">verified_user</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Secure session established. Multi-factor authentication required for Grand Master level tasks.
+                    </p>
+</div>
+<!-- Action Button -->
+<button class="w-full bg-primary text-on-primary font-headline-md text-headline-md py-3 rounded-lg shadow-sm hover:opacity-90 active:scale-[0.98] transition-standard flex items-center justify-center gap-sm" type="submit">
+                    Continue to Portal
+                    <span class="material-symbols-outlined" style="font-size: 20px;">arrow_forward</span>
+</button>
+</form>
+</div>
+<!-- Footer / Status -->
+<div class="mt-lg flex flex-col items-center gap-sm">
+<div class="inline-flex items-center gap-sm bg-surface-container-highest px-md py-1.5 rounded-full border border-outline-variant">
+<span class="w-2 h-2 rounded-full bg-[#10B981] pulse-emerald"></span>
+<span class="font-label-md text-label-md text-on-surface tracking-wide uppercase">Server: Online</span>
+</div>
+<div class="flex items-center gap-xl mt-md">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-size: 16px;">cloud_done</span>
+<span class="font-label-md text-label-md text-on-surface-variant">CLOUD SYNC: ACTIVE</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-size: 16px;">update</span>
+<span class="font-label-md text-label-md text-on-surface-variant">v4.2.0-STABLE</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Overlay Loading State (Simulated) -->
+<div class="fixed inset-0 bg-on-background/80 flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm" id="loadingOverlay">
+<div class="bg-white p-xl rounded-xl flex flex-col items-center space-y-md shadow-2xl">
+<div class="relative w-12 h-12">
+<div class="absolute inset-0 rounded-full border-4 border-primary/20"></div>
+<div class="absolute inset-0 rounded-full border-4 border-t-primary animate-spin"></div>
+</div>
+<p class="font-headline-md text-headline-md text-on-surface">Validating Session...</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Connecting to Global API Edge</p>
+</div>
+</div>
+<script>
+        function togglePassword() {
+            const pwd = document.getElementById('password');
+            const icon = document.getElementById('eye-icon');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                icon.innerText = 'visibility_off';
+            } else {
+                pwd.type = 'password';
+                icon.innerText = 'visibility';
+            }
+        }
+
+        const loginForm = document.getElementById('loginForm');
+        const overlay = document.getElementById('loadingOverlay');
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Show loading state
+            overlay.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.add('opacity-100');
+            }, 10);
+
+            // Simulate server lag
+            setTimeout(() => {
+                // In a real app, logic for redirect or error would go here
+                alert('Secure access granted. Redirecting to Cloud Dashboard...');
+                window.location.reload(); 
+            }, 2000);
+        });
+
+        // Simple interactive micro-effect for inputs
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('border-primary');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.classList.remove('border-primary');
+            });
+        });
+    </script>
+</body></html>
