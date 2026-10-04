@@ -1,26 +1,50 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getStoredSchedules, DynamicScheduleItem, SchoolLevel } from '@/lib/dynamicStore';
+import { DynamicScheduleItem, SchoolLevel } from '@/lib/dynamicStore';
+import { fetchSchedulesFromApi } from '@/lib/api';
+import { Badge, Card, EmptyState, LiveClock, PerformanceTimer } from '@/components/ui';
+
+interface ExtendedScheduleItem extends DynamicScheduleItem {
+  updatedAt?: string;
+}
 
 export default function PublicSchedulePage() {
-  const [scheduleList, setScheduleList] = useState<DynamicScheduleItem[]>([]);
+  const [scheduleList, setScheduleList] = useState<ExtendedScheduleItem[]>([]);
   const [selectedJenjang, setSelectedJenjang] = useState<'ALL' | SchoolLevel>('ALL');
 
+  const loadSchedules = async () => {
+    try {
+      const result = await fetchSchedulesFromApi();
+      if (result.success && result.data) {
+        const mapped: ExtendedScheduleItem[] = result.data.map((item: any) => ({
+          id: item.id,
+          noTampil: item.participant?.show_number || item.no_tampil || 1,
+          participantNo: item.participant?.participant_no || item.participant_no || '',
+          teamName: item.participant?.team_name || item.team_name || '',
+          schoolName: item.participant?.school_name || item.school_name || '',
+          category: item.participant?.category_id || 'LKBB PRAMUKA',
+          jenjang: (item.participant?.category?.level || item.jenjang || 'SMA') as SchoolLevel,
+          timeSlot: item.time_slot || '09:00 - 09:20',
+          status: (item.status || 'WAITING') as DynamicScheduleItem['status'],
+          updatedAt: item.updated_at || new Date().toISOString(),
+        }));
+        setScheduleList(mapped);
+      }
+    } catch (err) {
+      console.error('Error fetching schedules:', err);
+    }
+  };
+
   useEffect(() => {
-    setScheduleList(getStoredSchedules());
+    loadSchedules();
 
-    const handleStorageChange = () => {
-      setScheduleList(getStoredSchedules());
-    };
-
-    window.addEventListener('storage', handleStorageChange);
+    // Fast polling every 2 seconds for live sync
     const interval = setInterval(() => {
-      setScheduleList(getStoredSchedules());
-    }, 3000);
+      loadSchedules();
+    }, 2000);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
       clearInterval(interval);
     };
   }, []);
@@ -30,47 +54,45 @@ export default function PublicSchedulePage() {
     return item.jenjang === selectedJenjang;
   });
 
-  const getJenjangBadge = (jenjang: SchoolLevel) => {
-    switch (jenjang) {
-      case 'SD':
-        return <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-black">🎒 SD / MI</span>;
-      case 'SMP':
-        return <span className="px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/40 text-[10px] font-black">🏫 SMP / MTs</span>;
-      case 'SMA':
-        return <span className="px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40 text-[10px] font-black">🏛️ SMA / SMK / MA</span>;
-    }
-  };
+  // Calculate dynamic countdown for currently performing team
+  const performingItem = scheduleList.find((s) => s.status === 'NOW PERFORMING');
+  let dynamicRemainingSeconds = 600; // default 10m
+  if (performingItem && performingItem.updatedAt) {
+    const updatedTime = new Date(performingItem.updatedAt).getTime();
+    const elapsedSeconds = Math.max(0, Math.floor((Date.now() - updatedTime) / 1000));
+    dynamicRemainingSeconds = Math.max(0, 600 - elapsedSeconds);
+  }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'NOW PERFORMING':
         return (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-black bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse">
-            <span className="w-2 h-2 rounded-full bg-rose-500 mr-1.5 animate-ping"></span>
-            🔴 NOW PERFORMING (SEDANG TAMPIL)
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-black bg-red-100 text-red-700 border border-red-200 animate-pulse">
+            <span className="w-2 h-2 rounded-full bg-red-600 mr-1.5 animate-ping" />
+            🔴 SEDANG TAMPIL
           </span>
         );
       case 'STANDBY':
         return (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-black bg-amber-500/20 text-amber-300 border border-amber-500/40">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-200">
             ⏳ STANDBY (BERSIAP PINTU ARENA)
           </span>
         );
       case 'NEXT':
         return (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-black bg-green-100 text-green-800 border border-green-200">
             ➡️ NEXT (GILIRAN BERIKUTNYA)
           </span>
         );
       case 'COMPLETED':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-800 text-slate-400">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-green-50 text-green-700 border border-green-200">
             ✓ SELESAI TAMPIL
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-900 text-slate-500 border border-slate-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-green-50 text-green-600 border border-green-100">
             ⏳ MENUNGGU GILIRAN
           </span>
         );
@@ -78,35 +100,32 @@ export default function PublicSchedulePage() {
   };
 
   return (
-    <main className="max-w-7xl mx-auto px-4 py-8">
+    <main className="max-w-7xl mx-auto px-4 py-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
-      <div className="mb-8 pb-6 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="pb-6 border-b border-green-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
-            <span>⏱️</span> Urutan Tampil Realtime Lapangan
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Pantau pergerakan giliran tampil peserta secara live dari router lokal / Wi-Fi venue.
+          <Badge variant="primary" className="font-black text-[9px] mb-1">⏱️ LIVE SCOREBOARD</Badge>
+          <h1 className="text-2xl sm:text-4xl font-black text-green-950 tracking-tight">Urutan Tampil Realtime</h1>
+          <p className="text-xs sm:text-sm text-green-700/70 mt-1">
+            Pantau giliran tampil peserta secara live di arena kompetisi AGP 2026.
           </p>
         </div>
 
-        {/* Live Indicator */}
-        <div className="flex items-center space-x-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-          <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
-            LIVE ARENA BROADCAST
-          </span>
+        {/* Live Indicator & Timer */}
+        <div className="flex flex-wrap items-center gap-3">
+          <LiveClock />
+          <PerformanceTimer key={performingItem?.id || 'timer'} initialSeconds={dynamicRemainingSeconds} isRunning={!!performingItem} />
         </div>
       </div>
 
       {/* Filter Tabs Jenjang SD / SMP / SMA */}
-      <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2">
         <button
           onClick={() => setSelectedJenjang('ALL')}
-          className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
             selectedJenjang === 'ALL'
-              ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20'
-              : 'bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800'
+              ? 'bg-green-700 text-white shadow-md'
+              : 'bg-white text-green-800 border border-green-200 hover:bg-green-50'
           }`}
         >
           🌐 SEMUA JENJANG ({scheduleList.length})
@@ -114,47 +133,46 @@ export default function PublicSchedulePage() {
 
         <button
           onClick={() => setSelectedJenjang('SD')}
-          className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
             selectedJenjang === 'SD'
-              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-lg shadow-emerald-500/10'
-              : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-white'
+              ? 'bg-green-700 text-white shadow-md'
+              : 'bg-white text-green-800 border border-green-200 hover:bg-green-50'
           }`}
         >
-          <span>🎒</span>
-          <span>SD / MI ({scheduleList.filter(s => s.jenjang === 'SD').length})</span>
+          🎒 SD / MI ({scheduleList.filter(s => s.jenjang === 'SD').length})
         </button>
 
         <button
           onClick={() => setSelectedJenjang('SMP')}
-          className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
             selectedJenjang === 'SMP'
-              ? 'bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-lg shadow-sky-500/10'
-              : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-white'
+              ? 'bg-green-700 text-white shadow-md'
+              : 'bg-white text-green-800 border border-green-200 hover:bg-green-50'
           }`}
         >
-          <span>🏫</span>
-          <span>SMP / MTs ({scheduleList.filter(s => s.jenjang === 'SMP').length})</span>
+          🏫 SMP / MTs ({scheduleList.filter(s => s.jenjang === 'SMP').length})
         </button>
 
         <button
           onClick={() => setSelectedJenjang('SMA')}
-          className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
             selectedJenjang === 'SMA'
-              ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-lg shadow-purple-500/10'
-              : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-white'
+              ? 'bg-green-700 text-white shadow-md'
+              : 'bg-white text-green-800 border border-green-200 hover:bg-green-50'
           }`}
         >
-          <span>🏛️</span>
-          <span>SMA / SMK / MA ({scheduleList.filter(s => s.jenjang === 'SMA').length})</span>
+          🏛️ SMA / SMK / MA ({scheduleList.filter(s => s.jenjang === 'SMA').length})
         </button>
       </div>
 
       {/* Schedule Table / List */}
       {filteredSchedule.length === 0 ? (
-        <div className="p-12 rounded-3xl bg-slate-900/40 border border-slate-800 text-center text-slate-400 text-xs">
-          <p className="font-bold text-sm mb-1">Belum Ada Jadwal Tampil untuk Jenjang Ini</p>
-          <p className="text-slate-500">Jadwal tampil akan diperbarui secara realtime oleh Operator Lapangan.</p>
-        </div>
+        <Card className="py-12">
+          <EmptyState
+            title="Belum Ada Jadwal Tampil"
+            description="Jadwal tampil akan diperbarui secara realtime oleh Operator Lapangan."
+          />
+        </Card>
       ) : (
         <div className="space-y-4">
           {filteredSchedule.map((item) => {
@@ -164,37 +182,36 @@ export default function PublicSchedulePage() {
             return (
               <div
                 key={item.id}
-                className={`p-5 rounded-2xl border transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl ${
+                className={`p-5 rounded-2xl border transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs ${
                   isPerforming
-                    ? 'bg-slate-900/90 border-rose-500/50 shadow-rose-500/10 ring-1 ring-rose-500/30'
+                    ? 'bg-red-50/60 border-red-300 ring-2 ring-red-400'
                     : isStandby
-                    ? 'bg-slate-900/80 border-amber-500/40'
-                    : 'bg-slate-900/50 border-slate-800 hover:border-slate-700'
+                    ? 'bg-amber-50/60 border-amber-300'
+                    : 'bg-white border-green-200 hover:border-green-400'
                 }`}
               >
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center font-mono font-black text-emerald-400 text-lg shadow-inner shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-green-100 border border-green-200 flex items-center justify-center font-mono font-black text-green-950 text-lg shadow-inner shrink-0">
                     {item.noTampil}
                   </div>
 
                   <div>
                     <div className="flex items-center space-x-2 mb-1 flex-wrap gap-y-1">
-                      {getJenjangBadge(item.jenjang)}
-                      <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 font-mono text-[10px] text-slate-400 font-bold">
+                      <Badge variant="primary" className="text-[9px] font-extrabold">{item.jenjang}</Badge>
+                      <span className="px-2 py-0.5 rounded bg-green-50 border border-green-200 font-mono text-[10px] text-green-900 font-bold">
                         {item.participantNo}
                       </span>
-                      <span className="text-xs text-slate-400 font-semibold">{item.category}</span>
                     </div>
 
-                    <h3 className="text-lg font-extrabold text-white">{item.teamName}</h3>
-                    <p className="text-xs text-slate-400">{item.schoolName}</p>
+                    <h3 className="text-lg font-black text-green-950">{item.teamName}</h3>
+                    <p className="text-xs text-green-800 font-semibold">{item.schoolName}</p>
                   </div>
                 </div>
 
                 <div className="flex flex-col md:items-end gap-2 self-start md:self-center">
                   {getStatusBadge(item.status)}
-                  <span className="text-[11px] font-mono text-slate-400">
-                    Est. Jam Tampil: <strong className="text-slate-200 font-extrabold">{item.timeSlot}</strong>
+                  <span className="text-[11px] font-mono text-green-800 font-bold">
+                    Est. Jam Tampil: <strong className="text-green-950 font-black">{item.timeSlot}</strong>
                   </span>
                 </div>
               </div>

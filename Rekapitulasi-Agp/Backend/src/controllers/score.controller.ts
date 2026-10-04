@@ -56,7 +56,7 @@ export const submitScores = async (
     let assessmentItems: AssessmentItem[] = [];
     if (categoryId) {
       const { data: itemsData } = await supabase
-        .from('assessment_items')
+        .from('criteria')
         .select('*')
         .eq('category_id', categoryId);
 
@@ -84,7 +84,7 @@ export const submitScores = async (
         if (numVal < item.min_score || numVal > item.max_score) {
           res.status(400).json({
             success: false,
-            message: `Validasi gagal: Nilai "${item.item_name}" (${numVal}) di luar rentang valid (${item.min_score} - ${item.max_score}).`,
+            message: `Validasi gagal: Nilai "${item.name}" (${numVal}) di luar rentang valid (${item.min_score} - ${item.max_score}).`,
           });
           return;
         }
@@ -92,28 +92,19 @@ export const submitScores = async (
 
       upsertPayload.push({
         participant_id: participantId,
-        item_id: itemId,
+        criterion_id: itemId,
         juri_number: juriNumber,
         score_value: numVal,
       });
     }
 
     // 5. Bulk Upsert ke Supabase
-    const { error: upsertError } = await supabase.from('participant_scores').upsert(upsertPayload, {
-      onConflict: 'participant_id,item_id,juri_number',
+    const { error: upsertError } = await supabase.from('scores').upsert(upsertPayload, {
+      onConflict: 'participant_id,criterion_id,juri_number',
     });
 
     if (upsertError) {
-      console.warn('Supabase upsert warning:', upsertError.message);
-      if (upsertError.message.includes('placeholder') || upsertError.message.includes('fetch failed')) {
-        res.status(200).json({
-          success: true,
-          message: `Nilai Juri ${juriNumber} berhasil disimpan (Mode Standalone/Simulasi)!`,
-          data: { count: upsertPayload.length },
-        });
-        return;
-      }
-
+      console.error('Supabase upsert error:', upsertError.message);
       res.status(500).json({
         success: false,
         message: `Gagal menyimpan nilai ke database: ${upsertError.message}`,

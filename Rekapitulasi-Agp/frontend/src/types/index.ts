@@ -112,7 +112,7 @@ export interface LeaderboardEntry {
  */
 export interface ActionResponse<T = undefined> {
   success: boolean;
-  message: string;
+  message?: string;
   data?: T;
   error?: string;
 }

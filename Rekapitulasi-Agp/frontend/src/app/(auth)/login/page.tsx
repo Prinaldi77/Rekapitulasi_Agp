@@ -1,79 +1,87 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Card } from '@/components/ui/Card';
+import Link from 'next/link';
+import { ArrowLeft, Home } from 'lucide-react';
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const customRedirect = searchParams?.get('redirectTo');
+  const customRedirect = searchParams.get('redirect');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('agp_remember_email');
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMessage(null);
+    setErrorMessage('');
 
     try {
-      const rawInput = email.trim();
-      let primaryEmail = rawInput;
-
-      if (!primaryEmail.includes('@')) {
-        primaryEmail = `${rawInput}@agp.local`;
-      }
-
-      // Try primary attempt
-      let res: any = await supabase.auth.signInWithPassword({
-        email: primaryEmail,
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
         password,
       });
 
-      // Fallback attempt with @agp.com if primary fails and user didn't type explicit domain
-      if (res.error && !rawInput.includes('@')) {
-        const secondaryEmail = `${rawInput}@agp.com`;
-        const resFallback: any = await supabase.auth.signInWithPassword({
-          email: secondaryEmail,
-          password,
-        });
-        if (!resFallback.error) {
-          res = resFallback;
-          primaryEmail = secondaryEmail;
-        }
-      }
-
-      if (res.error) {
-        console.error('Supabase Auth Error:', res.error);
-        const rawMsg = res.error.message || (typeof res.error === 'string' ? res.error : JSON.stringify(res.error));
-        const finalMsg = (!rawMsg || rawMsg === '{}') 
-          ? 'Kombinasi Username/Email & Password salah.' 
-          : rawMsg;
-
-        setErrorMessage(finalMsg);
+      if (error) {
+        setErrorMessage(error.message);
         setLoading(false);
         return;
       }
 
-      if (res.data?.session && res.data?.user) {
-        // Fetch user profile role to determine default dashboard
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', res.data.user.id)
-          .single();
+      if (data?.session) {
+        try {
+          const { user } = data.session;
+          const userId = user.id;
+          const metaRole = user.user_metadata?.role || 'OPERATOR';
+          const usernameVal = user.user_metadata?.username || email.split('@')[0];
+          const fullNameVal = user.user_metadata?.full_name || usernameVal;
+          
+          let dbRole = 'OPERATOR';
+          if (metaRole === 'SUPER_ADMIN' || metaRole === 'GRAND_MASTER' || email.includes('grandmaster')) {
+            dbRole = 'GRAND_MASTER';
+          }
 
-        let targetUrl = customRedirect;
-        if (!targetUrl) {
-          const isGrandMaster = profile?.role === 'GRAND_MASTER' || primaryEmail.includes('grandmaster') || rawInput.includes('grandmaster');
-          targetUrl = isGrandMaster ? '/admin/leaderboard' : '/admin/schedule-manage';
+          await supabase.from('profiles').upsert({
+            id: userId,
+            username: usernameVal.toLowerCase().replace(/[^a-z0-9_]/g, ''),
+            full_name: fullNameVal,
+            role: dbRole,
+          });
+        } catch (profileErr) {
+          console.error('Failed to self-heal profile on login:', profileErr);
         }
 
-        // Use hard location navigation to guarantee cookie sync with Next.js Middleware
-        window.location.href = targetUrl;
+        if (rememberMe) {
+          localStorage.setItem('agp_remember_email', email);
+        } else {
+          localStorage.removeItem('agp_remember_email');
+        }
+
+        setSuccess(true);
+        let targetUrl = customRedirect || '/admin';
+
+        setTimeout(() => {
+          window.location.href = targetUrl;
+        }, 1200);
       }
     } catch (err: any) {
       console.error('System Login Error:', err);
@@ -82,90 +90,124 @@ function LoginForm() {
     }
   };
 
+  if (success) {
+    return (
+      <div className="w-full max-w-md p-8 text-center space-y-6 animate-in zoom-in-95 duration-300">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-semibold text-slate-900">Berhasil masuk</h2>
+          <p className="text-sm text-slate-500">
+            Mengalihkan ke dashboard...
+          </p>
+        </div>
+        <div className="flex justify-center">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-      {/* Glow Accent */}
-      <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <Card className="w-full max-w-sm p-8 shadow-sm border border-slate-200 bg-white">
+      {/* Navigation Top Action Bar */}
+      <div className="mb-8 flex items-center justify-between">
+        <Link
+          href="/"
+          className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors flex items-center gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Beranda
+        </Link>
+        <Link
+          href="/live-score"
+          className="text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
+        >
+          Live Score
+        </Link>
+      </div>
 
       {/* Header */}
-      <div className="text-center mb-8">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-500 flex items-center justify-center text-slate-950 font-black text-2xl shadow-xl shadow-emerald-500/20 mx-auto mb-4">
-          AGP
-        </div>
-        <h1 className="text-2xl font-black text-white tracking-tight">Login Portal Panitia</h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Masuk untuk mengakses Control Panel Panitia AGP 2026
+      <div className="mb-8">
+        <h1 className="text-xl font-semibold text-slate-900">Masuk ke Portal</h1>
+        <p className="text-sm text-slate-500 mt-1">
+          Silakan masuk menggunakan akun panitia Anda.
         </p>
       </div>
 
-      {/* Error Alert */}
+      {/* Error State */}
       {errorMessage && (
-        <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-semibold flex items-center gap-2">
-          <span>⚠️</span>
-          <span>{errorMessage}</span>
+        <div className="mb-6 p-3 rounded-lg bg-red-50 text-red-600 text-sm font-medium border border-red-100">
+          {errorMessage}
         </div>
       )}
 
       {/* Form */}
-      <form onSubmit={handleLogin} className="space-y-5">
+      <form onSubmit={handleLogin} className="space-y-4">
         <div>
-          <label className="block text-xs font-extrabold uppercase text-slate-300 mb-2 tracking-wider">
-            Username atau Email Panitia
+          <label htmlFor="email-input" className="block text-sm font-medium text-slate-700 mb-1.5">
+            Email atau Username
           </label>
-          <input
-            type="text"
-            required
-            placeholder="Contoh: grandmaster / operator_lapangan"
+          <Input
+            id="email-input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm font-semibold placeholder:text-slate-600 outline-none focus:border-emerald-500 transition-colors"
+            required
+            className="w-full"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-extrabold uppercase text-slate-300 mb-2 tracking-wider">
-            Kata Sandi (Password)
+          <label htmlFor="password-input" className="block text-sm font-medium text-slate-700 mb-1.5">
+            Password
           </label>
-          <input
-            type="password"
-            required
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm font-semibold placeholder:text-slate-600 outline-none focus:border-emerald-500 transition-colors"
-          />
+          <div className="relative">
+            <Input
+              id="password-input"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-2.5 text-xs font-medium text-slate-400 hover:text-slate-700"
+            >
+              {showPassword ? 'Sembunyikan' : 'Tampilkan'}
+            </button>
+          </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black rounded-xl text-sm transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 disabled:opacity-50"
-        >
-          {loading ? (
-            <span>Memverifikasi Hak Akses...</span>
-          ) : (
-            <>
-              <span>🔑</span>
-              <span>MASUK SEKARANG</span>
-            </>
-          )}
-        </button>
-      </form>
+        {/* Remember Me Toggle */}
+        <div className="flex items-center pt-2 pb-4">
+          <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900"
+            />
+            Ingat saya
+          </label>
+        </div>
 
-      {/* Footer Info */}
-      <div className="mt-8 pt-6 border-t border-slate-800 text-center">
-        <p className="text-[11px] text-slate-500 font-medium">
-          Hak Akses Terlindungi. Supabase Auth &amp; Server Middleware Protection
-        </p>
-      </div>
-    </div>
+        <Button
+          type="submit"
+          variant="primary"
+          className="w-full py-2.5 bg-slate-900 text-white hover:bg-slate-800"
+          isLoading={loading}
+        >
+          Masuk
+        </Button>
+      </form>
+    </Card>
   );
 }
 
 export default function LoginPage() {
   return (
-    <main className="min-h-[85vh] flex items-center justify-center px-4 py-12">
-      <Suspense fallback={<div className="text-white text-xs">Loading...</div>}>
+    <main className="min-h-[80vh] flex items-center justify-center px-4 py-12 bg-slate-50">
+      <Suspense fallback={<div className="text-slate-500 text-sm font-medium animate-pulse">Memuat...</div>}>
         <LoginForm />
       </Suspense>
     </main>

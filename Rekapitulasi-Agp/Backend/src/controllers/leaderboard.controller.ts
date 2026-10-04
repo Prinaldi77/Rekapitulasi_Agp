@@ -45,7 +45,7 @@ export const getLeaderboard = async (
 
     // 2. Ambil Assessment Items Kategori untuk Mapping Group Type
     const { data: itemsData } = await supabase
-      .from('assessment_items')
+      .from('criteria')
       .select('*')
       .eq('category_id', categoryId);
 
@@ -57,7 +57,7 @@ export const getLeaderboard = async (
     // 3. Ambil Semua Skor Peserta
     const participantIds = participants.map((p) => p.id);
     const { data: scoresData } = await supabase
-      .from('participant_scores')
+      .from('scores')
       .select('*')
       .in('participant_id', participantIds);
 
@@ -81,7 +81,7 @@ export const getLeaderboard = async (
 
       pScores.forEach((sc) => {
         const val = sc.score_value || 0;
-        const group = itemGroupMap.get(sc.item_id);
+        const group = itemGroupMap.get(sc.criterion_id);
 
         if (group === 'PBB_DASAR') pbbTotal += val;
         else if (group === 'VARIASI_FORMASI') variasiTotal += val;

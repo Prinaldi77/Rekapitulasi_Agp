@@ -37,16 +37,7 @@ export const togglePublishStatus = async (
       .eq('id', categoryId);
 
     if (error) {
-      console.warn('Supabase DB error updating publish status:', error.message);
-      if (error.message.includes('placeholder') || error.message.includes('fetch failed')) {
-        res.status(200).json({
-          success: true,
-          message: `Status publikasi berhasil diubah ke ${isPublished ? 'PUBLISH (TERBUKA)' : 'TERKUNCI'} (Simulasi Standalone)!`,
-          data: { isPublished },
-        });
-        return;
-      }
-
+      console.error('Supabase DB error updating publish status:', error.message);
       res.status(500).json({
         success: false,
         message: `Gagal memperbarui status publikasi: ${error.message}`,

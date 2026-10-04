@@ -1,9 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { SchoolLevel } from '@/lib/dynamicStore';
 import { supabase } from '@/lib/supabase';
 import { printLembarPenilaianDetailPDF } from '@/lib/pdf';
+import { submitScoresToApi } from '@/lib/api';
+import { Card, Button, Input, Badge, Modal, ScoreStepper, Toast } from '@/components/ui';
+import { useDebounce } from '@/lib/useDebounce';
+import ScoreOcrUploader from '@/components/ScoreOcrUploader';
 
 export type MateriLombaType = 
   | 'LKBB'
@@ -25,11 +29,8 @@ interface ScoreCriterion {
   maxScore: number;
 }
 
-// 1. ITEMS FOR SD / MI
 const CRITERIA_SD: ScoreCriterion[] = [
-  // PBB DASAR - GERAKAN BERKUMPUL
   { id: 'sd_1', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERKUMPUL', no: 1, name: 'BERSAF KUMPUL', minScore: 15, maxScore: 25 },
-  // PBB DASAR - GERAKAN DITEMPAT
   { id: 'sd_2', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN DITEMPAT', no: 2, name: 'SIKAP SEMPURNA', minScore: 8, maxScore: 18 },
   { id: 'sd_3', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN DITEMPAT', no: 3, name: 'ISTIRAHAT DI TEMPAT', minScore: 8, maxScore: 18 },
   { id: 'sd_4', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN DITEMPAT', no: 4, name: 'PARADE PERIKSA KERAPIHAN', minScore: 15, maxScore: 25 },
@@ -43,33 +44,25 @@ const CRITERIA_SD: ScoreCriterion[] = [
   { id: 'sd_12', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN DITEMPAT', no: 12, name: 'HADAP KANAN', minScore: 8, maxScore: 18 },
   { id: 'sd_13', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN DITEMPAT', no: 13, name: 'LENCANG DEPAN', minScore: 8, maxScore: 18 },
   { id: 'sd_14', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN DITEMPAT', no: 14, name: 'JALAN DITEMPAT', minScore: 8, maxScore: 18 },
-  // GERAKAN PINDAH TEMPAT
   { id: 'sd_15', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN PINDAH TEMPAT', no: 15, name: '4 LANGKAH BELAKANG', minScore: 16, maxScore: 26 },
   { id: 'sd_16', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN PINDAH TEMPAT', no: 16, name: '3 LANGKAH DEPAN', minScore: 16, maxScore: 26 },
   { id: 'sd_17', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN PINDAH TEMPAT', no: 17, name: '4 LANGKAH KIRI', minScore: 16, maxScore: 26 },
   { id: 'sd_18', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN PINDAH TEMPAT', no: 18, name: '3 LANGKAH KANAN', minScore: 16, maxScore: 26 },
-  // GERAKAN BERHENTI KE BERJALAN
   { id: 'sd_19', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERHENTI KE BERJALAN', no: 19, name: 'LANGKAH PERLAHAN', minScore: 15, maxScore: 35 },
   { id: 'sd_20', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERHENTI KE BERJALAN', no: 20, name: 'LANGKAH BIASA', minScore: 15, maxScore: 35 },
   { id: 'sd_21', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERHENTI KE BERJALAN', no: 21, name: 'LANGKAH LARI', minScore: 15, maxScore: 35 },
-  // GERAKAN BERJALAN KE BERJALAN
   { id: 'sd_22', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERJALAN KE BERJALAN', no: 22, name: 'TIAP2 BANJAR 2 KALI BELOK KANAN', minScore: 10, maxScore: 40 },
   { id: 'sd_23', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERJALAN KE BERJALAN', no: 23, name: 'LANGKAH TEGAP', minScore: 10, maxScore: 40 },
   { id: 'sd_24', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERJALAN KE BERJALAN', no: 24, name: 'HORMAT KANAN', minScore: 10, maxScore: 40 },
   { id: 'sd_25', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERJALAN KE BERJALAN', no: 25, name: 'TIAP2 BANJAR 2 KALI BELOK KIRI', minScore: 10, maxScore: 40 },
   { id: 'sd_26', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERJALAN KE BERJALAN', no: 26, name: 'HADAP KANAN HENTI', minScore: 10, maxScore: 40 },
-  // BUBAR
   { id: 'sd_27', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BUBAR', no: 27, name: 'BUBAR JALAN', minScore: 15, maxScore: 25 },
-
-  // VARIASI FORMASI
   { id: 'sd_v1', categoryGroup: 'VARIASI_FORMASI', no: 1, name: 'KEINDAHAN GERAKAN', minScore: 21, maxScore: 30 },
   { id: 'sd_v2', categoryGroup: 'VARIASI_FORMASI', no: 2, name: 'KEKOMPAKAN', minScore: 21, maxScore: 30 },
   { id: 'sd_v3', categoryGroup: 'VARIASI_FORMASI', no: 3, name: 'KESULITAN GERAKAN', minScore: 31, maxScore: 40 },
   { id: 'sd_v4', categoryGroup: 'VARIASI_FORMASI', no: 4, name: 'UNSUR PBB MURNI', minScore: 31, maxScore: 40 },
   { id: 'sd_v5', categoryGroup: 'VARIASI_FORMASI', no: 5, name: 'KEKREATIFAN', minScore: 21, maxScore: 30 },
   { id: 'sd_v6', categoryGroup: 'VARIASI_FORMASI', no: 6, name: 'ETIKA', minScore: 21, maxScore: 30 },
-
-  // DANTON
   { id: 'sd_d1', categoryGroup: 'DANTON', no: 1, name: 'SIKAP/POSTUR', minScore: 5, maxScore: 15 },
   { id: 'sd_d2', categoryGroup: 'DANTON', no: 2, name: 'CARA MEMBERIKAN INSTRUKSI (LAGAM)', minScore: 10, maxScore: 20 },
   { id: 'sd_d3', categoryGroup: 'DANTON', no: 3, name: 'KETEPATAN PEMBERIAN ABA-ABA', minScore: 15, maxScore: 25 },
@@ -77,11 +70,8 @@ const CRITERIA_SD: ScoreCriterion[] = [
   { id: 'sd_d5', categoryGroup: 'DANTON', no: 5, name: 'INTONASI/INTERFAL PEMBERIAN ABA-ABA', minScore: 5, maxScore: 15 },
 ];
 
-// 2. ITEMS FOR SMP/MTS AND SMA/SMK/MA
 const CRITERIA_SMP_SMA: ScoreCriterion[] = [
-  // PBB DASAR - GERAKAN BERKUMPUL
   { id: 'ss_1', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERKUMPUL', no: 1, name: 'BERSAF KUMPUL', minScore: 15, maxScore: 25 },
-  // GERAKAN DITEMPAT
   { id: 'ss_2', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN DITEMPAT', no: 2, name: 'SIKAP SEMPURNA', minScore: 8, maxScore: 18 },
   { id: 'ss_3', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN DITEMPAT', no: 3, name: 'ISTIRAHAT DI TEMPAT', minScore: 8, maxScore: 18 },
   { id: 'ss_4', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN DITEMPAT', no: 4, name: 'BERHITUNG', minScore: 8, maxScore: 18 },
@@ -95,14 +85,11 @@ const CRITERIA_SMP_SMA: ScoreCriterion[] = [
   { id: 'ss_12', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN DITEMPAT', no: 12, name: 'HADAP KANAN', minScore: 8, maxScore: 18 },
   { id: 'ss_13', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN DITEMPAT', no: 13, name: 'LENCANG DEPAN', minScore: 8, maxScore: 18 },
   { id: 'ss_14', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN DITEMPAT', no: 14, name: 'JALAN DITEMPAT', minScore: 8, maxScore: 18 },
-  // GERAKAN PINDAH TEMPAT
   { id: 'ss_15', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN PINDAH TEMPAT', no: 15, name: '4 LANGKAH BELAKANG', minScore: 14, maxScore: 24 },
   { id: 'ss_16', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN PINDAH TEMPAT', no: 16, name: '3 LANGKAH DEPAN', minScore: 14, maxScore: 24 },
-  // GERAKAN BERHENTI KE BERJALAN
   { id: 'ss_17', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERHENTI KE BERJALAN', no: 17, name: 'LANGKAH PERLAHAN', minScore: 7, maxScore: 27 },
   { id: 'ss_18', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERHENTI KE BERJALAN', no: 18, name: 'LANGKAH BIASA', minScore: 7, maxScore: 27 },
   { id: 'ss_19', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERHENTI KE BERJALAN', no: 19, name: 'LANGKAH TEGAP', minScore: 7, maxScore: 27 },
-  // GERAKAN BERJALAN KE BERJALAN
   { id: 'ss_20', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERJALAN KE BERJALAN', no: 20, name: 'LANGKAH LARI', minScore: 15, maxScore: 35 },
   { id: 'ss_21', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERJALAN KE BERJALAN', no: 21, name: 'LANGKAH BIASA', minScore: 15, maxScore: 35 },
   { id: 'ss_22', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERJALAN KE BERJALAN', no: 22, name: 'BELOK KANAN', minScore: 15, maxScore: 35 },
@@ -111,22 +98,17 @@ const CRITERIA_SMP_SMA: ScoreCriterion[] = [
   { id: 'ss_25', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERJALAN KE BERJALAN', no: 25, name: 'HORMAT KANAN', minScore: 15, maxScore: 35 },
   { id: 'ss_26', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERJALAN KE BERJALAN', no: 26, name: 'MELINTANG KIRI/KANAN', minScore: 15, maxScore: 35 },
   { id: 'ss_27', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BERJALAN KE BERJALAN', no: 27, name: 'HALUAN KANAN/KIRI', minScore: 15, maxScore: 35 },
-  // BUBAR
   { id: 'ss_28', categoryGroup: 'PBB_DASAR', subGroup: 'GERAKAN BUBAR', no: 28, name: 'BUBAR JALAN', minScore: 15, maxScore: 25 },
-
-  // VARIASI FORMASI
   { id: 'ss_v1', categoryGroup: 'VARIASI_FORMASI', no: 1, name: 'KEINDAHAN GERAKAN', minScore: 21, maxScore: 30 },
   { id: 'ss_v2', categoryGroup: 'VARIASI_FORMASI', no: 2, name: 'KEKOMPAKAN', minScore: 21, maxScore: 30 },
   { id: 'ss_v3', categoryGroup: 'VARIASI_FORMASI', no: 3, name: 'KESULITAN GERAKAN', minScore: 31, maxScore: 40 },
   { id: 'ss_v4', categoryGroup: 'VARIASI_FORMASI', no: 4, name: 'UNSUR PBB MURNI', minScore: 31, maxScore: 40 },
   { id: 'ss_v5', categoryGroup: 'VARIASI_FORMASI', no: 5, name: 'KEKREATIFAN', minScore: 21, maxScore: 30 },
   { id: 'ss_v6', categoryGroup: 'VARIASI_FORMASI', no: 6, name: 'ETIKA', minScore: 21, maxScore: 30 },
-
-  // DANTON
   { id: 'ss_d1', categoryGroup: 'DANTON', no: 1, name: 'SIKAP/POSTUR', minScore: 5, maxScore: 15 },
   { id: 'ss_d2', categoryGroup: 'DANTON', no: 2, name: 'CARA MEMBERIKAN INSTRUKSI (LAGAM)', minScore: 10, maxScore: 20 },
   { id: 'ss_d3', categoryGroup: 'DANTON', no: 3, name: 'KETEPATAN PEMBERIAN ABA-ABA', minScore: 15, maxScore: 25 },
-  { id: 'sd_d4', categoryGroup: 'DANTON', no: 4, name: 'PENGUASAAN LAPANGAN', minScore: 15, maxScore: 25 },
+  { id: 'ss_d4', categoryGroup: 'DANTON', no: 4, name: 'PENGUASAAN LAPANGAN', minScore: 15, maxScore: 25 },
   { id: 'ss_d5', categoryGroup: 'DANTON', no: 5, name: 'INTONASI/INTERFAL PEMBERIAN ABA-ABA', minScore: 5, maxScore: 15 },
 ];
 
@@ -139,19 +121,66 @@ export default function RapidScoreEntryPage() {
   const [namaSekolah, setNamaSekolah] = useState('SMAN 1 KOTA BANDUNG');
   const [namaTim, setNamaTim] = useState('PASBRATA UTAMA');
 
-  // Single Numeric Score state for non-LKBB materi (Bank Soal, Semaphore, Morse, Pionering, Kebersihan, etc)
+  // Participant Search & List Sidebar
+  const [participants, setParticipants] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  // Single Numeric Score state for non-LKBB materi
   const [singleScore, setSingleScore] = useState<number>(85);
 
   const [scores, setScores] = useState<Record<string, number>>({});
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [feedbackType, setFeedbackType] = useState<'success' | 'error' | 'info'>('info');
   const [isSaving, setIsSaving] = useState(false);
+  const [isOcrModalOpen, setIsOcrModalOpen] = useState(false);
 
-  const criteriaList = jenjang === 'SD' ? CRITERIA_SD : CRITERIA_SMP_SMA;
+  // Accordion Expand/Collapse State
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
+    PBB_DASAR: true,
+    VARIASI_FORMASI: true,
+    DANTON: true,
+  });
 
-  // Key for local storage persistence: agp_scores_<materi>_<jenjang>_<gender>_<noPeserta>_juri<selectedJuri>
+  const criteriaList = useMemo(() => {
+    return jenjang === 'SD' ? CRITERIA_SD : CRITERIA_SMP_SMA;
+  }, [jenjang]);
+
+  // Refs array for input keyboard shortcuts
+  const inputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  // Key for local storage persistence
   const storageKey = `agp_scores_${materi}_${jenjang}_${genderRegu}_${noPeserta.trim().toUpperCase()}_juri${selectedJuri}`;
 
-  // Load existing scores whenever materi, jenjang, gender, noPeserta, or selectedJuri changes
+  // Fetch participants on mount
+  useEffect(() => {
+    const fetchParticipants = async () => {
+      try {
+        const { data } = await supabase
+          .from('participants')
+          .select('*, category:categories(*)');
+        if (data && data.length > 0) {
+          setParticipants(data);
+        } else {
+          setParticipants([
+            { id: 'p_sma1', participant_no: 'SMA-01', team_name: 'PASBRATA UTAMA', school_name: 'SMAN 1 KOTA BANDUNG', category: { level: 'SMA' } },
+            { id: 'p_smp1', participant_no: 'SMP-01', team_name: 'PASKIBRA SMP 1', school_name: 'SMPN 1 KOTA BANDUNG', category: { level: 'SMP' } },
+            { id: 'p_sd1', participant_no: 'SD-01', team_name: 'TUNAS BANGSA', school_name: 'SDN 1 KOTA BANDUNG', category: { level: 'SD' } },
+          ]);
+        }
+      } catch (err) {
+        console.error('Error fetching participants:', err);
+        setParticipants([
+          { id: 'p_sma1', participant_no: 'SMA-01', team_name: 'PASBRATA UTAMA', school_name: 'SMAN 1 KOTA BANDUNG', category: { level: 'SMA' } },
+          { id: 'p_smp1', participant_no: 'SMP-01', team_name: 'PASKIBRA SMP 1', school_name: 'SMPN 1 KOTA BANDUNG', category: { level: 'SMP' } },
+          { id: 'p_sd1', participant_no: 'SD-01', team_name: 'TUNAS BANGSA', school_name: 'SDN 1 KOTA BANDUNG', category: { level: 'SD' } },
+        ]);
+      }
+    };
+    fetchParticipants();
+  }, []);
+
+  // Load existing scores whenever key variables change
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const existingData = localStorage.getItem(storageKey);
@@ -162,7 +191,8 @@ export default function RapidScoreEntryPage() {
         if (parsed.singleScore !== undefined) setSingleScore(parsed.singleScore);
         if (parsed.namaTim) setNamaTim(parsed.namaTim);
         if (parsed.namaSekolah) setNamaSekolah(parsed.namaSekolah);
-        setFeedback(`📂 Memuat lembar nilai tersimpan: ${materi} (${genderRegu}) - Peserta ${noPeserta}`);
+        setFeedbackType('info');
+        setFeedback(`📂 Memuat nilai tersimpan: ${materi} - Peserta ${noPeserta}`);
       } catch {
         setScores({});
       }
@@ -172,43 +202,43 @@ export default function RapidScoreEntryPage() {
     }
   }, [storageKey, materi, jenjang, genderRegu, noPeserta, selectedJuri]);
 
-  const handleScoreChange = (criterionId: string, value: number) => {
-    setScores(prev => ({
-      ...prev,
-      [criterionId]: value,
-    }));
-  };
-
-  // Pre-fill default median score for fast entry testing
-  const handleAutoFillDefault = () => {
-    const defaultMap: Record<string, number> = {};
-    criteriaList.forEach(c => {
-      defaultMap[c.id] = Math.floor((c.minScore + c.maxScore) / 2);
-    });
-    setScores(defaultMap);
-    setSingleScore(85);
-    setFeedback('✨ Berhasil mengisikan skor rata-rata default untuk seluruh item!');
-  };
-
-  // Calculate totals per category group for LKBB
-  const calculateGroupTotal = (group: 'PBB_DASAR' | 'VARIASI_FORMASI' | 'DANTON') => {
+  const calculateGroupTotal = useCallback((scoresObj: Record<string, number>, group: 'PBB_DASAR' | 'VARIASI_FORMASI' | 'DANTON') => {
     return criteriaList
       .filter(c => c.categoryGroup === group)
-      .reduce((sum, c) => sum + (scores[c.id] || 0), 0);
-  };
+      .reduce((sum, c) => sum + (scoresObj[c.id] || 0), 0);
+  }, [criteriaList]);
 
-  const totalPbb = calculateGroupTotal('PBB_DASAR');
-  const totalVariasi = calculateGroupTotal('VARIASI_FORMASI');
-  const totalDanton = calculateGroupTotal('DANTON');
-  const grandTotalLkbb = totalPbb + totalVariasi + totalDanton;
+  // Auto Save into localStorage as users type/modify
+  const handleScoreChange = useCallback((criterionId: string, value: number) => {
+    setScores(prev => {
+      const newScores = { ...prev, [criterionId]: value };
+      
+      const sheetData = {
+        materi,
+        jenjang,
+        genderRegu,
+        noPeserta: noPeserta.trim().toUpperCase(),
+        namaTim,
+        namaSekolah,
+        juri: selectedJuri,
+        scores: newScores,
+        singleScore: materi !== 'LKBB' ? singleScore : undefined,
+        totalPbb: calculateGroupTotal(newScores, 'PBB_DASAR'),
+        totalVariasi: calculateGroupTotal(newScores, 'VARIASI_FORMASI'),
+        totalDanton: calculateGroupTotal(newScores, 'DANTON'),
+        grandTotal: (materi === 'LKBB' 
+          ? calculateGroupTotal(newScores, 'PBB_DASAR') + calculateGroupTotal(newScores, 'VARIASI_FORMASI') + calculateGroupTotal(newScores, 'DANTON')
+          : singleScore
+        ),
+        updatedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(storageKey, JSON.stringify(sheetData));
+      return newScores;
+    });
+  }, [storageKey, materi, jenjang, genderRegu, noPeserta, namaTim, namaSekolah, selectedJuri, singleScore, calculateGroupTotal]);
 
-  const currentFinalTotal = materi === 'LKBB' ? grandTotalLkbb : singleScore;
-
-  const handleSaveScoreSheet = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSaving(true);
-    setFeedback(null);
-
+  const handleSingleScoreChange = useCallback((value: number) => {
+    setSingleScore(value);
     const sheetData = {
       materi,
       jenjang,
@@ -217,20 +247,108 @@ export default function RapidScoreEntryPage() {
       namaTim,
       namaSekolah,
       juri: selectedJuri,
-      scores: materi === 'LKBB' ? scores : undefined,
-      singleScore: materi !== 'LKBB' ? singleScore : undefined,
-      totalPbb: materi === 'LKBB' ? totalPbb : 0,
-      totalVariasi: materi === 'LKBB' ? totalVariasi : 0,
-      totalDanton: materi === 'LKBB' ? totalDanton : 0,
-      grandTotal: currentFinalTotal,
+      scores: undefined,
+      singleScore: value,
+      totalPbb: 0,
+      totalVariasi: 0,
+      totalDanton: 0,
+      grandTotal: value,
       updatedAt: new Date().toISOString(),
     };
-
-    // Save to LocalStorage for offline LAN persistence
     localStorage.setItem(storageKey, JSON.stringify(sheetData));
+  }, [storageKey, materi, jenjang, genderRegu, noPeserta, namaTim, namaSekolah, selectedJuri]);
 
-    setIsSaving(false);
-    setFeedback(`💾 LEMBAR PENILAIAN ${materi} (${genderRegu}) UNTUK '${namaTim}' (${noPeserta}) BERHASIL DISIMPAN! TOTAL: ${currentFinalTotal} PTS.`);
+  const handleAutoFillDefault = () => {
+    const defaultMap: Record<string, number> = {};
+    criteriaList.forEach(c => {
+      defaultMap[c.id] = Math.floor((c.minScore + c.maxScore) / 2);
+    });
+    setScores(defaultMap);
+    setSingleScore(85);
+    setFeedbackType('success');
+    setFeedback('✨ Berhasil mengisi skor rata-rata default!');
+  };
+
+  const totalPbb = useMemo(() => calculateGroupTotal(scores, 'PBB_DASAR'), [scores, calculateGroupTotal]);
+  const totalVariasi = useMemo(() => calculateGroupTotal(scores, 'VARIASI_FORMASI'), [scores, calculateGroupTotal]);
+  const totalDanton = useMemo(() => calculateGroupTotal(scores, 'DANTON'), [scores, calculateGroupTotal]);
+  const grandTotalLkbb = useMemo(() => totalPbb + totalVariasi + totalDanton, [totalPbb, totalVariasi, totalDanton]);
+  const currentFinalTotal = materi === 'LKBB' ? grandTotalLkbb : singleScore;
+
+  // Track progress of filled criteria
+  const filledCriteriaCount = useMemo(() => criteriaList.filter(c => scores[c.id] !== undefined && scores[c.id] > 0).length, [criteriaList, scores]);
+  const totalCriteriaCount = useMemo(() => criteriaList.length, [criteriaList]);
+  const progressPercent = useMemo(() => totalCriteriaCount > 0 ? Math.round((filledCriteriaCount / totalCriteriaCount) * 100) : 0, [filledCriteriaCount, totalCriteriaCount]);
+
+  const handleSaveScoreSheet = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    setFeedback(null);
+
+    if (materi === 'LKBB') {
+      const outOfBounds = criteriaList.find(c => {
+        const val = scores[c.id];
+        return val !== undefined && (val < c.minScore || val > c.maxScore);
+      });
+      if (outOfBounds) {
+        setFeedbackType('error');
+        setFeedback(`❌ Nilai item '${outOfBounds.name}' berada di luar batas (${outOfBounds.minScore} - ${outOfBounds.maxScore} PTS).`);
+        setIsSaving(false);
+        return;
+      }
+    }
+
+    try {
+      let participantId = '';
+      const { data: part } = await supabase
+        .from('participants')
+        .select('id')
+        .eq('participant_no', noPeserta.trim().toUpperCase())
+        .limit(1)
+        .maybeSingle();
+
+      if (part) {
+        participantId = part.id;
+      } else {
+        const { data: cat } = await supabase
+          .from('categories')
+          .select('id')
+          .eq('level', jenjang)
+          .limit(1)
+          .maybeSingle();
+
+        const categoryId = cat?.id || 'c1111111-1111-1111-1111-111111111111';
+
+        const { data: newPart, error: partErr } = await supabase
+          .from('participants')
+          .insert({
+            participant_no: noPeserta.trim().toUpperCase(),
+            team_name: namaTim.trim(),
+            school_name: namaSekolah.trim(),
+            category_id: categoryId,
+            show_number: Math.floor(Math.random() * 100) + 1
+          })
+          .select()
+          .single();
+
+        if (partErr || !newPart) throw new Error(partErr?.message || 'Gagal mendaftarkan peserta baru.');
+        participantId = newPart.id;
+      }
+
+      const scoresMap = materi === 'LKBB' ? scores : { [materi]: singleScore };
+      const result = await submitScoresToApi(participantId, selectedJuri, scoresMap);
+
+      if (!result.success) throw new Error(result.message);
+
+      setFeedbackType('success');
+      setFeedback(`💾 LEMBAR PENILAIAN BERHASIL DISIMPAN! TOTAL: ${currentFinalTotal} PTS.`);
+    } catch (err: any) {
+      console.error(err);
+      setFeedbackType('error');
+      setFeedback(`❌ GAGAL MENYIMPAN NILAI: ${err.message || 'Kesalahan koneksi API Backend.'}`);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handlePrintPembinaScoreSheet = () => {
@@ -249,47 +367,62 @@ export default function RapidScoreEntryPage() {
     });
   };
 
-  const renderRatingOptions = (criterion: ScoreCriterion) => {
-    const range: number[] = [];
-    for (let i = criterion.minScore; i <= criterion.maxScore; i++) {
-      range.push(i);
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>, currentId: string, idx: number) => {
+    if (e.key === 'Enter' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      const nextCriterion = criteriaList[idx + 1];
+      if (nextCriterion) {
+        inputRefs.current[nextCriterion.id]?.focus();
+        inputRefs.current[nextCriterion.id]?.select();
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const prevCriterion = criteriaList[idx - 1];
+      if (prevCriterion) {
+        inputRefs.current[prevCriterion.id]?.focus();
+        inputRefs.current[prevCriterion.id]?.select();
+      }
     }
+  }, [criteriaList]);
 
-    const currentScore = scores[criterion.id];
+  const toggleAccordion = useCallback((group: string) => {
+    setExpandedGroups(prev => ({ ...prev, [group]: !prev[group] }));
+  }, []);
 
-    return (
-      <div className="flex flex-wrap items-center gap-1">
-        {range.map((val) => (
-          <button
-            key={val}
-            type="button"
-            onClick={() => handleScoreChange(criterion.id, val)}
-            className={`w-7 h-7 rounded-lg text-xs font-bold transition-all border ${
-              currentScore === val
-                ? 'bg-emerald-500 text-slate-950 border-emerald-400 font-black scale-110 shadow-md shadow-emerald-500/20'
-                : 'bg-slate-950 text-slate-300 border-slate-800 hover:bg-slate-800 hover:text-white'
-            }`}
-          >
-            {val}
-          </button>
-        ))}
-      </div>
-    );
-  };
+  const selectParticipant = useCallback((p: any) => {
+    setNoPeserta(p.participant_no);
+    setNamaTim(p.team_name);
+    setNamaSekolah(p.school_name);
+    if (p.category?.level) setJenjang(p.category.level);
+  }, []);
+
+  // Filtered Participants List - Memoized and Debounced
+  const filteredParticipants = useMemo(() => {
+    const q = (debouncedSearchQuery || '').toLowerCase();
+    return (participants || []).filter(p => {
+      if (!p) return false;
+      const teamName = (p.team_name || '').toLowerCase();
+      const schoolName = (p.school_name || '').toLowerCase();
+      const partNo = (p.participant_no || '').toLowerCase();
+      return teamName.includes(q) || schoolName.includes(q) || partNo.includes(q);
+    });
+  }, [participants, debouncedSearchQuery]);
 
   return (
-    <main className="max-w-7xl mx-auto px-4 py-8">
-      {/* Selector Materi Lomba Tabs */}
-      <div className="mb-6 flex flex-wrap items-center gap-2 bg-slate-950 p-2 rounded-2xl border border-slate-800">
+    <>
+    <main className="max-w-7xl mx-auto px-4 py-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      
+      {/* Top Selector Tabs */}
+      <div className="flex flex-wrap items-center gap-2 bg-slate-900 border border-slate-800 p-2 rounded-2xl">
         {[
-          { key: 'LKBB', label: '🎯 LKBB (PBB/VAFOR/DANTON)', color: 'bg-emerald-500 text-slate-950' },
-          { key: 'BANK_SOAL', label: '📚 MATERI A: BANK SOAL', color: 'bg-amber-500 text-slate-950' },
-          { key: 'SEMAPHORE', label: '🚩 MATERI B: SEMAPHORE', color: 'bg-sky-500 text-slate-950' },
-          { key: 'MORSE', label: '📻 MATERI C: MORSE', color: 'bg-indigo-500 text-white' },
-          { key: 'MINI_PIONERING', label: '🏗️ MATERI D: MINI PIONERING', color: 'bg-purple-500 text-white' },
-          { key: 'KEBERSIHAN', label: '🧹 MATERI E: KEBERSIHAN BARAK', color: 'bg-teal-500 text-slate-950' },
-          { key: 'FASHION_SHOW', label: '👗 FASHION SHOW', color: 'bg-rose-500 text-white' },
-          { key: 'ADMINISTRASI', label: '📁 ADMINISTRASI & PEMBINA', color: 'bg-slate-700 text-white' },
+          { key: 'LKBB', label: '🎯 LKBB (PBB/VAFOR/DANTON)', color: 'text-brand-emerald-400' },
+          { key: 'BANK_SOAL', label: '📚 BANK SOAL', color: 'text-brand-cyan-400' },
+          { key: 'SEMAPHORE', label: '🚩 SEMAPHORE', color: 'text-brand-cyan-400' },
+          { key: 'MORSE', label: '📻 MORSE', color: 'text-brand-cyan-400' },
+          { key: 'MINI_PIONERING', label: '🏗️ PIONERING', color: 'text-brand-cyan-400' },
+          { key: 'KEBERSIHAN', label: '🧹 KEBERSIHAN', color: 'text-brand-cyan-400' },
+          { key: 'FASHION_SHOW', label: '👗 FASHION', color: 'text-brand-cyan-400' },
+          { key: 'ADMINISTRASI', label: '📁 ADMIN', color: 'text-brand-cyan-400' },
         ].map((m) => (
           <button
             key={m.key}
@@ -297,8 +430,8 @@ export default function RapidScoreEntryPage() {
             onClick={() => setMateri(m.key as MateriLombaType)}
             className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all ${
               materi === m.key
-                ? `${m.color} shadow-lg scale-105`
-                : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                ? 'bg-brand-emerald-500 text-slate-950 font-black shadow-glow-emerald'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
             {m.label}
@@ -306,399 +439,408 @@ export default function RapidScoreEntryPage() {
         ))}
       </div>
 
-      {/* Header Form Penilaian Resmi */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 mb-8 shadow-2xl">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-slate-800">
-          <div>
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-black mb-2">
-              <span>📋</span>
-              <span>INPUT NILAI MATERI: {materi}</span>
+      {/* Split Layout Container */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+        
+        {/* Left Side: Participant List Sidebar */}
+        <div className="lg:col-span-1 space-y-4">
+          <Card className="p-4 space-y-4">
+            <h3 className="text-xs font-black uppercase text-green-800 tracking-wider">Antrean Peserta</h3>
+            <Input
+              placeholder="Cari No / Tim..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="py-2 text-xs"
+              icon={
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              }
+            />
+
+
+            <div className="max-h-[350px] overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+              {filteredParticipants.length === 0 ? (
+                <p className="text-[10px] text-slate-500 italic text-center py-4">Tidak ada tim.</p>
+              ) : (
+                filteredParticipants.map((p) => {
+                  const isActive = noPeserta === p.participant_no;
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => selectParticipant(p)}
+                      className={`w-full text-left p-3 rounded-xl border text-xs transition-all flex flex-col gap-1 ${
+                        isActive
+                          ? 'border-brand-emerald-500/40 bg-brand-emerald-500/10 text-brand-emerald-400 shadow-glow-emerald/10'
+                          : 'border-slate-900 bg-slate-950/40 hover:bg-slate-900/60'
+                      }`}
+                    >
+                      <div className="flex justify-between items-center w-full">
+                        <span className="font-extrabold text-white">@{p.participant_no}</span>
+                        <Badge variant="primary" className="text-[8px] scale-90">{p.category?.level}</Badge>
+                      </div>
+                      <span className="font-bold text-slate-200 truncate">{p.team_name}</span>
+                    </button>
+                  );
+                })
+              )}
             </div>
-            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight uppercase">
-              FORMAT PENILAIAN {materi.replace('_', ' ')} - AGP 2026 ({jenjang})
-            </h1>
-            <p className="text-xs text-slate-400 mt-1">
-              Pilih Kategori Regu (Putera/Puteri), Nomor Peserta, dan masukkan nilai hasil penilaian juri.
+          </Card>
+
+          <Card className="p-4 space-y-2 text-xs">
+            <div className="font-bold text-slate-300 uppercase tracking-wider text-[10px]">Petunjuk Pengisian</div>
+            <p className="text-slate-400 leading-relaxed text-[10px]">
+              Gunakan tombol <kbd className="bg-slate-950 px-1.5 py-0.5 rounded text-white border border-slate-800">▲</kbd> / <kbd className="bg-slate-950 px-1.5 py-0.5 rounded text-white border border-slate-800">▼</kbd> atau <kbd className="bg-slate-950 px-1.5 py-0.5 rounded text-white border border-slate-800">Enter</kbd> untuk berpindah kolom skor secara instan.
             </p>
-          </div>
+          </Card>
+        </div>
 
-          {/* Selector Regu Putera/Puteri & Jenjang */}
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Putera / Puteri Switcher */}
-            <div className="bg-slate-950 p-1 rounded-2xl border border-slate-800 flex items-center gap-1">
-              <button
-                type="button"
-                onClick={() => setGenderRegu('PUTERA')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
-                  genderRegu === 'PUTERA'
-                    ? 'bg-blue-500 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                👦 REGU PUTERA (PA)
-              </button>
+        {/* Right Side: Score Input Form */}
+        <div className="lg:col-span-3 space-y-6">
+          
+          <Card className="p-6 space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-900">
+              <div className="space-y-1">
+                <Badge variant="success" className="text-[9px] font-black">Materi: {materi}</Badge>
+                <h2 className="text-lg font-black text-white uppercase">FORMAT NILAI {materi} ({jenjang})</h2>
+              </div>
 
-              <button
-                type="button"
-                onClick={() => setGenderRegu('PUTERI')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
-                  genderRegu === 'PUTERI'
-                    ? 'bg-pink-500 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                👧 REGU PUTERI (PI)
-              </button>
+              {/* Form Controls */}
+              <div className="flex flex-wrap gap-2 items-center">
+                <div className="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800">
+                  {(['PUTERA', 'PUTERI'] as const).map(g => (
+                    <button
+                      key={g}
+                      onClick={() => setGenderRegu(g)}
+                      className={`px-2.5 py-1 text-[9px] font-bold rounded-md ${
+                        genderRegu === g ? 'bg-brand-emerald-500 text-slate-950 font-black' : 'text-slate-400'
+                      }`}
+                    >
+                      {g === 'PUTERA' ? '👦 PA' : '👧 PI'}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800">
+                  {(['SD', 'SMP', 'SMA'] as const).map(j => (
+                    <button
+                      key={j}
+                      onClick={() => setJenjang(j)}
+                      className={`px-2.5 py-1 text-[9px] font-bold rounded-md ${
+                        jenjang === j ? 'bg-brand-emerald-500 text-slate-950 font-black' : 'text-slate-400'
+                      }`}
+                    >
+                      {j}
+                    </button>
+                  ))}
+                </div>
+
+                {materi === 'LKBB' && (
+                  <div className="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800">
+                    {[1, 2, 3].map(num => (
+                      <button
+                        key={num}
+                        onClick={() => setSelectedJuri(num as any)}
+                        className={`px-2.5 py-1 text-[9px] font-bold rounded-md ${
+                          selectedJuri === num ? 'bg-brand-amber-500 text-slate-950 font-black' : 'text-slate-400'
+                        }`}
+                      >
+                        JURI {num}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* OCR Scan Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsOcrModalOpen(true)}
+                  className="text-[10px] font-black border-brand-amber-500/30 text-brand-amber-400 hover:bg-brand-amber-500/10 py-1.5 px-3"
+                >
+                  📷 Scan Kertas Juri
+                </Button>
+              </div>
             </div>
 
-            {/* Jenjang Switcher */}
-            <div className="bg-slate-950 p-1 rounded-2xl border border-slate-800 flex items-center gap-1">
-              <button
-                type="button"
-                onClick={() => setJenjang('SD')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
-                  jenjang === 'SD'
-                    ? 'bg-emerald-500 text-slate-950 shadow-md'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                🎒 SD
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setJenjang('SMP')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
-                  jenjang === 'SMP'
-                    ? 'bg-sky-500 text-slate-950 shadow-md'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                🏫 SMP
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setJenjang('SMA')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
-                  jenjang === 'SMA'
-                    ? 'bg-purple-500 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                🏛️ SMA
-              </button>
+            {/* Inputs identity */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Input
+                id="score-noPeserta"
+                label="Nomor Dada *"
+                value={noPeserta}
+                onChange={(e) => setNoPeserta(e.target.value)}
+                className="py-2 font-mono font-bold text-xs"
+              />
+              <Input
+                id="score-teamName"
+                label="Nama Tim *"
+                value={namaTim}
+                onChange={(e) => setNamaTim(e.target.value)}
+                className="py-2 font-bold text-xs"
+              />
+              <Input
+                id="score-schoolName"
+                label="Asal Sekolah *"
+                value={namaSekolah}
+                onChange={(e) => setNamaSekolah(e.target.value)}
+                className="py-2 font-bold text-xs"
+              />
             </div>
 
-            {/* Juri Selector */}
+            {/* Progress Bar */}
             {materi === 'LKBB' && (
-              <div className="bg-slate-950 p-1 rounded-2xl border border-slate-800 flex items-center gap-1">
-                <span className="text-[10px] font-black uppercase text-slate-500 px-2">JURI:</span>
-                {[1, 2, 3].map((num) => (
-                  <button
-                    key={num}
-                    type="button"
-                    onClick={() => setSelectedJuri(num as any)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
-                      selectedJuri === num
-                        ? 'bg-amber-500 text-slate-950 shadow-md'
-                        : 'text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    JURI {num}
-                  </button>
-                ))}
+              <div className="space-y-1.5 pt-2">
+                <div className="flex justify-between text-[10px] font-bold text-green-700/80 uppercase tracking-wide">
+                  <span>Progres Penilaian</span>
+                  <span>{filledCriteriaCount} / {totalCriteriaCount} Item ({progressPercent}%)</span>
+                </div>
+                <div className="w-full h-2.5 rounded-full bg-green-100 overflow-hidden p-0.5 border border-green-200">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-green-600 to-green-500 transition-all duration-300 shadow-sm"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
               </div>
             )}
-          </div>
-        </div>
+          </Card>
 
-        {/* Input Identity Bar (No Peserta & Sekolah) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6">
-          <div>
-            <label className="block text-[11px] font-extrabold uppercase text-slate-400 mb-1">
-              NO PESERTA / DADA *
-            </label>
-            <input
-              type="text"
-              required
-              value={noPeserta}
-              onChange={(e) => setNoPeserta(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-sm outline-none focus:border-emerald-500"
+          {feedback && (
+            <Toast
+              message={feedback}
+              type={feedbackType === 'success' ? 'success' : feedbackType === 'error' ? 'error' : 'info'}
+              onClose={() => setFeedback(null)}
             />
-          </div>
+          )}
 
-          <div>
-            <label className="block text-[11px] font-extrabold uppercase text-slate-400 mb-1">
-              NAMA REGU / PASUKAN *
-            </label>
-            <input
-              type="text"
-              required
-              value={namaTim}
-              onChange={(e) => setNamaTim(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-extrabold text-sm outline-none focus:border-emerald-500"
-            />
-          </div>
+          {/* Form Content */}
+          {materi !== 'LKBB' ? (
+            /* NON-LKBB Form */
+            <form onSubmit={handleSaveScoreSheet}>
+              <Card className="p-8 space-y-6 text-center">
+                <h3 className="text-sm font-black text-white uppercase">Skor Angka {materi}</h3>
+                <div className="max-w-xs mx-auto">
+                  <input
+                    type="number"
+                    required
+                    min={0}
+                    max={500}
+                    value={singleScore}
+                    onChange={(e) => handleSingleScoreChange(Number(e.target.value))}
+                    className="w-full text-center py-4 rounded-2xl bg-slate-950 border-2 border-brand-emerald-500/80 text-brand-emerald-400 font-mono font-black text-4xl outline-none"
+                  />
+                </div>
+                <Button variant="primary" type="submit" className="w-full py-4 text-xs font-bold" isLoading={isSaving}>
+                  💾 SIMPAN NILAI {materi}
+                </Button>
+              </Card>
+            </form>
+          ) : (
+            /* LKBB Full Form */
+            <form onSubmit={handleSaveScoreSheet} className="space-y-6">
 
-          <div>
-            <label className="block text-[11px] font-extrabold uppercase text-slate-400 mb-1">
-              NAMA BASIS SEKOLAH / PANGKALAN *
-            </label>
-            <input
-              type="text"
-              required
-              value={namaSekolah}
-              onChange={(e) => setNamaSekolah(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-bold text-sm outline-none focus:border-emerald-500"
-            />
-          </div>
-        </div>
-      </div>
+              {/* Accordion Group 1: PBB Dasar */}
+              <div className="border border-green-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+                <button
+                  type="button"
+                  onClick={() => toggleAccordion('PBB_DASAR')}
+                  className="w-full bg-green-50/80 px-5 py-4 flex justify-between items-center text-xs font-black text-green-900 hover:bg-green-100 transition-colors cursor-pointer border-b border-green-100"
+                >
+                  <span className="flex items-center gap-2">
+                    <span>1. PBB DASAR</span>
+                    <Badge variant="primary" className="text-[8px] scale-90">{totalPbb} PTS</Badge>
+                  </span>
+                  <span>{expandedGroups.PBB_DASAR ? '▲' : '▼'}</span>
+                </button>
 
-      {feedback && (
-        <div className="mb-6 p-4 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-xs font-bold flex items-center justify-between">
-          <span>{feedback}</span>
-          <button
-            onClick={() => setFeedback(null)}
-            className="text-slate-400 hover:text-white font-bold text-xs"
-          >
-            ✕
-          </button>
-        </div>
-      )}
-
-      {/* NON-LKBB MATERI SINGLE SCORE FORM */}
-      {materi !== 'LKBB' ? (
-        <form onSubmit={handleSaveScoreSheet} className="bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 max-w-2xl mx-auto">
-          <div className="text-center space-y-2">
-            <span className="text-4xl">
-              {materi === 'BANK_SOAL' ? '📚' :
-               materi === 'SEMAPHORE' ? '🚩' :
-               materi === 'MORSE' ? '📻' :
-               materi === 'MINI_PIONERING' ? '🏗️' :
-               materi === 'KEBERSIHAN' ? '🧹' :
-               materi === 'FASHION_SHOW' ? '👗' : '📁'}
-            </span>
-            <h2 className="text-lg font-black text-white uppercase">
-              NILAI MATERI {materi.replace('_', ' ')} ({genderRegu})
-            </h2>
-            <p className="text-xs text-slate-400">
-              Masukkan perolehan skor angka untuk {namaTim} ({noPeserta}) dari {namaSekolah}
-            </p>
-          </div>
-
-          <div>
-            <label className="block text-xs font-black uppercase text-slate-300 mb-2 text-center">
-              TOTAL SKOR ANGKA DITERIMA *
-            </label>
-            <input
-              type="number"
-              required
-              min={0}
-              max={500}
-              value={singleScore}
-              onChange={(e) => setSingleScore(Number(e.target.value))}
-              className="w-full text-center py-4 rounded-2xl bg-slate-950 border-2 border-emerald-500/80 text-emerald-400 font-mono font-black text-4xl outline-none"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSaving}
-            className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black rounded-2xl text-sm transition-all shadow-xl shadow-emerald-500/20 disabled:opacity-50"
-          >
-            {isSaving ? 'MENYIMPAN...' : `💾 SIMPAN NILAI ${materi.replace('_', ' ')} (${singleScore} PTS)`}
-          </button>
-        </form>
-      ) : (
-        /* LKBB MATERI FULL FORM */
-        <>
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-            <button
-              type="button"
-              onClick={handlePrintPembinaScoreSheet}
-              className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black rounded-xl text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center space-x-2"
-            >
-              <span>🖨️</span>
-              <span>PRINT LEMBAR PENILAIAN LENGKAP (UNTUK PEMBINA)</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleAutoFillDefault}
-              className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-800 rounded-xl text-xs font-bold transition-all"
-            >
-              ⚡ Auto-Fill Skor Rata-Rata Default (Fast Testing)
-            </button>
-          </div>
-
-          <form onSubmit={handleSaveScoreSheet} className="space-y-8">
-            {/* 1. PBB DASAR */}
-            <div className="bg-slate-900/80 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
-              <div className="bg-slate-950 px-6 py-4 border-b border-slate-800 flex items-center justify-between">
-                <h2 className="text-sm font-black text-emerald-400 uppercase tracking-wider flex items-center gap-2">
-                  <span>📋</span>
-                  <span>1. KATEGORI PENILAIAN PBB DASAR</span>
-                </h2>
-                <span className="text-xs font-mono font-black text-slate-300">
-                  SUBTOTAL: <strong className="text-emerald-400 text-sm">{totalPbb} PTS</strong>
-                </span>
-              </div>
-
-              <div className="p-4 space-y-4 overflow-x-auto">
-                {criteriaList
-                  .filter(c => c.categoryGroup === 'PBB_DASAR')
-                  .map((item) => (
-                    <div
-                      key={item.id}
-                      className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800/80 hover:border-slate-700 transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-3"
-                    >
-                      <div className="flex items-center space-x-3 shrink-0 lg:w-1/3">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-slate-400 font-mono text-xs font-bold flex items-center justify-center border border-slate-800">
-                          {item.no}
-                        </span>
-                        <div>
-                          {item.subGroup && (
-                            <span className="text-[9px] font-black uppercase text-emerald-500 tracking-wider block">
-                              {item.subGroup}
+                {expandedGroups.PBB_DASAR && (
+                  <div className="p-4 space-y-3.5 divide-y divide-green-100 max-h-[480px] overflow-y-auto custom-scrollbar">
+                    {criteriaList
+                      .filter(c => c.categoryGroup === 'PBB_DASAR')
+                      .map((item, index) => (
+                        <div key={item.id} className="pt-3.5 first:pt-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                            <span className="w-6 h-6 rounded bg-green-100 text-green-800 font-mono text-[10px] font-bold flex items-center justify-center border border-green-200">
+                              {item.no}
                             </span>
-                          )}
-                          <h4 className="text-xs font-extrabold text-white">{item.name}</h4>
+                            <div className="min-w-0">
+                              {item.subGroup && <span className="text-[8px] text-green-600 font-black block">{item.subGroup}</span>}
+                              <h4 className="text-xs font-bold text-green-900 truncate">{item.name}</h4>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3 self-end sm:self-center">
+                            <span className="text-[9px] text-green-600/70 font-semibold">({item.minScore} - {item.maxScore} pts)</span>
+                            <ScoreStepper
+                              minScore={item.minScore}
+                              maxScore={item.maxScore}
+                              value={scores[item.id] || 0}
+                              inputRef={el => { inputRefs.current[item.id] = el; }}
+                              onChange={(newVal) => handleScoreChange(item.id, newVal)}
+                              onKeyDown={(e) => handleKeyDown(e, item.id, index)}
+                            />
+                          </div>
                         </div>
-                      </div>
-
-                      <div className="flex-1">
-                        {renderRatingOptions(item)}
-                      </div>
-
-                      <div className="shrink-0 text-right">
-                        <span className="text-xs font-mono font-black text-emerald-400">
-                          {scores[item.id] !== undefined ? `${scores[item.id]} PTS` : '-'}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </div>
-
-            {/* 2. VARIASI FORMASI */}
-            <div className="bg-slate-900/80 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
-              <div className="bg-slate-950 px-6 py-4 border-b border-slate-800 flex items-center justify-between">
-                <h2 className="text-sm font-black text-amber-400 uppercase tracking-wider flex items-center gap-2">
-                  <span>🎨</span>
-                  <span>2. KATEGORI PENILAIAN VARIASI FORMASI</span>
-                </h2>
-                <span className="text-xs font-mono font-black text-slate-300">
-                  SUBTOTAL: <strong className="text-amber-400 text-sm">{totalVariasi} PTS</strong>
-                </span>
+                      ))}
+                  </div>
+                )}
               </div>
 
-              <div className="p-4 space-y-4 overflow-x-auto">
-                {criteriaList
-                  .filter(c => c.categoryGroup === 'VARIASI_FORMASI')
-                  .map((item) => (
-                    <div
-                      key={item.id}
-                      className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800/80 hover:border-slate-700 transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-3"
-                    >
-                      <div className="flex items-center space-x-3 shrink-0 lg:w-1/3">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-slate-400 font-mono text-xs font-bold flex items-center justify-center border border-slate-800">
-                          {item.no}
-                        </span>
-                        <h4 className="text-xs font-extrabold text-white">{item.name}</h4>
-                      </div>
+              {/* Accordion Group 2: Variasi Formasi */}
+              <div className="border border-green-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+                <button
+                  type="button"
+                  onClick={() => toggleAccordion('VARIASI_FORMASI')}
+                  className="w-full bg-green-50/80 px-5 py-4 flex justify-between items-center text-xs font-black text-green-900 hover:bg-green-100 transition-colors cursor-pointer border-b border-green-100"
+                >
+                  <span className="flex items-center gap-2">
+                    <span>2. VARIASI FORMASI</span>
+                    <Badge variant="warning" className="text-[8px] scale-90">{totalVariasi} PTS</Badge>
+                  </span>
+                  <span>{expandedGroups.VARIASI_FORMASI ? '▲' : '▼'}</span>
+                </button>
 
-                      <div className="flex-1">
-                        {renderRatingOptions(item)}
-                      </div>
+                {expandedGroups.VARIASI_FORMASI && (
+                  <div className="p-4 space-y-3.5 divide-y divide-green-100">
+                    {criteriaList
+                      .filter(c => c.categoryGroup === 'VARIASI_FORMASI')
+                      .map((item, index) => {
+                        const globalIndex = criteriaList.findIndex(c => c.id === item.id);
+                        return (
+                          <div key={item.id} className="pt-3.5 first:pt-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div className="flex items-center gap-2.5">
+                              <span className="w-6 h-6 rounded bg-green-100 text-green-800 font-mono text-[10px] font-bold flex items-center justify-center border border-green-200">
+                                {item.no}
+                              </span>
+                              <h4 className="text-xs font-bold text-green-900">{item.name}</h4>
+                            </div>
 
-                      <div className="shrink-0 text-right">
-                        <span className="text-xs font-mono font-black text-amber-400">
-                          {scores[item.id] !== undefined ? `${scores[item.id]} PTS` : '-'}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                            <div className="flex items-center gap-3 self-end sm:self-center">
+                              <span className="text-[9px] text-green-600/70 font-semibold">({item.minScore} - {item.maxScore} pts)</span>
+                              <ScoreStepper
+                                minScore={item.minScore}
+                                maxScore={item.maxScore}
+                                value={scores[item.id] || 0}
+                                inputRef={el => { inputRefs.current[item.id] = el; }}
+                                onChange={(newVal) => handleScoreChange(item.id, newVal)}
+                                onKeyDown={(e) => handleKeyDown(e, item.id, globalIndex)}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                )}
               </div>
-            </div>
 
-            {/* 3. DANTON */}
-            <div className="bg-slate-900/80 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
-              <div className="bg-slate-950 px-6 py-4 border-b border-slate-800 flex items-center justify-between">
-                <h2 className="text-sm font-black text-purple-400 uppercase tracking-wider flex items-center gap-2">
-                  <span>🗣️</span>
-                  <span>3. KATEGORI PENILAIAN DANTON</span>
-                </h2>
-                <span className="text-xs font-mono font-black text-slate-300">
-                  SUBTOTAL: <strong className="text-purple-400 text-sm">{totalDanton} PTS</strong>
-                </span>
+              {/* Accordion Group 3: Danton */}
+              <div className="border border-green-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+                <button
+                  type="button"
+                  onClick={() => toggleAccordion('DANTON')}
+                  className="w-full bg-green-50/80 px-5 py-4 flex justify-between items-center text-xs font-black text-green-900 hover:bg-green-100 transition-colors cursor-pointer border-b border-green-100"
+                >
+                  <span className="flex items-center gap-2">
+                    <span>3. DANTON</span>
+                    <Badge variant="warning" className="text-[8px] scale-90">{totalDanton} PTS</Badge>
+                  </span>
+                  <span>{expandedGroups.DANTON ? '▲' : '▼'}</span>
+                </button>
+
+                {expandedGroups.DANTON && (
+                  <div className="p-4 space-y-3.5 divide-y divide-green-100">
+                    {criteriaList
+                      .filter(c => c.categoryGroup === 'DANTON')
+                      .map((item, index) => {
+                        const globalIndex = criteriaList.findIndex(c => c.id === item.id);
+                        return (
+                          <div key={item.id} className="pt-3.5 first:pt-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div className="flex items-center gap-2.5">
+                              <span className="w-6 h-6 rounded bg-green-100 text-green-800 font-mono text-[10px] font-bold flex items-center justify-center border border-green-200">
+                                {item.no}
+                              </span>
+                              <h4 className="text-xs font-bold text-green-900">{item.name}</h4>
+                            </div>
+
+                            <div className="flex items-center gap-3 self-end sm:self-center">
+                              <span className="text-[9px] text-green-600/70 font-semibold">({item.minScore} - {item.maxScore} pts)</span>
+                              <ScoreStepper
+                                minScore={item.minScore}
+                                maxScore={item.maxScore}
+                                value={scores[item.id] || 0}
+                                inputRef={el => { inputRefs.current[item.id] = el; }}
+                                onChange={(newVal) => handleScoreChange(item.id, newVal)}
+                                onKeyDown={(e) => handleKeyDown(e, item.id, globalIndex)}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                )}
               </div>
 
-              <div className="p-4 space-y-4 overflow-x-auto">
-                {criteriaList
-                  .filter(c => c.categoryGroup === 'DANTON')
-                  .map((item) => (
-                    <div
-                      key={item.id}
-                      className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800/80 hover:border-slate-700 transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-3"
-                    >
-                      <div className="flex items-center space-x-3 shrink-0 lg:w-1/3">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-slate-400 font-mono text-xs font-bold flex items-center justify-center border border-slate-800">
-                          {item.no}
-                        </span>
-                        <h4 className="text-xs font-extrabold text-white">{item.name}</h4>
-                      </div>
+              {/* Bottom Sticky Action Footer */}
+              <div className="bg-white border border-green-200 rounded-3xl p-6 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="space-y-1">
+                  <h3 className="text-xs font-black text-green-800 uppercase tracking-wider">
+                    Ringkasan Hasil Juri {selectedJuri} ({genderRegu})
+                  </h3>
+                  <div className="flex items-center space-x-4 text-xs font-extrabold text-green-900">
+                    <span>PBB: <strong className="text-green-700">{totalPbb}</strong></span>
+                    <span>VARIASI: <strong className="text-amber-700">{totalVariasi}</strong></span>
+                    <span>DANTON: <strong className="text-emerald-700">{totalDanton}</strong></span>
+                  </div>
+                </div>
 
-                      <div className="flex-1">
-                        {renderRatingOptions(item)}
-                      </div>
-
-                      <div className="shrink-0 text-right">
-                        <span className="text-xs font-mono font-black text-purple-400">
-                          {scores[item.id] !== undefined ? `${scores[item.id]} PTS` : '-'}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </div>
-
-            {/* FOOTER SUMMARY & GRAND TOTAL */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="space-y-1">
-                <h3 className="text-xs font-extrabold text-slate-400 uppercase tracking-wider">
-                  REKAPITULASI TOTAL SKOR LKBB JURI {selectedJuri} ({genderRegu})
-                </h3>
-                <div className="flex items-center space-x-4 text-xs font-semibold text-slate-300">
-                  <span>PBB: <strong className="text-emerald-400">{totalPbb}</strong></span>
-                  <span>VARIASI: <strong className="text-amber-400">{totalVariasi}</strong></span>
-                  <span>DANTON: <strong className="text-purple-400">{totalDanton}</strong></span>
+                <div className="flex flex-wrap items-center gap-3">
+                  <Button variant="outline" type="button" onClick={handlePrintPembinaScoreSheet} className="text-xs font-bold">
+                    🖨️ Cetak Hasil
+                  </Button>
+                  <Button variant="primary" type="submit" disabled={isSaving} className="px-8 text-xs font-bold" isLoading={isSaving}>
+                    {isSaving ? 'Menyimpan...' : `💾 Simpan LKBB (${grandTotalLkbb} Pts)`}
+                  </Button>
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={handlePrintPembinaScoreSheet}
-                  className="px-6 py-4 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-black rounded-2xl text-xs transition-all flex items-center space-x-2"
-                >
-                  <span>🖨️</span>
-                  <span>CETAK LEMBAR PEMBINA</span>
-                </button>
+            </form>
+          )}
 
-                <button
-                  type="submit"
-                  disabled={isSaving}
-                  className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black rounded-2xl text-sm transition-all shadow-xl shadow-emerald-500/20 disabled:opacity-50"
-                >
-                  {isSaving ? 'MENYIMPAN...' : `💾 SIMPAN LKBB JURI ${selectedJuri}`}
-                </button>
-              </div>
-            </div>
-          </form>
-        </>
-      )}
+        </div>
+
+      </div>
+
     </main>
+
+    {/* OCR Scan Modal */}
+    <Modal
+      isOpen={isOcrModalOpen}
+      onClose={() => setIsOcrModalOpen(false)}
+      title="📷 Scan Lembar Nilai Juri dengan AI"
+      size="lg"
+    >
+      <ScoreOcrUploader
+        criteriaNames={criteriaList.map(c => c.name)}
+        onConfirm={(ocrScores) => {
+          const updatedScores: Record<string, number> = { ...scores };
+          ocrScores.forEach(ocrItem => {
+            const matched = criteriaList.find(c =>
+              c.name.toLowerCase().includes(ocrItem.criteriaName.toLowerCase()) ||
+              ocrItem.criteriaName.toLowerCase().includes(c.name.toLowerCase())
+            );
+            if (matched) {
+              const clamped = Math.min(Math.max(ocrItem.value, matched.minScore), matched.maxScore);
+              updatedScores[matched.id] = clamped;
+            }
+          });
+          setScores(updatedScores);
+          setFeedbackType('success');
+          setFeedback(`🤖 ${ocrScores.length} nilai berhasil diisi dari hasil scan kertas juri. Periksa kembali sebelum menyimpan.`);
+          setIsOcrModalOpen(false);
+        }}
+        onClose={() => setIsOcrModalOpen(false)}
+      />
+    </Modal>
+    </>
   );
 }

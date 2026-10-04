@@ -4,7 +4,7 @@
 
 export type SchoolLevel = 'SD' | 'SMP' | 'SMA';
 export type GroupType = 'PBB_DASAR' | 'VARIASI_FORMASI' | 'DANTON';
-export type ShowStatus = 'WAITING' | 'PERFORMING' | 'COMPLETED';
+export type ShowStatus = 'WAITING' | 'STANDBY' | 'NEXT' | 'NOW PERFORMING' | 'COMPLETED';
 
 export interface Category {
   id: string;
@@ -31,16 +31,17 @@ export interface AssessmentItem {
   group_type: GroupType;
   sub_group?: string;
   item_no: number;
-  item_name: string;
+  name: string;
   min_score: number;
   max_score: number;
+  weight?: number;
   created_at?: string;
 }
 
 export interface ParticipantScore {
   id?: string;
   participant_id: string;
-  item_id: string;
+  criterion_id: string;
   juri_number: number;
   score_value: number;
   created_at?: string;

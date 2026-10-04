@@ -1,27 +1,43 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getStoredBaracks, DynamicBarackItem, SchoolLevel } from '@/lib/dynamicStore';
+import { DynamicBarackItem, SchoolLevel } from '@/lib/dynamicStore';
+import { fetchBaracksFromApi } from '@/lib/api';
+import { Badge, Card, EmptyState, Input } from '@/components/ui';
+import { Search, MapPin } from 'lucide-react';
 
 export default function PublicBarackPage() {
   const [barackList, setBarackList] = useState<DynamicBarackItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedJenjang, setSelectedJenjang] = useState<'ALL' | SchoolLevel>('ALL');
 
+  const loadBaracks = async () => {
+    try {
+      const result = await fetchBaracksFromApi();
+      if (result.success && result.data) {
+        const mapped: DynamicBarackItem[] = result.data.map((item: any) => ({
+          id: item.id,
+          noTampil: item.participant?.participant_no || item.no_tampil || 'A-00',
+          teamName: item.participant?.team_name || item.team_name || '',
+          schoolName: item.participant?.school_name || item.school_name || '',
+          roomName: item.room_name || '',
+          jenjang: (item.participant?.category?.level || 'SMA') as SchoolLevel,
+        }));
+        setBarackList(mapped);
+      }
+    } catch (err) {
+      console.error('Error fetching baracks:', err);
+    }
+  };
+
   useEffect(() => {
-    setBarackList(getStoredBaracks());
+    loadBaracks();
 
-    const handleStorageChange = () => {
-      setBarackList(getStoredBaracks());
-    };
-
-    window.addEventListener('storage', handleStorageChange);
     const interval = setInterval(() => {
-      setBarackList(getStoredBaracks());
-    }, 3000);
+      loadBaracks();
+    }, 4000);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
       clearInterval(interval);
     };
   }, []);
@@ -38,112 +54,114 @@ export default function PublicBarackPage() {
   });
 
   return (
-    <main className="max-w-7xl mx-auto px-4 py-8">
+    <main className="max-w-7xl mx-auto px-4 py-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
-      <div className="mb-8 pb-6 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="pb-6 border-b border-green-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
-            <span>🏕️</span> Pembagian Ruang Transit / Barak Peserta
+          <Badge variant="primary" className="font-black text-[9px] mb-1">🏕️ TRANSIT AREA</Badge>
+          <h1 className="text-2xl sm:text-4xl font-black text-green-950 tracking-tight">
+            Pembagian Ruang Transit / Barak Peserta
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-green-800/80 font-medium mt-1">
             Cari lokasi dan pemetaan ruang istirahat tim kontingen sekolah Anda.
           </p>
         </div>
 
         {/* Quick Search Bar */}
         <div className="w-full md:w-80">
-          <input
-            type="text"
-            placeholder="🔍 Cari Sekolah / Tim / No. Tampil..."
+          <Input
+            placeholder="Cari Sekolah / Tim / No. Tampil..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 text-xs font-semibold placeholder:text-slate-500 outline-none focus:border-cyan-500 transition-colors"
+            className="py-2.5 text-xs font-semibold"
+            icon={<Search className="w-3.5 h-3.5 text-green-700/60" />}
           />
         </div>
       </div>
 
       {/* Filter Tabs Jenjang SD / SMP / SMA */}
-      <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
+      <div className="flex items-center gap-2 overflow-x-auto touch-pan-x pb-2">
         <button
+          type="button"
           onClick={() => setSelectedJenjang('ALL')}
-          className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
             selectedJenjang === 'ALL'
-              ? 'bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/20'
-              : 'bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800'
+              ? 'bg-green-700 text-white shadow-md'
+              : 'bg-white text-green-900 border border-green-200 hover:bg-green-50'
           }`}
         >
           🌐 SEMUA JENJANG ({barackList.length})
         </button>
 
         <button
+          type="button"
           onClick={() => setSelectedJenjang('SD')}
-          className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
             selectedJenjang === 'SD'
-              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-              : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-white'
+              ? 'bg-green-700 text-white shadow-md'
+              : 'bg-white text-green-900 border border-green-200 hover:bg-green-50'
           }`}
         >
-          <span>🎒</span>
-          <span>SD / MI ({barackList.filter(b => b.jenjang === 'SD').length})</span>
+          🎒 SD / MI ({barackList.filter(b => b.jenjang === 'SD').length})
         </button>
 
         <button
+          type="button"
           onClick={() => setSelectedJenjang('SMP')}
-          className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
             selectedJenjang === 'SMP'
-              ? 'bg-sky-500/20 text-sky-300 border border-sky-500/40'
-              : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-white'
+              ? 'bg-green-700 text-white shadow-md'
+              : 'bg-white text-green-900 border border-green-200 hover:bg-green-50'
           }`}
         >
-          <span>🏫</span>
-          <span>SMP / MTs ({barackList.filter(b => b.jenjang === 'SMP').length})</span>
+          🏫 SMP / MTs ({barackList.filter(b => b.jenjang === 'SMP').length})
         </button>
 
         <button
+          type="button"
           onClick={() => setSelectedJenjang('SMA')}
-          className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
             selectedJenjang === 'SMA'
-              ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
-              : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-white'
+              ? 'bg-green-700 text-white shadow-md'
+              : 'bg-white text-green-900 border border-green-200 hover:bg-green-50'
           }`}
         >
-          <span>🏛️</span>
-          <span>SMA / SMK ({barackList.filter(b => b.jenjang === 'SMA').length})</span>
+          🏛️ SMA / SMK ({barackList.filter(b => b.jenjang === 'SMA').length})
         </button>
       </div>
 
       {/* Grid of Barack Cards */}
       {filteredBarack.length === 0 ? (
-        <div className="p-12 rounded-3xl bg-slate-900/40 border border-slate-800 text-center text-slate-400 text-xs">
-          <p className="font-bold text-sm mb-1">Belum Ada Data Ruang Transit</p>
-          <p className="text-slate-500">Data lokasi barak peserta akan diumumkan oleh Panitia Logistik.</p>
-        </div>
+        <Card className="py-12">
+          <EmptyState
+            title="Belum Ada Data Ruang Transit"
+            description="Data lokasi barak peserta akan diumumkan oleh Panitia Logistik."
+          />
+        </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredBarack.map((item) => (
             <div
               key={item.id}
-              className="p-5 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-cyan-500/40 transition-all shadow-xl"
+              className="p-5 rounded-2xl bg-white border border-green-200 hover:border-green-400 transition-all shadow-xs hover:shadow-md"
             >
               <div className="flex items-start justify-between mb-3">
-                <span className="px-3 py-1 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-mono font-extrabold text-xs">
+                <span className="px-3 py-1 rounded-xl bg-green-100 text-green-900 border border-green-300 font-mono font-black text-xs">
                   NO. TAMPIL {item.noTampil}
                 </span>
-                <span className={`px-2.5 py-0.5 rounded text-[10px] font-black uppercase ${
-                  item.jenjang === 'SD' ? 'bg-emerald-500/20 text-emerald-300' :
-                  item.jenjang === 'SMP' ? 'bg-sky-500/20 text-sky-300' : 'bg-purple-500/20 text-purple-300'
-                }`}>
+                <Badge variant="primary" className="text-[9px] font-black uppercase">
                   {item.jenjang}
-                </span>
+                </Badge>
               </div>
 
-              <h3 className="text-base font-extrabold text-white mb-1">{item.teamName}</h3>
-              <p className="text-xs text-slate-400 mb-4">{item.schoolName}</p>
+              <h3 className="text-base font-black text-green-950 mb-1">{item.teamName}</h3>
+              <p className="text-xs text-green-800 font-semibold mb-4">{item.schoolName}</p>
 
-              <div className="pt-3 border-t border-slate-800">
-                <div className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                  <span>📍 Ruang Transit:</span>
-                  <span className="text-white font-extrabold text-sm">{item.roomName}</span>
+              <div className="pt-3 border-t border-green-100">
+                <div className="text-xs font-bold text-green-800 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-green-700 shrink-0" />
+                  <span>Ruang Transit:</span>
+                  <strong className="text-green-950 font-black text-sm">{item.roomName}</strong>
                 </div>
               </div>
             </div>

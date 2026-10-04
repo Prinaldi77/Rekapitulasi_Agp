@@ -24,50 +24,59 @@ export default function Navbar() {
   useEffect(() => {
     // Get active user session
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        const { data } = await supabase
-          .from('profiles')
-          .select('username, full_name, role')
-          .eq('id', session.user.id)
-          .single();
+      try {
+        const { data } = await supabase.auth.getSession();
+        const session = data?.session ?? null;
+        setUser(session?.user ?? null);
         
-        const effectiveRole = (data?.role === 'GRAND_MASTER' || session.user.email?.includes('grandmaster') || data?.username === 'grandmaster')
-          ? 'GRAND_MASTER'
-          : 'OPERATOR';
+        if (session?.user) {
+          const { data: profData } = await supabase
+            .from('profiles')
+            .select('username, full_name, role')
+            .eq('id', session.user.id)
+            .single();
+          
+          const effectiveRole = (profData?.role === 'GRAND_MASTER' || session.user.email?.includes('grandmaster') || profData?.username === 'grandmaster')
+            ? 'GRAND_MASTER'
+            : 'OPERATOR';
 
-        setProfile({
-          username: data?.username || session.user.email?.split('@')[0],
-          full_name: data?.full_name || (effectiveRole === 'GRAND_MASTER' ? 'Sekretaris Utama AGP (Grand Master)' : 'Operator Lapangan'),
-          role: effectiveRole,
-        });
+          setProfile({
+            username: profData?.username || session.user.email?.split('@')[0],
+            full_name: profData?.full_name || (effectiveRole === 'GRAND_MASTER' ? 'Sekretaris Utama AGP (Grand Master)' : 'Operator Lapangan'),
+            role: effectiveRole,
+          });
+        }
+      } catch (err) {
+        console.warn('Navbar getSession notice:', err);
       }
     };
 
     getSession();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        const { data } = await supabase
-          .from('profiles')
-          .select('username, full_name, role')
-          .eq('id', session.user.id)
-          .single();
+      try {
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          const { data: profData } = await supabase
+            .from('profiles')
+            .select('username, full_name, role')
+            .eq('id', session.user.id)
+            .single();
 
-        const effectiveRole = (data?.role === 'GRAND_MASTER' || session.user.email?.includes('grandmaster') || data?.username === 'grandmaster')
-          ? 'GRAND_MASTER'
-          : 'OPERATOR';
+          const effectiveRole = (profData?.role === 'GRAND_MASTER' || session.user.email?.includes('grandmaster') || profData?.username === 'grandmaster')
+            ? 'GRAND_MASTER'
+            : 'OPERATOR';
 
-        setProfile({
-          username: data?.username || session.user.email?.split('@')[0],
-          full_name: data?.full_name || (effectiveRole === 'GRAND_MASTER' ? 'Sekretaris Utama AGP (Grand Master)' : 'Operator Lapangan'),
-          role: effectiveRole,
-        });
-      } else {
-        setProfile(null);
+          setProfile({
+            username: profData?.username || session.user.email?.split('@')[0],
+            full_name: profData?.full_name || (effectiveRole === 'GRAND_MASTER' ? 'Sekretaris Utama AGP (Grand Master)' : 'Operator Lapangan'),
+            role: effectiveRole,
+          });
+        } else {
+          setProfile(null);
+        }
+      } catch (err) {
+        console.warn('Navbar onAuthStateChange notice:', err);
       }
     });
 
@@ -212,10 +221,10 @@ export default function Navbar() {
 
         {/* User Badges & Action Buttons */}
         <div className="flex items-center space-x-3">
-          {/* Offline LAN Server Status Badge */}
+          {/* Server Status Badge */}
           <span className="hidden lg:inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping mr-1.5"></span>
-            LAN ONLINE (0.0.0.0)
+            SERVER ONLINE
           </span>
 
           {user && (

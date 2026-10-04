@@ -24,13 +24,13 @@ export const getBaracks = async (
   try {
     const { data, error } = await supabase
       .from('baracks')
-      .select('*, participant:participants(*)');
+      .select('*, participant:participants(*, category:categories(*))');
 
     if (error) {
-      res.status(200).json({
-        success: true,
-        message: 'Mengambil data barack (mode simulasi standalone)',
-        data: [],
+      console.error('Supabase DB error fetching baracks:', error.message);
+      res.status(500).json({
+        success: false,
+        message: `Gagal mengambil data barack: ${error.message}`,
       });
       return;
     }
@@ -65,25 +65,69 @@ export const createBarack = async (
       return;
     }
 
-    const newBarack = {
-      id: 'b_' + Date.now(),
-      participant_id: req.body.participant_id || 'p_' + Date.now(),
-      room_name,
-      building,
-      no_tampil: no_tampil || 'A-00',
-      team_name,
-      school_name: school_name || '',
-      created_at: new Date().toISOString(),
-    };
+    // Resolve participant_id (UUID)
+    let participantId = req.body.participant_id;
+    if (!participantId || participantId.length < 36) {
+      // Find participant by no_tampil / participant_no
+      const { data: part } = await supabase
+        .from('participants')
+        .select('id')
+        .eq('participant_no', no_tampil)
+        .limit(1)
+        .maybeSingle();
 
-    const { data, error } = await supabase.from('baracks').insert(newBarack).select().single();
+      if (part) {
+        participantId = part.id;
+      } else {
+        // Create participant dynamically if not found
+        const level = req.body.floor?.includes('SD') ? 'SD' : 'SMA'; // basic heuristic or default
+        const { data: cat } = await supabase
+          .from('categories')
+          .select('id')
+          .eq('level', level)
+          .limit(1)
+          .maybeSingle();
+
+        const categoryId = cat?.id || 'c1111111-1111-1111-1111-111111111111';
+
+        const { data: newPart, error: partErr } = await supabase
+          .from('participants')
+          .insert({
+            participant_no: no_tampil || `T-${Date.now()}`,
+            team_name,
+            school_name: school_name || '',
+            category_id: categoryId,
+            show_number: Math.floor(Math.random() * 100) + 1
+          })
+          .select()
+          .single();
+
+        if (partErr) {
+          throw partErr;
+        }
+        participantId = newPart.id;
+      }
+    }
+
+    const { data, error } = await supabase
+      .from('baracks')
+      .upsert({
+        participant_id: participantId,
+        room_name,
+        building,
+        floor: req.body.floor || 'Lantai 1',
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'participant_id'
+      })
+      .select()
+      .single();
 
     if (error) {
-      // Fallback for standalone/mock mode
-      res.status(201).json({
-        success: true,
-        message: 'Alokasi barack baru berhasil ditambahkan (simulasi standalone)!',
-        data: newBarack,
+      console.error('Supabase DB error createBarack:', error.message);
+      res.status(500).json({
+        success: false,
+        message: `Gagal menyimpan alokasi barack: ${error.message}`,
       });
       return;
     }
@@ -113,7 +157,12 @@ export const deleteBarack = async (
     const { error } = await supabase.from('baracks').delete().eq('id', id);
 
     if (error) {
-      console.warn('Supabase DB delete barack:', error.message);
+      console.error('Supabase DB delete barack:', error.message);
+      res.status(500).json({
+        success: false,
+        message: `Gagal menghapus alokasi barack: ${error.message}`,
+      });
+      return;
     }
 
     res.status(200).json({
