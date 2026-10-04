@@ -413,25 +413,25 @@ export default function RapidScoreEntryPage() {
     <main className="max-w-7xl mx-auto px-4 py-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
       {/* Top Selector Tabs */}
-      <div className="flex flex-wrap items-center gap-2 bg-slate-900 border border-slate-800 p-2 rounded-2xl">
+      <div className="flex flex-wrap items-center gap-1.5 bg-green-50/50 border border-green-200/60 p-2 rounded-2xl shadow-sm">
         {[
-          { key: 'LKBB', label: '🎯 LKBB (PBB/VAFOR/DANTON)', color: 'text-brand-emerald-400' },
-          { key: 'BANK_SOAL', label: '📚 BANK SOAL', color: 'text-brand-cyan-400' },
-          { key: 'SEMAPHORE', label: '🚩 SEMAPHORE', color: 'text-brand-cyan-400' },
-          { key: 'MORSE', label: '📻 MORSE', color: 'text-brand-cyan-400' },
-          { key: 'MINI_PIONERING', label: '🏗️ PIONERING', color: 'text-brand-cyan-400' },
-          { key: 'KEBERSIHAN', label: '🧹 KEBERSIHAN', color: 'text-brand-cyan-400' },
-          { key: 'FASHION_SHOW', label: '👗 FASHION', color: 'text-brand-cyan-400' },
-          { key: 'ADMINISTRASI', label: '📁 ADMIN', color: 'text-brand-cyan-400' },
+          { key: 'LKBB', label: '🎯 LKBB (PBB/VAFOR/DANTON)' },
+          { key: 'BANK_SOAL', label: '📚 BANK SOAL' },
+          { key: 'SEMAPHORE', label: '🚩 SEMAPHORE' },
+          { key: 'MORSE', label: '📻 MORSE' },
+          { key: 'MINI_PIONERING', label: '🏗️ PIONERING' },
+          { key: 'KEBERSIHAN', label: '🧹 KEBERSIHAN' },
+          { key: 'FASHION_SHOW', label: '👗 FASHION' },
+          { key: 'ADMINISTRASI', label: '📁 ADMIN' },
         ].map((m) => (
           <button
             key={m.key}
             type="button"
             onClick={() => setMateri(m.key as MateriLombaType)}
-            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${
               materi === m.key
-                ? 'bg-brand-emerald-500 text-slate-950 font-black shadow-glow-emerald'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-white text-green-900 border border-green-300 shadow-sm ring-1 ring-green-100'
+                : 'text-green-800/60 hover:text-green-900 hover:bg-green-100/50 border border-transparent'
             }`}
           >
             {m.label}
@@ -469,17 +469,17 @@ export default function RapidScoreEntryPage() {
                     <button
                       key={p.id}
                       onClick={() => selectParticipant(p)}
-                      className={`w-full text-left p-3 rounded-xl border text-xs transition-all flex flex-col gap-1 ${
+                      className={`w-full text-left p-3.5 rounded-xl border text-xs transition-all flex flex-col gap-1.5 ${
                         isActive
-                          ? 'border-brand-emerald-500/40 bg-brand-emerald-500/10 text-brand-emerald-400 shadow-glow-emerald/10'
-                          : 'border-slate-900 bg-slate-950/40 hover:bg-slate-900/60'
+                          ? 'border-green-400 bg-green-50 text-green-950 shadow-sm ring-1 ring-green-400/30'
+                          : 'border-green-100 bg-white hover:bg-green-50/60 hover:border-green-200'
                       }`}
                     >
                       <div className="flex justify-between items-center w-full">
-                        <span className="font-extrabold text-white">@{p.participant_no}</span>
-                        <Badge variant="primary" className="text-[8px] scale-90">{p.category?.level}</Badge>
+                        <span className={`font-black ${isActive ? 'text-green-900' : 'text-green-800'}`}>@{p.participant_no}</span>
+                        <Badge variant={isActive ? 'success' : 'secondary'} className="text-[9px] scale-90">{p.category?.level}</Badge>
                       </div>
-                      <span className="font-bold text-slate-200 truncate">{p.team_name}</span>
+                      <span className={`font-bold truncate ${isActive ? 'text-green-800' : 'text-slate-600'}`}>{p.team_name}</span>
                     </button>
                   );
                 })
@@ -617,9 +617,12 @@ export default function RapidScoreEntryPage() {
           {materi !== 'LKBB' ? (
             /* NON-LKBB Form */
             <form onSubmit={handleSaveScoreSheet}>
-              <Card className="p-8 space-y-6 text-center">
-                <h3 className="text-sm font-black text-white uppercase">Skor Angka {materi}</h3>
-                <div className="max-w-xs mx-auto">
+              <Card className="p-10 space-y-8 text-center border-green-200 bg-gradient-to-b from-white to-green-50/30">
+                <div className="space-y-2">
+                  <h3 className="text-sm font-black text-green-900 uppercase tracking-widest">Skor Angka {materi}</h3>
+                  <p className="text-xs font-semibold text-green-700/60">Masukkan skor langsung tanpa kriteria detail</p>
+                </div>
+                <div className="max-w-[200px] mx-auto">
                   <input
                     type="number"
                     required
@@ -627,11 +630,11 @@ export default function RapidScoreEntryPage() {
                     max={500}
                     value={singleScore}
                     onChange={(e) => handleSingleScoreChange(Number(e.target.value))}
-                    className="w-full text-center py-4 rounded-2xl bg-slate-950 border-2 border-brand-emerald-500/80 text-brand-emerald-400 font-mono font-black text-4xl outline-none"
+                    className="w-full text-center py-5 rounded-2xl bg-white border-2 border-green-300 focus:border-green-600 focus:ring-4 focus:ring-green-500/20 text-green-950 font-mono font-black text-5xl outline-none transition-all shadow-inner"
                   />
                 </div>
-                <Button variant="primary" type="submit" className="w-full py-4 text-xs font-bold" isLoading={isSaving}>
-                  💾 SIMPAN NILAI {materi}
+                <Button variant="primary" type="submit" className="w-full max-w-[200px] py-4 mt-4 text-xs font-bold" isLoading={isSaving}>
+                  💾 SIMPAN NILAI
                 </Button>
               </Card>
             </form>
