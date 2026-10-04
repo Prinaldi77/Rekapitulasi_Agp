@@ -499,21 +499,21 @@ export default function RapidScoreEntryPage() {
         <div className="lg:col-span-3 space-y-6">
           
           <Card className="p-6 space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-900">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-green-200/60">
               <div className="space-y-1">
                 <Badge variant="success" className="text-[9px] font-black">Materi: {materi}</Badge>
-                <h2 className="text-lg font-black text-white uppercase">FORMAT NILAI {materi} ({jenjang})</h2>
+                <h2 className="text-lg font-black text-green-950 uppercase">FORMAT NILAI {materi} ({jenjang})</h2>
               </div>
 
               {/* Form Controls */}
               <div className="flex flex-wrap gap-2 items-center">
-                <div className="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800">
+                <div className="flex bg-green-50/50 p-0.5 rounded-lg border border-green-200/80 shadow-sm">
                   {(['PUTERA', 'PUTERI'] as const).map(g => (
                     <button
                       key={g}
                       onClick={() => setGenderRegu(g)}
-                      className={`px-2.5 py-1 text-[9px] font-bold rounded-md ${
-                        genderRegu === g ? 'bg-brand-emerald-500 text-slate-950 font-black' : 'text-slate-400'
+                      className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${
+                        genderRegu === g ? 'bg-white text-green-900 shadow-sm border border-green-200' : 'text-green-800/60 hover:text-green-900 border border-transparent'
                       }`}
                     >
                       {g === 'PUTERA' ? '👦 PA' : '👧 PI'}
@@ -521,13 +521,13 @@ export default function RapidScoreEntryPage() {
                   ))}
                 </div>
 
-                <div className="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800">
+                <div className="flex bg-green-50/50 p-0.5 rounded-lg border border-green-200/80 shadow-sm">
                   {(['SD', 'SMP', 'SMA'] as const).map(j => (
                     <button
                       key={j}
                       onClick={() => setJenjang(j)}
-                      className={`px-2.5 py-1 text-[9px] font-bold rounded-md ${
-                        jenjang === j ? 'bg-brand-emerald-500 text-slate-950 font-black' : 'text-slate-400'
+                      className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${
+                        jenjang === j ? 'bg-white text-green-900 shadow-sm border border-green-200' : 'text-green-800/60 hover:text-green-900 border border-transparent'
                       }`}
                     >
                       {j}
@@ -536,13 +536,13 @@ export default function RapidScoreEntryPage() {
                 </div>
 
                 {materi === 'LKBB' && (
-                  <div className="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800">
+                  <div className="flex bg-amber-50/50 p-0.5 rounded-lg border border-amber-200/80 shadow-sm">
                     {[1, 2, 3].map(num => (
                       <button
                         key={num}
                         onClick={() => setSelectedJuri(num as any)}
-                        className={`px-2.5 py-1 text-[9px] font-bold rounded-md ${
-                          selectedJuri === num ? 'bg-brand-amber-500 text-slate-950 font-black' : 'text-slate-400'
+                        className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${
+                          selectedJuri === num ? 'bg-white text-amber-900 shadow-sm border border-amber-200' : 'text-amber-800/60 hover:text-amber-900 border border-transparent'
                         }`}
                       >
                         JURI {num}
@@ -556,7 +556,7 @@ export default function RapidScoreEntryPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setIsOcrModalOpen(true)}
-                  className="text-[10px] font-black border-brand-amber-500/30 text-brand-amber-400 hover:bg-brand-amber-500/10 py-1.5 px-3"
+                  className="text-[10px] font-black border-green-300 text-green-800 hover:bg-green-50 hover:text-green-950 py-1.5 px-3 bg-white"
                 >
                   📷 Scan Kertas Juri
                 </Button>
