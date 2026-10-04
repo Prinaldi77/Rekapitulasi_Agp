@@ -5,7 +5,7 @@ import { NextResponse, type NextRequest } from 'next/server';
  * Next.js Server Middleware enforcing security & role-based access control policies
  * for the AGP Competition System Single Domain Architecture.
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   });
