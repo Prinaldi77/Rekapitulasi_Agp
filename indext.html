@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGP 2026 - Aktivitas Gerakan Pramuka</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: '#070707',
+                        surface: '#151515',
+                        surface2: '#262626',
+                        textMain: '#F5F5F2',
+                        muted: '#AAAAAA',
+                        accent: '#FFFFFF',
+                        focus: '#f5a900'
+                    },
+                    fontFamily: {
+                        bebas: ['"Bebas Neue"', 'sans-serif'],
+                        inter: ['"Inter"', 'sans-serif'],
+                    },
+                    lineHeight: {
+                        tight: '1.2',
+                        tighter: '1.11',
+                        tightest: '1',
+                        body: '1.43'
+                    },
+                    borderRadius: {
+                        'input': '6px',
+                        'btn': '9px',
+                        'card': '12px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #070707;
+            color: #F5F5F2;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        h1, h2, h3, .font-display {
+            font-family: 'Bebas Neue', sans-serif;
+            text-transform: uppercase;
+        }
+        h2 { font-size: 54px; line-height: 1; letter-spacing: -1.35px; font-weight: 900; }
+        h3 { font-size: 27px; line-height: 1.11; font-weight: 900; }
+        p, span, div { font-size: 14px; line-height: 1.43; font-weight: 400; }
+
+        button, a, input { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        button:focus-visible, a:focus-visible, input:focus-visible {
+            outline: 2px solid #f5a900;
+            outline-offset: 2px;
+        }
+        .card-hover:hover { border-color: #AAAAAA; }
+
+        /* Split screen diagonal effect */
+        .hero-split {
+            position: absolute;
+            top: 0; right: 0; bottom: 0;
+            width: 55%;
+            background-color: #151515;
+            clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%);
+            z-index: 0;
+            border-left: 1px solid #262626;
+            background-image: radial-gradient(#262626 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .text-stroke {
+            -webkit-text-stroke: 1px #F5F5F2;
+            color: transparent;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden selection:bg-accent selection:text-bg relative">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full z-50 bg-bg/90 backdrop-blur border-b border-surface2">
+        <div class="max-w-[1607px] mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="font-display text-2xl tracking-wide">AGP 2026</div>
+            <div class="hidden md:flex gap-8 font-display tracking-widest text-muted">
+                <a href="#tentang" class="hover:text-accent">Tentang</a>
+                <a href="#kategori" class="hover:text-accent">Kategori</a>
+                <a href="#timeline" class="hover:text-accent">Timeline</a>
+            </div>
+            <a href="#download" class="bg-accent text-bg px-5 py-2 rounded-btn font-display text-lg hover:bg-muted">Unduh Juknis</a>
+        </div>
+    </nav>
+
+    <!-- 1. Hero Section -->
+    <section class="relative min-h-[95vh] flex items-center pt-16">
+        <div class="hero-split hidden lg:block"></div>
+        <div class="max-w-[1607px] mx-auto px-6 w-full relative z-10 grid lg:grid-cols-2 gap-8">
+            <div class="flex flex-col justify-center max-w-xl py-20">
+                <div class="font-display text-focus text-xl tracking-widest mb-4">SE-JAWA BARAT OPEN</div>
+                <h1 class="text-[80px] md:text-[110px] font-display leading-[0.85] tracking-[-2px] mb-6 relative">
+                    <span class="block text-stroke relative z-10">AKTIVITAS</span>
+                    <span class="block relative z-20">GERAKAN</span>
+                    <span class="block relative z-20">PRAMUKA</span>
+                </h1>
+                <p class="text-muted text-base mb-10 max-w-md">
+                    Ajang perlombaan Pramuka Penggalang & Penegak paling bergengsi. Buktikan ketangguhan, kreativitas, dan kekompakan regumu di arena ini.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#download" class="bg-accent text-bg px-8 py-3 rounded-btn font-display text-2xl hover:bg-muted flex items-center gap-2">
+                        Unduh Juknis
+                    </a>
+                    <a href="#kontak" class="bg-bg border border-surface2 text-accent px-8 py-3 rounded-btn font-display text-2xl hover:border-muted flex items-center">
+                        Hubungi Panitia
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Floating Cards UI (Kanan) -->
+            <div class="hidden lg:flex flex-col justify-center relative h-[600px] perspective-[1000px]">
+                <div class="absolute right-12 top-24 bg-bg border border-surface2 p-6 rounded-card w-72 transform rotate-6 shadow-2xl z-20 hover:rotate-0 transition-transform duration-300">
+                    <div class="h-40 bg-surface2 rounded-btn mb-4 w-full opacity-50 flex items-center justify-center font-display text-5xl text-muted">PENGGALANG</div>
+                    <div class="font-display text-2xl">TINGKAT SD/SMP</div>
+                    <div class="text-muted text-xs mt-2">Kategori tangkas, sandi, & pionering.</div>
+                </div>
+                <div class="absolute right-32 top-64 bg-surface border border-surface2 p-6 rounded-card w-72 transform -rotate-3 shadow-2xl z-30 hover:rotate-0 transition-transform duration-300">
+                    <div class="h-40 bg-bg border border-surface2 rounded-btn mb-4 w-full flex items-center justify-center font-display text-5xl text-muted">PENEGAK</div>
+                    <div class="font-display text-2xl">TINGKAT SMA/SMK/MA</div>
+                    <div class="text-muted text-xs mt-2">Kategori manajerial, LKBB, & survival.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Tentang AGP -->
+    <section id="tentang" class="py-24 border-t border-surface2 bg-bg relative">
+        <div class="max-w-[1607px] mx-auto px-6 grid md:grid-cols-12 gap-12">
+            <div class="md:col-span-4">
+                <h2>Tentang AGP</h2>
+                <div class="w-12 h-1 bg-accent mt-4"></div>
+            </div>
+            <div class="md:col-span-8 flex flex-col gap-6">
+                <h3 class="text-muted">Ambalan Ki Hajar Dewantara & R.A Kartini<br>SMK Negeri 1 Soreang</h3>
+                <p class="text-muted max-w-2xl text-base">
+                    Aktivitas Gerakan Pramuka (AGP) 2026 adalah kompetisi tahunan yang dirancang untuk menguji keterampilan kepramukaan, kepemimpinan, dan kerja sama tim. Tahun ini mengusung tema <strong>"Pramuka Berani, Beraksi, Berprestasi"</strong>, menciptakan ruang bagi generasi muda untuk mengasah kecakapan hidup di era modern tanpa meninggalkan nilai-nilai luhur Dasa Darma.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Kategori & Mata Lomba -->
+    <section id="kategori" class="py-24 border-t border-surface2 bg-surface">
+        <div class="max-w-[1607px] mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2>MATA LOMBA</h2>
+                <p class="text-muted mt-4">Pilih dan siapkan regumu untuk kategori berikut.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-bg border border-surface2 rounded-card p-6 card-hover cursor-pointer flex flex-col h-full">
+                    <div class="w-12 h-12 bg-surface2 rounded-btn flex items-center justify-center mb-6 font-display text-2xl text-accent">01</div>
+                    <h3 class="mb-2">LKBB Resmi</h3>
+                    <p class="text-muted text-xs flex-grow">Menilai kedisiplinan, kerapian, dan variasi formasi PBB tingkat lanjut.</p>
+                    <div class="mt-6 pt-4 border-t border-surface2 font-display text-muted">Penegak & Penggalang</div>
+                </div>
+                <div class="bg-bg border border-surface2 rounded-card p-6 card-hover cursor-pointer flex flex-col h-full">
+                    <div class="w-12 h-12 bg-surface2 rounded-btn flex items-center justify-center mb-6 font-display text-2xl text-accent">02</div>
+                    <h3 class="mb-2">Pionering</h3>
+                    <p class="text-muted text-xs flex-grow">Merakit tongkat dan tali menjadi struktur bangunan darurat presisi.</p>
+                    <div class="mt-6 pt-4 border-t border-surface2 font-display text-muted">Penegak & Penggalang</div>
+                </div>
+                <div class="bg-bg border border-surface2 rounded-card p-6 card-hover cursor-pointer flex flex-col h-full">
+                    <div class="w-12 h-12 bg-surface2 rounded-btn flex items-center justify-center mb-6 font-display text-2xl text-accent">03</div>
+                    <h3 class="mb-2">Yel-Yel Kreasi</h3>
+                    <p class="text-muted text-xs flex-grow">Adu kreativitas, kekompakan suara, dan koreografi sorak regu.</p>
+                    <div class="mt-6 pt-4 border-t border-surface2 font-display text-muted">Penggalang</div>
+                </div>
+                <div class="bg-bg border border-surface2 rounded-card p-6 card-hover cursor-pointer flex flex-col h-full">
+                    <div class="w-12 h-12 bg-surface2 rounded-btn flex items-center justify-center mb-6 font-display text-2xl text-accent">04</div>
+                    <h3 class="mb-2">Kuis Pramuka</h3>
+                    <p class="text-muted text-xs flex-grow">Cerdas cermat menguji wawasan umum, sandi, dan sejarah kepanduan.</p>
+                    <div class="mt-6 pt-4 border-t border-surface2 font-display text-muted">Penegak</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Timeline / Jadwal Kegiatan -->
+    <section id="timeline" class="py-24 border-t border-surface2 bg-bg">
+        <div class="max-w-[1607px] mx-auto px-6">
+            <h2 class="mb-16 text-center lg:text-left">TIMELINE KEGIATAN</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
+                <div class="hidden md:block absolute top-6 left-0 right-0 h-[1px] bg-surface2 z-0"></div>
+                <div class="relative z-10 bg-bg pr-4 mb-8 md:mb-0">
+                    <div class="w-12 h-12 rounded-full border-2 border-accent bg-bg flex items-center justify-center font-display text-xl mb-4">1</div>
+                    <h3 class="mb-2">Pendaftaran</h3>
+                    <div class="font-display text-muted tracking-wider mb-2">10 - 25 Okt 2026</div>
+                    <p class="text-muted text-xs">Pendaftaran online dibuka melalui form pendaftaran panitia.</p>
+                </div>
+                <div class="relative z-10 bg-bg pr-4 mb-8 md:mb-0">
+                    <div class="w-12 h-12 rounded-full border-2 border-surface2 bg-bg flex items-center justify-center font-display text-xl text-muted mb-4">2</div>
+                    <h3 class="mb-2">Tech. Meeting</h3>
+                    <div class="font-display text-muted tracking-wider mb-2">28 Okt 2026</div>
+                    <p class="text-muted text-xs">Pembahasan teknis, pencabutan nomor, dan Q&A Juknis.</p>
+                </div>
+                <div class="relative z-10 bg-bg pr-4 mb-8 md:mb-0">
+                    <div class="w-12 h-12 rounded-full border-2 border-focus text-focus bg-bg flex items-center justify-center font-display text-xl mb-4">3</div>
+                    <h3 class="mb-2">Pelaksanaan</h3>
+                    <div class="font-display text-focus tracking-wider mb-2">04 - 05 Nov 2026</div>
+                    <p class="text-muted text-xs">Upacara pembukaan dan pelaksanaan seluruh mata lomba.</p>
+                </div>
+                <div class="relative z-10 bg-bg pr-4">
+                    <div class="w-12 h-12 rounded-full border-2 border-surface2 bg-bg flex items-center justify-center font-display text-xl text-muted mb-4">4</div>
+                    <h3 class="mb-2">Pengumuman</h3>
+                    <div class="font-display text-muted tracking-wider mb-2">05 Nov 2026</div>
+                    <p class="text-muted text-xs">Upacara penutupan dan penyerahan piala bergilir kejuaraan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Download Center -->
+    <section id="download" class="py-32 border-t border-surface2 bg-surface bg-[radial-gradient(#262626_1px,transparent_1px)]" style="background-size: 24px 24px;">
+        <div class="max-w-[1024px] mx-auto px-6 text-center">
+            <h2 class="mb-6">Pusat Unduhan</h2>
+            <p class="text-muted mb-12 max-w-xl mx-auto text-base">Semua dokumen administrasi, petunjuk pelaksanaan (Juklak), petunjuk teknis (Juknis), dan surat undangan resmi dapat diunduh di bawah ini.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#" class="bg-accent text-bg px-8 py-4 rounded-btn font-display text-2xl hover:bg-muted flex justify-center items-center gap-3">
+                    Juklak & Juknis (PDF)
+                </a>
+                <a href="#" class="bg-bg border border-surface2 text-accent px-8 py-4 rounded-btn font-display text-2xl hover:border-muted flex justify-center items-center gap-3">
+                    Surat Undangan
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Footer / Kontak & Lokasi -->
+    <footer id="kontak" class="border-t border-surface2 bg-bg py-16">
+        <div class="max-w-[1607px] mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <h3 class="mb-6">Kontak Panitia</h3>
+                <div class="space-y-4 text-muted">
+                    <p class="font-display text-2xl text-accent">SMK Negeri 1 Soreang</p>
+                    <p>Jl. Raya Soreang - Ciwidey, Kabupaten Bandung<br>Ambalan Ki Hajar Dewantara & R.A Kartini</p>
+                    <div class="flex flex-col gap-3 pt-6">
+                        <a href="#" class="hover:text-accent flex items-center gap-3">
+                            <span class="w-2 h-2 bg-accent rounded-full"></span>
+                            WhatsApp: +62 800-0000-0000
+                        </a>
+                        <a href="#" class="hover:text-accent flex items-center gap-3">
+                            <span class="w-2 h-2 bg-accent rounded-full"></span>
+                            Instagram: @pramukasmkn1soreang
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="h-72 bg-surface2 rounded-card relative overflow-hidden border border-surface2 flex items-center justify-center text-muted">
+                <!-- Ganti div ini dengan iFrame Google Maps nanti -->
+                <div class="text-center">
+                    <p class="font-display tracking-widest text-xl">[ LOKASI GOOGLE MAPS ]</p>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-[1607px] mx-auto px-6 mt-16 pt-8 border-t border-surface2 text-center text-muted text-xs">
+            &copy; 2026 AGP - Ambalan Ki Hajar Dewantara & R.A Kartini. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+</html>

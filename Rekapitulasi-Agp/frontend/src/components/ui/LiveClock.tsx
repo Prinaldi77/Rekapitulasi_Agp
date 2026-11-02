@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Timer } from 'lucide-react';
 
 interface LiveClockProps {
   showSeconds?: boolean;
@@ -16,8 +17,7 @@ export const LiveClock: React.FC<LiveClockProps> = ({ showSeconds = true, classN
     setMounted(true);
     const updateTime = () => {
       const now = new Date();
-      
-      // Format Jam Digital: 14:35:12 WIB
+
       const time = now.toLocaleTimeString('id-ID', {
         hour: '2-digit',
         minute: '2-digit',
@@ -25,7 +25,6 @@ export const LiveClock: React.FC<LiveClockProps> = ({ showSeconds = true, classN
         hour12: false,
       });
 
-      // Format Tanggal: Kamis, 6 Agustus 2026
       const date = now.toLocaleDateString('id-ID', {
         weekday: 'long',
         day: 'numeric',
@@ -46,12 +45,14 @@ export const LiveClock: React.FC<LiveClockProps> = ({ showSeconds = true, classN
   if (!mounted || !timeStr) return null;
 
   return (
-    <div className={`inline-flex items-center gap-2 bg-green-950 text-white px-3.5 py-1.5 rounded-xl border border-green-800 shadow-sm ${className}`}>
-      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
-      <div className="flex flex-col sm:flex-row sm:items-center gap-1 leading-none font-mono">
-        <span className="font-black text-xs text-emerald-300 tracking-wider">{timeStr}</span>
-        <span className="hidden md:inline text-green-400/50">&bull;</span>
-        <span className="hidden md:inline text-[10px] font-bold text-green-200/80">{dateStr}</span>
+    <div
+      className={`inline-flex items-center gap-2 bg-[#061C18] text-[#ffffff] px-3 py-1.5 rounded-[8px] border border-[#076653] ${className}`}
+    >
+      <span className="w-1.5 h-1.5 rounded-full bg-[#E3EF26] animate-pulse shrink-0" />
+      <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 leading-none font-mono">
+        <span className="font-semibold text-xs text-[#E3EF26] tracking-wider">{timeStr}</span>
+        <span className="hidden md:inline text-[#7AA89C]">|</span>
+        <span className="hidden md:inline text-[11px] font-normal text-[#B8D8D0]">{dateStr}</span>
       </div>
     </div>
   );
@@ -64,7 +65,7 @@ interface PerformanceTimerProps {
 }
 
 export const PerformanceTimer: React.FC<PerformanceTimerProps> = ({
-  initialSeconds = 600, // Default 10 Menit Alokasi Waktu Tampil
+  initialSeconds = 600,
   isRunning = true,
   onTimeUp,
 }) => {
@@ -99,25 +100,25 @@ export const PerformanceTimer: React.FC<PerformanceTimerProps> = ({
   const formattedMinutes = String(minutes).padStart(2, '0');
   const formattedSeconds = String(seconds).padStart(2, '0');
 
-  const isWarning = secondsLeft <= 120 && secondsLeft > 30; // 2 Menit Terakhir
-  const isDanger = secondsLeft <= 30; // 30 Detik Terakhir
+  const isWarning = secondsLeft <= 120 && secondsLeft > 30;
+  const isDanger = secondsLeft <= 30;
 
   return (
     <div
-      className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-xl font-mono font-black border transition-all duration-300 ${
+      className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-[10px] font-mono border transition-all duration-300 ${
         isDanger
-          ? 'bg-red-50 text-red-700 border-red-300 animate-pulse shadow-red-500/10'
+          ? 'bg-rose-950/80 text-rose-300 border-rose-500/50 animate-pulse'
           : isWarning
-          ? 'bg-amber-50 text-amber-800 border-amber-300 shadow-amber-500/10'
-          : 'bg-green-50 text-green-900 border-green-300 shadow-green-900/5'
+          ? 'bg-[#076653] text-[#E3EF26] border-[#E3EF26]/50'
+          : 'bg-[#061C18] text-[#E3EF26] border-[#076653]'
       }`}
     >
-      <span className="text-sm">⏱️</span>
+      <Timer className="w-4 h-4 shrink-0" />
       <div className="flex flex-col">
-        <span className="text-[9px] uppercase font-bold tracking-wider text-green-800">
-          {isDanger ? '⚠️ Sisa Waktu Tampil!' : isWarning ? '⏳ Persiapan Akhir' : 'Durasi Waktu Arena'}
+        <span className="text-[10px] uppercase font-medium tracking-wider text-[#B8D8D0]">
+          {isDanger ? 'Sisa Waktu Tampil!' : isWarning ? 'Persiapan Akhir' : 'Durasi Waktu Arena'}
         </span>
-        <span className="text-base font-black tracking-widest leading-tight">
+        <span className="text-base font-bold tracking-widest leading-tight text-[#ffffff]">
           {formattedMinutes}:{formattedSeconds}
         </span>
       </div>

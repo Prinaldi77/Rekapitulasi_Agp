@@ -29,10 +29,10 @@ export const Avatar: React.FC<AvatarProps> = ({
 
   return (
     <div
-      className={`relative inline-flex items-center justify-center rounded-full bg-gradient-to-tr from-green-600 to-green-400 p-[1.5px] shadow-md ${className}`}
+      className={`relative inline-flex items-center justify-center rounded-full bg-[#076653] border border-[#E3EF26]/40 p-[1.5px] ${className}`}
     >
       <div
-        className={`flex items-center justify-center rounded-full bg-white font-bold text-green-800 overflow-hidden ${sizes[size]}`}
+        className={`flex items-center justify-center rounded-full bg-[#061C18] font-mono font-bold text-[#E3EF26] overflow-hidden ${sizes[size]}`}
       >
         {src ? (
           <img src={src} alt={name} className="w-full h-full object-cover" />

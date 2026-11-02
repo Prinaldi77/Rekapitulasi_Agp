@@ -3,6 +3,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Button, Badge } from '@/components/ui';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Camera, Trash2, Sparkles, CheckCircle2, AlertTriangle, XCircle } from 'lucide-react';
 
 interface OcrScore {
   criteriaName: string;
@@ -22,26 +23,46 @@ interface ScoreOcrUploaderProps {
 }
 
 const confidenceConfig = {
-  HIGH:   { label: 'Kepercayaan Tinggi', emoji: '✅', cls: 'bg-green-50 border-green-200 text-green-700' },
-  MEDIUM: { label: 'Perlu Diperiksa',    emoji: '⚠️', cls: 'bg-amber-50 border-amber-200 text-amber-700' },
-  LOW:    { label: 'Banyak Nilai Meragukan', emoji: '❌', cls: 'bg-red-50 border-red-200 text-red-700' },
+  HIGH: {
+    label: 'Kepercayaan Tinggi',
+    icon: <CheckCircle2 className="w-4 h-4 text-[#E3EF26] shrink-0" />,
+    cls: 'bg-[#061C18] border-[#E3EF26]/40 text-[#E3EF26]',
+  },
+  MEDIUM: {
+    label: 'Perlu Diperiksa',
+    icon: <AlertTriangle className="w-4 h-4 text-[#ffd166] shrink-0" />,
+    cls: 'bg-[#076653] border-[#ffd166]/40 text-[#ffd166]',
+  },
+  LOW: {
+    label: 'Banyak Nilai Meragukan',
+    icon: <XCircle className="w-4 h-4 text-[#E3EF26] shrink-0" />,
+    cls: 'bg-[#076653] border-[#E3EF26]/40 text-[#E3EF26]',
+  },
 };
 
 export default function ScoreOcrUploader({ criteriaNames = [], onConfirm, onClose }: ScoreOcrUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [previewUrl, setPreviewUrl]   = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [imageBase64, setImageBase64] = useState<string | null>(null);
-  const [mimeType, setMimeType]       = useState<string>('image/jpeg');
+  const [mimeType, setMimeType] = useState<string>('image/jpeg');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [ocrResult, setOcrResult]     = useState<OcrResult | null>(null);
+  const [ocrResult, setOcrResult] = useState<OcrResult | null>(null);
   const [editedScores, setEditedScores] = useState<OcrScore[]>([]);
-  const [error, setError]             = useState<string | null>(null);
-  const [isDragging, setIsDragging]   = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleFile = useCallback((file: File) => {
-    if (!file.type.startsWith('image/')) { setError('File harus berupa gambar (JPG, PNG, WEBP).'); return; }
-    if (file.size > 10 * 1024 * 1024)   { setError('Ukuran gambar maksimal 10 MB.'); return; }
-    setError(null); setOcrResult(null); setEditedScores([]);
+    if (!file.type.startsWith('image/')) {
+      setError('File harus berupa gambar (JPG, PNG, WEBP).');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setError('Ukuran gambar maksimal 10 MB.');
+      return;
+    }
+    setError(null);
+    setOcrResult(null);
+    setEditedScores([]);
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target?.result as string;
@@ -53,16 +74,19 @@ export default function ScoreOcrUploader({ criteriaNames = [], onConfirm, onClos
   }, []);
 
   const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault(); setIsDragging(false);
+    e.preventDefault();
+    setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (file) handleFile(file);
   };
 
   const handleScan = async () => {
     if (!imageBase64) return;
-    setIsProcessing(true); setError(null); setOcrResult(null);
+    setIsProcessing(true);
+    setError(null);
+    setOcrResult(null);
     try {
-      const res  = await fetch('/api/ocr-score', {
+      const res = await fetch('/api/ocr-score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageBase64, mimeType, criteriaNames }),
@@ -71,7 +95,7 @@ export default function ScoreOcrUploader({ criteriaNames = [], onConfirm, onClos
       if (!res.ok || !json.success) throw new Error(json.error || 'Gagal memproses gambar.');
       const result: OcrResult = json.data;
       setOcrResult(result);
-      setEditedScores(result.scores.map(s => ({ ...s })));
+      setEditedScores(result.scores.map((s) => ({ ...s })));
     } catch (err: any) {
       setError(err.message || 'Terjadi kesalahan.');
     } finally {
@@ -81,55 +105,85 @@ export default function ScoreOcrUploader({ criteriaNames = [], onConfirm, onClos
 
   const handleScoreEdit = (index: number, val: string) => {
     const num = parseFloat(val);
-    setEditedScores(prev => prev.map((s, i) => i === index ? { ...s, value: isNaN(num) ? 0 : num } : s));
+    setEditedScores((prev) => prev.map((s, i) => (i === index ? { ...s, value: isNaN(num) ? 0 : num } : s)));
   };
 
-  const handleConfirm = () => { onConfirm(editedScores); onClose(); };
+  const handleConfirm = () => {
+    onConfirm(editedScores);
+    onClose();
+  };
   const confidenceInfo = ocrResult ? confidenceConfig[ocrResult.confidence] : null;
 
   return (
     <div className="flex flex-col gap-5 max-h-[80vh] overflow-y-auto pr-1">
-
       {/* Step 1 */}
       <div>
         <div className="flex items-center gap-2 mb-3">
-          <Badge variant="primary" className="text-[9px] font-black">LANGKAH 1</Badge>
-          <span className="text-xs font-bold text-green-800">Foto / Unggah Lembar Nilai Juri</span>
+          <Badge variant="primary">LANGKAH 01</Badge>
+          <span className="text-xs font-medium text-[#ffffff]">Foto / Unggah Lembar Nilai Juri</span>
         </div>
         <div
-          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragging(true);
+          }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
-          className={`relative w-full rounded-xl border-2 border-dashed cursor-pointer transition-all duration-300 flex flex-col items-center justify-center gap-3 py-8 ${
-            isDragging ? 'border-green-500 bg-green-50' : 'border-green-200 hover:border-green-400 bg-green-50/30'
+          className={`relative w-full rounded-[12px] border border-dashed cursor-pointer transition-all duration-200 flex flex-col items-center justify-center gap-3 py-8 ${
+            isDragging
+              ? 'border-[#E3EF26] bg-[#076653]/30'
+              : 'border-[#076653] hover:border-[#B8D8D0] bg-[#061C18]'
           }`}
         >
           {previewUrl ? (
-            <img src={previewUrl} alt="Preview" className="max-h-64 rounded-lg object-contain shadow" />
+            <img src={previewUrl} alt="Preview Lembar Nilai" className="max-h-64 rounded-[8px] object-contain" />
           ) : (
             <>
-              <span className="text-4xl">📷</span>
+              <div className="w-12 h-12 rounded-full bg-[#076653] border border-[#076653] flex items-center justify-center text-[#E3EF26]">
+                <Camera className="w-5 h-5" />
+              </div>
               <div className="text-center">
-                <p className="text-sm font-bold text-green-800">Klik atau seret foto ke sini</p>
-                <p className="text-xs text-green-600/60 mt-1">JPG, PNG, WEBP — Maksimal 10 MB</p>
+                <p className="text-sm font-medium text-[#ffffff]">Klik atau seret foto lembar nilai ke sini</p>
+                <p className="text-xs font-mono text-[#7AA89C] mt-1">JPG, PNG, WEBP — MAKS 10 MB</p>
               </div>
             </>
           )}
-          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleFile(f);
+            }}
+          />
         </div>
         {previewUrl && (
-          <button onClick={() => { setPreviewUrl(null); setImageBase64(null); setOcrResult(null); setEditedScores([]); setError(null); }}
-            className="mt-2 text-xs text-red-500 hover:text-red-700 font-semibold">
-            🗑️ Hapus & Upload Ulang
+          <button
+            type="button"
+            onClick={() => {
+              setPreviewUrl(null);
+              setImageBase64(null);
+              setOcrResult(null);
+              setEditedScores([]);
+              setError(null);
+            }}
+            className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-mono text-[#E3EF26] hover:underline cursor-pointer"
+          >
+            <Trash2 className="w-3.5 h-3.5" /> Hapus &amp; Unggah Ulang
           </button>
         )}
       </div>
 
       {error && (
-        <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
-          className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs font-bold">
-          ❌ {error}
+        <motion.div
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-3.5 rounded-[8px] bg-[#076653] border border-[#E3EF26]/40 text-[#E3EF26] text-xs font-medium"
+        >
+          {error}
         </motion.div>
       )}
 
@@ -137,58 +191,71 @@ export default function ScoreOcrUploader({ criteriaNames = [], onConfirm, onClos
       {imageBase64 && !ocrResult && (
         <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-2 mb-3">
-            <Badge variant="warning" className="text-[9px] font-black">LANGKAH 2</Badge>
-            <span className="text-xs font-bold text-green-800">Scan & Ekstrak Nilai Otomatis</span>
+            <Badge variant="danger">LANGKAH 02</Badge>
+            <span className="text-xs font-medium text-[#ffffff]">Ekstrak Angka Nilai Otomatis</span>
           </div>
-          <Button variant="primary" onClick={handleScan} isLoading={isProcessing} className="w-full font-black text-sm">
-            {isProcessing ? '🤖 Gemini AI sedang membaca lembar nilai...' : '🤖 Scan Lembar Nilai dengan AI'}
+          <Button variant="primary" onClick={handleScan} isLoading={isProcessing} className="w-full gap-2">
+            <Sparkles className="w-4 h-4" />
+            <span>{isProcessing ? 'AI sedang membaca lembar nilai...' : 'Scan Lembar Nilai dengan AI OCR'}</span>
           </Button>
-          {isProcessing && (
-            <p className="text-[11px] text-green-600/70 text-center mt-2 animate-pulse">
-              Proses ini membutuhkan waktu 5–15 detik...
-            </p>
-          )}
         </motion.div>
       )}
 
       {/* Step 3 */}
       <AnimatePresence>
         {ocrResult && (
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-4">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="space-y-4"
+          >
             <div className="flex items-center gap-2">
-              <Badge variant="success" className="text-[9px] font-black">LANGKAH 3</Badge>
-              <span className="text-xs font-bold text-green-800">Verifikasi & Koreksi Nilai</span>
+              <Badge variant="success">LANGKAH 03</Badge>
+              <span className="text-xs font-medium text-[#ffffff]">Verifikasi &amp; Koreksi Nilai</span>
             </div>
 
             {confidenceInfo && (
-              <div className={`p-3 rounded-xl border text-xs font-bold flex items-center gap-2 ${confidenceInfo.cls}`}>
-                <span>{confidenceInfo.emoji}</span>
-                <span>Tingkat Kepercayaan AI: <strong>{confidenceInfo.label}</strong></span>
+              <div className={`p-3 rounded-[8px] border text-xs font-medium flex items-center gap-2 ${confidenceInfo.cls}`}>
+                {confidenceInfo.icon}
+                <span>
+                  Tingkat Akurasi AI: <strong>{confidenceInfo.label}</strong>
+                </span>
               </div>
             )}
 
             {ocrResult.notes && (
-              <p className="text-[11px] text-green-700/80 bg-green-50 rounded-lg px-3 py-2 border border-green-100">
-                💬 Catatan AI: {ocrResult.notes}
+              <p className="text-xs text-[#B8D8D0] bg-[#061C18] rounded-[8px] px-3.5 py-2.5 border border-[#076653]">
+                Catatan AI: {ocrResult.notes}
               </p>
             )}
 
-            <div className="space-y-2">
+            <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
               {editedScores.map((score, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-2.5 rounded-xl bg-green-50/60 border border-green-100 hover:border-green-200 transition-colors">
-                  <span className="flex-1 text-xs font-semibold text-green-900 truncate">{score.criteriaName}</span>
+                <div
+                  key={idx}
+                  className="flex items-center gap-3 p-2.5 rounded-[8px] bg-[#061C18] border border-[#076653]"
+                >
+                  <span className="flex-1 text-xs font-medium text-[#ffffff] truncate">{score.criteriaName}</span>
                   <input
-                    type="number" min={0} max={100} value={score.value}
-                    onChange={e => handleScoreEdit(idx, e.target.value)}
-                    className="w-20 text-center px-2 py-1.5 rounded-lg bg-white border border-green-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-green-900 text-sm font-black transition-all"
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={score.value}
+                    onChange={(e) => handleScoreEdit(idx, e.target.value)}
+                    className="w-20 text-center px-2 py-1.5 rounded-[6px] bg-[#082620] border border-[#076653] focus:border-[#E3EF26] outline-none text-[#ffffff] text-sm font-mono font-bold"
                   />
                 </div>
               ))}
             </div>
 
-            <div className="flex gap-3 pt-2 border-t border-green-100">
-              <Button variant="outline" size="sm" onClick={onClose} className="flex-1 text-xs font-bold">Batal</Button>
-              <Button variant="primary" size="sm" onClick={handleConfirm} className="flex-1 text-xs font-bold">✅ Konfirmasi & Terapkan</Button>
+            <div className="flex gap-3 pt-3 border-t border-[#076653]">
+              <Button variant="outline" size="sm" onClick={onClose} className="flex-1">
+                Batal
+              </Button>
+              <Button variant="primary" size="sm" onClick={handleConfirm} className="flex-1">
+                Konfirmasi &amp; Terapkan Skor
+              </Button>
             </div>
           </motion.div>
         )}

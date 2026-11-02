@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
         data: {
           scores: simulatedScores,
           confidence: 'HIGH',
-          notes: '⚡ SIMULASI LOKAL: Gemini AI Key belum terpasang di .env.local. Ini adalah hasil simulasi pembacaan foto lembar nilai.',
+          notes: 'SIMULASI LOKAL: Gemini AI Key belum terpasang di .env.local. Ini adalah hasil simulasi pembacaan foto lembar nilai.',
         },
       });
     }

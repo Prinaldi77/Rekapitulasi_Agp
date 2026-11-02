@@ -42,46 +42,44 @@ export const Pagination: React.FC<PaginationProps> = ({
   };
 
   return (
-    <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-green-100 ${className}`}>
+    <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#076653] ${className}`}>
       {/* Items count info */}
-      <div className="text-xs text-green-700/80 font-medium">
+      <div className="text-xs text-[#B8D8D0] font-mono">
         {startItem && endItem && totalItems ? (
           <span>
-            Menampilkan <strong className="font-mono font-bold text-green-900">{startItem}</strong> - <strong className="font-mono font-bold text-green-900">{endItem}</strong> dari <strong className="font-mono font-bold text-green-900">{totalItems}</strong> data
+            Menampilkan <strong className="font-bold text-[#E3EF26]">{startItem}</strong> - <strong className="font-bold text-[#E3EF26]">{endItem}</strong> dari <strong className="font-bold text-[#ffffff]">{totalItems}</strong> data
           </span>
         ) : (
           <span>
-            Halaman <strong className="font-mono font-bold text-green-900">{currentPage}</strong> dari <strong className="font-mono font-bold text-green-900">{totalPages}</strong>
+            Halaman <strong className="font-bold text-[#E3EF26]">{currentPage}</strong> dari <strong className="font-bold text-[#ffffff]">{totalPages}</strong>
           </span>
         )}
       </div>
 
       {/* Navigation Controls */}
-      <div className="flex items-center gap-1">
-        {/* Previous Button */}
+      <div className="flex items-center gap-1.5">
         <button
           type="button"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage <= 1}
           aria-label="Halaman Sebelumnya"
-          className="p-2 rounded-lg bg-white border border-green-200 text-green-800 hover:bg-green-50 active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer shadow-sm"
+          className="p-2 rounded-[8px] bg-[#061C18] border border-[#076653] text-[#B8D8D0] hover:text-[#E3EF26] hover:bg-[#076653] active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
 
-        {/* Page numbers */}
         {getPageNumbers().map((page, idx) => (
           <React.Fragment key={idx}>
             {page === '...' ? (
-              <span className="px-2 text-xs text-green-600/60 font-mono">...</span>
+              <span className="px-2 text-xs text-[#7AA89C] font-mono">...</span>
             ) : (
               <button
                 type="button"
                 onClick={() => onPageChange(page as number)}
-                className={`min-w-[36px] h-9 px-2 rounded-lg text-xs font-mono font-extrabold transition-all cursor-pointer shadow-sm ${
+                className={`min-w-[36px] h-9 px-2 rounded-[8px] text-xs font-mono font-bold transition-all cursor-pointer ${
                   currentPage === page
-                    ? 'bg-green-700 text-white border border-green-700'
-                    : 'bg-white text-green-800 border border-green-200 hover:bg-green-50'
+                    ? 'bg-[#E3EF26] text-[#0C342C] border border-[#E3EF26]'
+                    : 'bg-[#061C18] text-[#B8D8D0] border border-[#076653] hover:text-[#ffffff] hover:bg-[#076653]'
                 }`}
               >
                 {page}
@@ -90,13 +88,12 @@ export const Pagination: React.FC<PaginationProps> = ({
           </React.Fragment>
         ))}
 
-        {/* Next Button */}
         <button
           type="button"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
           aria-label="Halaman Selanjutnya"
-          className="p-2 rounded-lg bg-white border border-green-200 text-green-800 hover:bg-green-50 active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer shadow-sm"
+          className="p-2 rounded-[8px] bg-[#061C18] border border-[#076653] text-[#B8D8D0] hover:text-[#E3EF26] hover:bg-[#076653] active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
         >
           <ChevronRight className="w-4 h-4" />
         </button>

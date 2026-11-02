@@ -9,7 +9,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
   Trophy, Clock, Tent, LayoutDashboard, Users, KeyRound, UserCheck,
   ClipboardList, Zap, FileText, Database, RefreshCw, Settings, ShieldAlert,
-  User, LogOut, ChevronLeft, ChevronRight, Menu, Bell, Key, Crown, ArrowLeft
+  User, LogOut, ChevronLeft, ChevronRight, Menu, Bell, Key, Crown, ArrowLeft, Home, X, Search
 } from 'lucide-react';
 
 interface UserProfile {
@@ -37,20 +37,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [globalSearch, setGlobalSearch] = useState('');
-  
+
   const [notifications, setNotifications] = useState<NotificationItem[]>([
-    { id: '1', title: '📢 Urutan Tampil', message: 'Regu SMA-02 statusnya diubah menjadi PERFORMING!', time: 'Baru saja', unread: true },
-    { id: '2', title: '💾 Nilai Terkirim', message: 'Juri 1 menyelesaikan rekap nilai untuk SD-01.', time: '5m lalu', unread: true },
-    { id: '3', title: '🏕️ Barak Terisi', message: 'Tim PANG LIMA MUDA menempati Kelas IX-A.', time: '12m lalu', unread: false },
+    { id: '1', title: 'Urutan Tampil', message: 'Regu SMA-02 statusnya diubah menjadi PERFORMING!', time: 'Baru saja', unread: true },
+    { id: '2', title: 'Nilai Terkirim', message: 'Juri 1 menyelesaikan rekap nilai untuk SD-01.', time: '5m lalu', unread: true },
+    { id: '3', title: 'Barak Terisi', message: 'Tim PANG LIMA MUDA menempati Kelas IX-A.', time: '12m lalu', unread: false },
   ]);
 
   const notificationRef = useRef<HTMLDivElement>(null);
 
   const isLoginPage = pathname === '/login';
   const isAdminRoute = pathname?.startsWith('/admin');
-  const isGrandMaster = profile?.role === 'GRAND_MASTER';
 
-  // Load sidebar collapsed state
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('agp_sidebar_collapsed') === 'true';
@@ -58,16 +56,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Sync session and profile details
   useEffect(() => {
     const getSession = async () => {
       try {
         const { data } = await supabase.auth.getSession();
         const session = data?.session ?? null;
-        
+
         let currentUser = session?.user ?? null;
 
-        // Local dev fallback user check
         if (!currentUser && typeof window !== 'undefined') {
           const savedDevUser = localStorage.getItem('agp_dev_user');
           if (savedDevUser) {
@@ -80,13 +76,47 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         }
 
         setUser(currentUser);
-        
+
         if (currentUser) {
+          const { data: profData } = await supabase
+            .from('profiles')
+            .select('username, full_name, role')
+            .eq('id', currentUser.id)
+            .maybeSingle();
+
           const metaRole = (currentUser as any).user_metadata?.role;
+          const dbRole = profData?.role;
+          const uname = (
+            profData?.username ||
+            (currentUser as any).user_metadata?.username ||
+            currentUser.email?.split('@')[0] ||
+            'operator'
+          ).toLowerCase();
+
+          let effectiveRole: 'SUPER_ADMIN' | 'ADMIN' | 'OPERATOR_REKAP' = 'OPERATOR_REKAP';
+          if (
+            uname === 'superadmin' ||
+            uname === 'grandmaster' ||
+            dbRole === 'GRAND_MASTER' ||
+            metaRole === 'SUPER_ADMIN' ||
+            metaRole === 'GRAND_MASTER'
+          ) {
+            effectiveRole = 'SUPER_ADMIN';
+          } else if (uname === 'admin' || uname.includes('admin') || metaRole === 'ADMIN') {
+            effectiveRole = 'ADMIN';
+          }
+
+          const defaultFullName =
+            effectiveRole === 'SUPER_ADMIN'
+              ? 'Sekretaris Utama AGP (Super Admin)'
+              : effectiveRole === 'ADMIN'
+                ? 'Pengelola Master Data (Admin)'
+                : 'Operator Entri Nilai (PJ Rekap)';
+
           setProfile({
-            username: (currentUser as any).user_metadata?.username || currentUser.email?.split('@')[0] || 'admin',
-            full_name: 'Sekretaris Utama AGP (Grand Master)',
-            role: (metaRole as any) || 'SUPER_ADMIN',
+            username: uname,
+            full_name: profData?.full_name || (currentUser as any).user_metadata?.full_name || defaultFullName,
+            role: effectiveRole,
           });
         }
       } catch (err) {
@@ -104,24 +134,42 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             .from('profiles')
             .select('username, full_name, role')
             .eq('id', session.user.id)
-            .single();
+            .maybeSingle();
 
           const metaRole = session.user.user_metadata?.role;
           const dbRole = data?.role;
+          const uname = (
+            data?.username ||
+            session.user.user_metadata?.username ||
+            session.user.email?.split('@')[0] ||
+            'operator'
+          ).toLowerCase();
+
           let effectiveRole: 'SUPER_ADMIN' | 'ADMIN' | 'OPERATOR_REKAP' = 'OPERATOR_REKAP';
-          
-          if (metaRole === 'SUPER_ADMIN' || metaRole === 'ADMIN' || metaRole === 'OPERATOR_REKAP') {
-            effectiveRole = metaRole as any;
-          } else if (dbRole === 'GRAND_MASTER' || session.user.email?.includes('grandmaster') || data?.username === 'grandmaster') {
+
+          if (
+            uname === 'superadmin' ||
+            uname === 'grandmaster' ||
+            dbRole === 'GRAND_MASTER' ||
+            metaRole === 'SUPER_ADMIN' ||
+            metaRole === 'GRAND_MASTER'
+          ) {
             effectiveRole = 'SUPER_ADMIN';
-          } else if (data?.username?.includes('admin')) {
+          } else if (uname === 'admin' || uname.includes('admin') || metaRole === 'ADMIN') {
             effectiveRole = 'ADMIN';
           }
 
+          const defaultFullName =
+            effectiveRole === 'SUPER_ADMIN'
+              ? 'Sekretaris Utama AGP (Super Admin)'
+              : effectiveRole === 'ADMIN'
+                ? 'Pengelola Master Data (Admin)'
+                : 'Operator Entri Nilai (PJ Rekap)';
+
           setProfile({
-            username: data?.username || session.user.email?.split('@')[0],
-            full_name: data?.full_name || (effectiveRole === 'SUPER_ADMIN' ? 'Sekretaris Utama AGP (Grand Master)' : 'Operator Lapangan'),
-            role: effectiveRole as any,
+            username: uname,
+            full_name: data?.full_name || session.user.user_metadata?.full_name || defaultFullName,
+            role: effectiveRole,
           });
         } else {
           setProfile(null);
@@ -136,7 +184,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Realtime Supabase Channel Notifications
   useEffect(() => {
     const channel = supabase
       .channel('realtime-app-notifications')
@@ -148,7 +195,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           if (newStatus === 'NOW PERFORMING') {
             const newItem: NotificationItem = {
               id: String(Date.now()),
-              title: '📢 Urutan Tampil Realtime',
+              title: 'Urutan Tampil Realtime',
               message: `Tim peserta baru saja dipanggil dan tampil di Arena Lapangan Utama!`,
               time: 'Baru saja',
               unread: true,
@@ -161,11 +208,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'scores' },
         () => {
-          // Only show score submission notification to internal Panitia/Admin users
           if (user) {
             const newItem: NotificationItem = {
               id: String(Date.now()),
-              title: '💾 Nilai Juri Masuk (Internal)',
+              title: 'Nilai Juri Masuk (Internal)',
               message: `Rekap nilai baru dari Juri telah terisi ke sistem rekapitulasi rahasia.`,
               time: 'Baru saja',
               unread: true,
@@ -180,7 +226,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         () => {
           const newItem: NotificationItem = {
             id: String(Date.now()),
-            title: '🏕️ Update Ruang Transit',
+            title: 'Update Ruang Transit',
             message: `Alokasi barak peserta diperbarui oleh Panitia Logistik.`,
             time: 'Baru saja',
             unread: true,
@@ -193,9 +239,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [user]);
 
-  // Notifications click-outside listener
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
@@ -234,9 +279,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       else if (seg === 'users') label = 'KELOLA PANITIA';
       else if (seg === 'schedule-manage') label = 'KELOLA JADWAL';
       else if (seg === 'barack-manage') label = 'KELOLA BARAK';
-      else if (seg === 'live-score') label = 'HASIL & SK JUARA';
-      else if (seg === 'schedule') label = 'URUTAN TAMPIL';
-      else if (seg === 'barack') label = 'TRANSIT BARAK';
+      else if (seg === 'live-score') label = 'PENGUMUMAN JUARA & SK';
+      else if (seg === 'schedule') label = 'WAKTU & URUTAN TAMPIL';
+      else if (seg === 'barack') label = 'LOKASI BARAK';
       return { label, href };
     });
   };
@@ -244,46 +289,47 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const breadcrumbs = getBreadcrumbs();
 
   const publicLinks = [
-    { label: 'Hasil & SK Juara', href: '/live-score', icon: <Trophy className="w-5 h-5" /> },
-    { label: 'Urutan Tampil', href: '/schedule', icon: <Clock className="w-5 h-5" /> },
-    { label: 'Transit Barak', href: '/barack', icon: <Tent className="w-5 h-5" /> },
+    { label: 'Landing Page', href: '/', icon: <Home className="w-4 h-4" /> },
+    { label: 'Waktu Tampil', href: '/schedule', icon: <Clock className="w-4 h-4" /> },
+    { label: 'Lokasi Barak', href: '/barack', icon: <Tent className="w-4 h-4" /> },
+    { label: 'Pengumuman Juara', href: '/live-score', icon: <Trophy className="w-4 h-4" /> },
   ];
 
   const superAdminLinks = [
-    { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard className="w-5 h-5" /> },
-    { label: 'User Management', href: '/admin/users', icon: <Users className="w-5 h-5" /> },
-    { label: 'Role Management', href: '/admin/roles', icon: <KeyRound className="w-5 h-5" /> },
-    { label: 'Peserta', href: '/admin/participants', icon: <UserCheck className="w-5 h-5" /> },
-    { label: 'Barack', href: '/admin/barack-manage', icon: <Tent className="w-5 h-5" /> },
-    { label: 'Jadwal', href: '/admin/schedule-manage', icon: <Clock className="w-5 h-5" /> },
-    { label: 'Kategori Penilaian', href: '/admin/categories', icon: <ClipboardList className="w-5 h-5" /> },
-    { label: 'Input Nilai', href: '/admin/score-entry', icon: <Zap className="w-5 h-5" /> },
-    { label: 'Rekap Nilai', href: '/admin/leaderboard', icon: <Trophy className="w-5 h-5" /> },
-    { label: 'Leaderboard', href: '/live-score', icon: <FileText className="w-5 h-5" /> },
-    { label: 'Audit Log', href: '/admin/audit-logs', icon: <ShieldAlert className="w-5 h-5" /> },
-    { label: 'Backup Database', href: '/admin/backup', icon: <Database className="w-5 h-5" /> },
-    { label: 'Restore Database', href: '/admin/restore', icon: <RefreshCw className="w-5 h-5" /> },
-    { label: 'Pengaturan Sistem', href: '/admin/settings', icon: <Settings className="w-5 h-5" /> },
+    { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard className="w-4 h-4" /> },
+    { label: 'Input Nilai Juri', href: '/admin/score-entry', icon: <Zap className="w-4 h-4" /> },
+    { label: 'Rekap & SK Juara', href: '/admin/leaderboard', icon: <Trophy className="w-4 h-4" /> },
+    { label: 'Kelola Jadwal', href: '/admin/schedule-manage', icon: <Clock className="w-4 h-4" /> },
+    { label: 'Kelola Barak', href: '/admin/barack-manage', icon: <Tent className="w-4 h-4" /> },
+    { label: 'Data Peserta', href: '/admin/participants', icon: <UserCheck className="w-4 h-4" /> },
+    { label: 'Kategori Penilaian', href: '/admin/categories', icon: <ClipboardList className="w-4 h-4" /> },
+    { label: 'User Management', href: '/admin/users', icon: <Users className="w-4 h-4" /> },
+    { label: 'Role Management', href: '/admin/roles', icon: <KeyRound className="w-4 h-4" /> },
+    { label: 'Audit Log', href: '/admin/audit-logs', icon: <ShieldAlert className="w-4 h-4" /> },
+    { label: 'Backup Database', href: '/admin/backup', icon: <Database className="w-4 h-4" /> },
+    { label: 'Restore Database', href: '/admin/restore', icon: <RefreshCw className="w-4 h-4" /> },
+    { label: 'Pengaturan Sistem', href: '/admin/settings', icon: <Settings className="w-4 h-4" /> },
+    { label: 'Pratinjau Publik', href: '/live-score', icon: <FileText className="w-4 h-4" /> },
   ];
 
   const adminLinks = [
-    { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard className="w-5 h-5" /> },
-    { label: 'Peserta', href: '/admin/participants', icon: <UserCheck className="w-5 h-5" /> },
-    { label: 'Barack', href: '/admin/barack-manage', icon: <Tent className="w-5 h-5" /> },
-    { label: 'Jadwal', href: '/admin/schedule-manage', icon: <Clock className="w-5 h-5" /> },
-    { label: 'Kategori Penilaian', href: '/admin/categories', icon: <ClipboardList className="w-5 h-5" /> },
-    { label: 'Input Nilai', href: '/admin/score-entry', icon: <Zap className="w-5 h-5" /> },
-    { label: 'Rekap Nilai', href: '/admin/leaderboard', icon: <Trophy className="w-5 h-5" /> },
-    { label: 'Leaderboard', href: '/live-score', icon: <FileText className="w-5 h-5" /> },
-    { label: 'Operator Rekap Management', href: '/admin/operators', icon: <Users className="w-5 h-5" /> },
+    { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard className="w-4 h-4" /> },
+    { label: 'Kelola Jadwal', href: '/admin/schedule-manage', icon: <Clock className="w-4 h-4" /> },
+    { label: 'Kelola Barak', href: '/admin/barack-manage', icon: <Tent className="w-4 h-4" /> },
+    { label: 'Data Peserta', href: '/admin/participants', icon: <UserCheck className="w-4 h-4" /> },
+    { label: 'Kategori Penilaian', href: '/admin/categories', icon: <ClipboardList className="w-4 h-4" /> },
+    { label: 'Input Nilai Juri', href: '/admin/score-entry', icon: <Zap className="w-4 h-4" /> },
+    { label: 'Rekap & SK Juara', href: '/admin/leaderboard', icon: <Trophy className="w-4 h-4" /> },
+    { label: 'Operator Rekap', href: '/admin/operators', icon: <Users className="w-4 h-4" /> },
+    { label: 'Pratinjau Publik', href: '/live-score', icon: <FileText className="w-4 h-4" /> },
   ];
 
   const operatorRekapLinks = [
-    { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard className="w-5 h-5" /> },
-    { label: 'Input Nilai', href: '/admin/score-entry', icon: <Zap className="w-5 h-5" /> },
-    { label: 'Rekap Nilai', href: '/admin/leaderboard', icon: <Trophy className="w-5 h-5" /> },
-    { label: 'Leaderboard', href: '/live-score', icon: <FileText className="w-5 h-5" /> },
-    { label: 'Profile', href: '/admin/profile', icon: <User className="w-5 h-5" /> },
+    { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard className="w-4 h-4" /> },
+    { label: 'Input Nilai Juri', href: '/admin/score-entry', icon: <Zap className="w-4 h-4" /> },
+    { label: 'Rekap & SK Juara', href: '/admin/leaderboard', icon: <Trophy className="w-4 h-4" /> },
+    { label: 'Pratinjau Publik', href: '/live-score', icon: <FileText className="w-4 h-4" /> },
+    { label: 'Profile', href: '/admin/profile', icon: <User className="w-4 h-4" /> },
   ];
 
   const getRole = () => {
@@ -319,37 +365,252 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     },
   ];
 
-  const unreadCount = notifications.filter(n => n.unread).length;
+  const unreadCount = notifications.filter((n) => n.unread).length;
 
   const markAllNotificationsAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, unread: false })));
+    setNotifications(notifications.map((n) => ({ ...n, unread: false })));
   };
 
+  // ============================================================================
+  // PUBLIC WEB SHELL (Non-Admin Routes: /schedule, /barack, /live-score)
+  // Awwwards-Style Glassmorphic Pill Navigation Bar (#0C342C, #076653, #E3EF26)
+  // ============================================================================
+  if (!isAdminRoute) {
+    const arenaTabs = [
+      { label: 'WAKTU TAMPIL', href: '/schedule', icon: <Clock className="w-3.5 h-3.5" /> },
+      { label: 'LOKASI BARAK', href: '/barack', icon: <Tent className="w-3.5 h-3.5" /> },
+      { label: 'PENGUMUMAN JUARA', href: '/live-score', icon: <Trophy className="w-3.5 h-3.5" /> },
+    ];
+
+    return (
+      <div className="min-h-screen flex flex-col bg-[#07201B] text-[#F4F9F7] font-inter selection:bg-[#E3EF26] selection:text-[#0C342C] relative overflow-x-hidden">
+        <a href="#main-content" className="skip-to-content">
+          Lewati ke konten utama
+        </a>
+
+        {/* Subtle Ambient Studio Lighting & Fine Grid */}
+        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+          <div
+            className="absolute -top-44 left-1/2 -translate-x-1/2 w-[1000px] h-[480px] rounded-full opacity-30 blur-[140px]"
+            style={{
+              background:
+                'radial-gradient(circle, rgba(7,102,83,0.65) 0%, rgba(227,239,38,0.12) 50%, transparent 75%)',
+            }}
+          />
+          <div
+            className="absolute inset-0 opacity-[0.03]"
+            style={{
+              backgroundImage:
+                'linear-gradient(to right, #E3EF26 1px, transparent 1px), linear-gradient(to bottom, #E3EF26 1px, transparent 1px)',
+              backgroundSize: '72px 72px',
+            }}
+          />
+        </div>
+
+        {/* Minimalist Awwwards Top Navigation Bar */}
+        <header className="sticky top-0 z-50 px-4 sm:px-8 pt-4 pb-2">
+          <div className="max-w-[1360px] mx-auto flex items-center justify-between gap-3">
+            {/* Left: Brand Pill with Crisp Kirani Logo */}
+            <Link
+              href="/"
+              className="group inline-flex items-center gap-3 pl-2.5 pr-4 py-1.5 rounded-full bg-[#092922]/90 border border-[#076653]/65 backdrop-blur-xl hover:border-[#E3EF26]/65 transition-all duration-300 shrink-0 shadow-[0_10px_28px_rgba(0,0,0,0.4)]"
+            >
+              <img
+                src="/kirani.svg"
+                alt="Logo Kirani AGP"
+                className="w-9 h-9 sm:w-10 sm:h-10 object-contain shrink-0 drop-shadow-[0_2px_8px_rgba(227,239,38,0.28)] group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="flex flex-col leading-none">
+                <span className="text-xs sm:text-[13px] font-black tracking-[0.14em] uppercase text-white">
+                  KIRANI<span className="text-[#E3EF26]">.ARENA</span>
+                </span>
+                <span className="text-[9px] font-mono tracking-[0.15em] text-[#E3EF26] mt-0.5 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#E3EF26] animate-pulse" />
+                  PORTAL ARENA
+                </span>
+              </div>
+            </Link>
+
+            {/* Center: Segmented Pill Switcher with Framer Motion layoutId */}
+            <nav
+              className="hidden md:flex items-center gap-1 p-1.5 rounded-full bg-[#092922]/90 border border-[#076653]/65 backdrop-blur-2xl shadow-[0_16px_36px_rgba(0,0,0,0.45)]"
+              aria-label="Navigasi Arena Publik"
+            >
+              {arenaTabs.map((link) => {
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`relative px-4 py-1.5 rounded-full text-[11px] font-bold tracking-[0.12em] uppercase transition-colors duration-300 flex items-center gap-2 ${
+                      isActive ? 'text-[#0C342C]' : 'text-[#A9C6BE] hover:text-white'
+                    }`}
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId="arena-nav-pill"
+                        transition={{ type: 'spring', stiffness: 360, damping: 32 }}
+                        className="absolute inset-0 rounded-full bg-[#E3EF26] shadow-[0_0_20px_rgba(227,239,38,0.4)]"
+                      />
+                    )}
+                    <span className="relative z-10 flex items-center gap-1.5">
+                      {link.icon}
+                      <span>{link.label}</span>
+                    </span>
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* Right: Live Clock + Juklak Download + Back to Landing Page (or Admin if committee logged in) */}
+            <div className="flex items-center gap-2.5">
+              <LiveClock className="hidden lg:inline-flex" />
+              <a
+                href="/Juklak_AGP_III_SMKN1_Soreang.pdf"
+                download="Surat_Edaran_dan_JUKLAK_AGP_Vol_III_SMKN1_Soreang.pdf"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#092922]/90 border border-[#E3EF26]/45 text-xs font-semibold text-[#E3EF26] hover:bg-[#E3EF26] hover:text-[#0C342C] backdrop-blur-xl transition-all"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Unduh Juklak</span>
+              </a>
+              {user ? (
+                <Link
+                  href="/admin"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#E3EF26] text-[#0C342C] text-xs font-extrabold tracking-wide shadow-[0_10px_24px_rgba(227,239,38,0.25)] hover:bg-[#eef842] transition-all"
+                >
+                  <LayoutDashboard className="w-3.5 h-3.5" />
+                  <span>Dashboard Panitia</span>
+                </Link>
+              ) : (
+                <Link
+                  href="/"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#092922]/90 border border-[#076653]/70 text-xs font-semibold text-[#D7EAE3] hover:border-[#E3EF26] hover:text-[#E3EF26] backdrop-blur-xl transition-all"
+                >
+                  <Home className="w-3.5 h-3.5 text-[#E3EF26]" />
+                  <span>Beranda Event</span>
+                </Link>
+              )}
+            </div>
+          </div>
+
+          {/* Mobile Segmented Sub-navigation Bar */}
+          <div className="md:hidden max-w-[1360px] mx-auto mt-2.5 p-1 rounded-full bg-[#092922]/95 border border-[#076653]/65 backdrop-blur-xl flex items-center justify-between gap-1 overflow-x-auto">
+            {arenaTabs.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase whitespace-nowrap transition-all ${
+                    isActive
+                      ? 'bg-[#E3EF26] text-[#0C342C] shadow-[0_0_16px_rgba(227,239,38,0.3)]'
+                      : 'text-[#A9C6BE] hover:text-white'
+                  }`}
+                >
+                  {link.icon}
+                  <span>{link.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </header>
+
+        {/* Main Public Content */}
+        <main
+          id="main-content"
+          className="relative z-10 flex-1 w-full max-w-[1360px] mx-auto px-4 py-6 sm:px-8 sm:py-10"
+        >
+          {user && (
+            <div className="mb-6 p-4 rounded-2xl bg-[#092922]/90 border border-[#E3EF26]/45 backdrop-blur-xl text-[#ffffff] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_16px_40px_rgba(0,0,0,0.4)]">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-[#0C342C] border border-[#E3EF26]/50 flex items-center justify-center text-[#E3EF26] shrink-0">
+                  <Crown className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-[11px] font-mono font-semibold uppercase tracking-wider text-[#E3EF26]">
+                    Sesi Panitia Aktif ({profile?.role || 'OPERATOR'})
+                  </h4>
+                  <p className="text-xs text-[#D7EAE3]">
+                    Anda sedang memantau Portal Live Arena Publik. Klik tombol di kanan untuk kembali ke ruang Rekapitulasi Panitia.
+                  </p>
+                </div>
+              </div>
+              <Link href="/admin">
+                <Button variant="primary" size="sm" className="shrink-0 gap-1.5">
+                  <ArrowLeft className="w-3.5 h-3.5" /> Kembali ke Portal Panitia
+                </Button>
+              </Link>
+            </div>
+          )}
+
+          {children}
+        </main>
+
+        {/* Footer Meta Strip */}
+        <footer className="relative z-10 border-t border-[#076653]/40 bg-[#061A15]/80 py-6 px-4 text-center">
+          <div className="max-w-[1360px] mx-auto flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono uppercase tracking-[0.14em] text-[#7FA69A]">
+            <span className="text-[#B8D8D0]">AGP-III • SMKN 1 SOREANG LIVE ARENA PORTAL (04.105–04.106)</span>
+            <div className="flex items-center gap-4">
+              <Link href="/" className="hover:text-[#E3EF26] transition-colors">
+                BERANDA EVENT
+              </Link>
+              <span>•</span>
+              <a
+                href="/Juklak_AGP_III_SMKN1_Soreang.pdf"
+                download="Surat_Edaran_dan_JUKLAK_AGP_Vol_III_SMKN1_Soreang.pdf"
+                className="text-[#E3EF26] hover:underline"
+              >
+                UNDUH JUKLAK PDF
+              </a>
+              <span>•</span>
+              <Link href="/schedule" className="hover:text-[#E3EF26] transition-colors">
+                WAKTU TAMPIL
+              </Link>
+              <span>•</span>
+              <Link href="/barack" className="hover:text-[#E3EF26] transition-colors">
+                LOKASI BARAK
+              </Link>
+              <span>•</span>
+              <Link href="/live-score" className="hover:text-[#E3EF26] transition-colors">
+                PENGUMUMAN JUARA
+              </Link>
+            </div>
+          </div>
+        </footer>
+      </div>
+    );
+  }
+
+  // ============================================================================
+  // COMMITTEE ADMIN SHELL (/admin/*) — Midnight Command Center Cockpit
+  // ============================================================================
   const renderNavLinks = (isMobile: boolean = false) => {
     return (
-      <nav className="flex flex-col gap-1.5 px-3 py-4">
-        <div className={`px-3 mb-2 text-[10px] font-bold text-slate-500 tracking-wider uppercase ${isSidebarCollapsed && !isMobile ? 'text-center' : ''}`}>
-          {isSidebarCollapsed && !isMobile ? 'Menu' : 'Navigasi'}
+      <nav className="flex flex-col gap-1 px-3 py-4" aria-label="Menu Navigasi Panitia">
+        <div
+          className={`px-3 mb-2 text-[10px] font-mono font-medium text-[#7AA89C] tracking-[0.08em] uppercase ${
+            isSidebarCollapsed && !isMobile ? 'text-center' : ''
+          }`}
+        >
+          {isSidebarCollapsed && !isMobile ? 'CMD' : 'Command Center'}
         </div>
         {currentLinks.map((link) => {
-          const isActive = pathname === link.href || (link.href === '/live-score' && pathname === '/');
-          
-          let colorClass = 'text-gray-600 hover:text-gray-900 hover:bg-gray-100';
-          if (isActive) {
-            colorClass = 'bg-green-50 text-green-700 border border-green-200/50 shadow-sm font-bold';
-            if (effectiveRole === 'SUPER_ADMIN') {
-              colorClass = 'bg-amber-50 text-amber-700 border border-amber-200/50 shadow-sm font-bold';
-            }
-          }
+          const isActive = pathname === link.href;
 
           return (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => isMobile && setIsDrawerOpen(false)}
-              className={`flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${colorClass}`}
+              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-[8px] text-[13px] font-medium transition-all duration-150 ${
+                isActive
+                  ? 'bg-[#076653] text-[#ffffff] border border-[#076653] shadow-[rgba(255,255,255,0.06)_0px_1px_0px_0px_inset]'
+                  : 'text-[#B8D8D0] hover:text-[#ffffff] hover:bg-[#061C18] border border-transparent'
+              }`}
             >
-              <span className="shrink-0 flex items-center justify-center">{link.icon}</span>
+              <span className={`shrink-0 flex items-center justify-center ${isActive ? 'text-[#E3EF26]' : 'text-[#7AA89C]'}`}>
+                {link.icon}
+              </span>
               {(!isSidebarCollapsed || isMobile) && <span className="truncate">{link.label}</span>}
             </Link>
           );
@@ -359,67 +620,72 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-50 text-gray-900 font-sans">
+    <div className="min-h-screen flex bg-[#0C342C] text-[#ffffff] font-inter">
       <a href="#main-content" className="skip-to-content">
         Lewati ke konten utama
       </a>
-      
+
       {/* 1. DESKTOP SIDEBAR */}
       <motion.aside
-        animate={{ width: isSidebarCollapsed ? 80 : 256 }}
+        animate={{ width: isSidebarCollapsed ? 76 : 252 }}
         transition={{ duration: shouldReduceMotion ? 0 : 0.2, ease: 'easeOut' }}
-        className="hidden md:flex flex-col flex-shrink-0 sticky top-0 h-screen overflow-hidden bg-white border-r border-gray-200 shadow-[2px_0_8px_rgba(0,0,0,0.02)] z-30"
+        className="hidden md:flex flex-col flex-shrink-0 sticky top-0 h-screen overflow-hidden bg-[#082620] border-r border-[#076653] z-30"
       >
-        {/* Brand Header */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100 shrink-0">
+        {/* Brand Header with Crisp Kirani Logo */}
+        <div className="h-16 flex items-center justify-between px-4 border-b border-[#076653] shrink-0">
           {!isSidebarCollapsed ? (
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="w-9 h-9 rounded-xl bg-green-50 border border-green-100 flex items-center justify-center text-green-600 group-hover:bg-green-100 transition-all duration-300">
-                <img src="/kirani.svg" alt="Kirani" className="w-7 h-7 object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display='none'; (e.target as HTMLImageElement).parentElement!.innerText='K'; }} />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xs font-black tracking-wider uppercase text-gray-900 leading-none">
-                  KIRANI AGP
+            <Link href="/admin" className="flex items-center gap-3 group min-w-0">
+              <img
+                src="/kirani.svg"
+                alt="Logo Kirani AGP"
+                className="w-9 h-9 object-contain shrink-0 drop-shadow-[0_2px_8px_rgba(227,239,38,0.25)] group-hover:scale-105 transition-transform"
+              />
+              <div className="flex flex-col min-w-0">
+                <span className="text-[13px] font-black tracking-wider text-[#ffffff] leading-none truncate">
+                  KIRANI<span className="text-[#E3EF26]">.AGP</span>
                 </span>
-                <span className="text-[9px] text-green-600 font-bold leading-none mt-1">
-                  COMPETITION 2026
+                <span className="text-[9px] font-mono text-[#B8D8D0] leading-none mt-1 truncate">
+                  REKAPITULASI PANITIA
                 </span>
               </div>
             </Link>
           ) : (
-            <div className="mx-auto w-9 h-9 rounded-xl bg-green-50 border border-green-100 flex items-center justify-center text-green-600 font-black text-sm">
-              <img src="/kirani.svg" alt="Kirani" className="w-6 h-6 object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display='none'; (e.target as HTMLImageElement).parentElement!.innerText='K'; }} />
-            </div>
+            <Link href="/admin" className="mx-auto flex items-center justify-center">
+              <img
+                src="/kirani.svg"
+                alt="Logo Kirani AGP"
+                className="w-9 h-9 object-contain shrink-0"
+              />
+            </Link>
           )}
 
           <button
             onClick={toggleSidebar}
-            className="p-1.5 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors cursor-pointer"
-            title={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            className="p-1.5 rounded-[8px] border border-[#076653] bg-[#061C18] hover:bg-[#076653] text-[#B8D8D0] hover:text-[#ffffff] transition-colors cursor-pointer"
+            title={isSidebarCollapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'}
+            aria-label={isSidebarCollapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'}
           >
             {isSidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           </button>
         </div>
 
         {/* Navigation Area */}
-        <div className="flex-1 overflow-y-auto">
-          {renderNavLinks(false)}
-        </div>
+        <div className="flex-1 overflow-y-auto">{renderNavLinks(false)}</div>
 
         {/* Footer Area with Server Status */}
-        <div className={`p-4 border-t border-gray-100 flex flex-col gap-2 ${isSidebarCollapsed ? 'items-center' : ''}`}>
+        <div className={`p-4 border-t border-[#076653] flex flex-col gap-2 ${isSidebarCollapsed ? 'items-center' : ''}`}>
           {!isSidebarCollapsed ? (
             <>
-              <div className="flex items-center gap-2 px-3 py-2 bg-green-50 rounded-xl border border-green-100">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-ping" />
-                <span className="text-[10px] text-green-700 font-bold">SERVER ONLINE</span>
+              <div className="flex items-center gap-2 px-3 py-2 bg-[#061C18] rounded-[8px] border border-[#076653]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E3EF26] animate-pulse" />
+                <span className="text-[10px] font-mono text-[#E3EF26] font-medium">LAN / CLOUD ONLINE</span>
               </div>
-              <div className="text-[10px] text-gray-400 text-center font-medium mt-1">
-                v1.2.0 — Kirani AGP 2026
+              <div className="text-[11px] font-mono text-[#7AA89C] text-center mt-0.5">
+                v1.2.0 | AGP 2026
               </div>
             </>
           ) : (
-            <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" title="Server Online" />
+            <span className="w-2 h-2 rounded-full bg-[#E3EF26] animate-pulse" title="Server Online" />
           )}
         </div>
       </motion.aside>
@@ -427,33 +693,29 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* 2. MOBILE DRAWER OVERLAY */}
       {isDrawerOpen && (
         <div className="fixed inset-0 z-50 md:hidden flex animate-in fade-in duration-200">
-          {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm"
+            className="fixed inset-0 bg-[#0C342C]/80 backdrop-blur-sm"
             onClick={() => setIsDrawerOpen(false)}
           />
-          {/* Drawer Body */}
-          <div className="relative w-72 h-full flex flex-col z-10 bg-white shadow-2xl animate-in slide-in-from-left duration-250">
-            <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100 shrink-0">
-              <span className="text-sm font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
-                <Menu className="w-5 h-5 text-gray-600" /> MENU KIRANI
+          <div className="relative w-72 h-full flex flex-col z-10 bg-[#082620] border-r border-[#076653] shadow-2xl animate-in slide-in-from-left duration-250">
+            <div className="h-16 flex items-center justify-between px-4 border-b border-[#076653] shrink-0">
+              <span className="text-xs font-mono font-semibold text-[#ffffff] uppercase tracking-widest flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rotate-45 bg-[#E3EF26] inline-block" /> AGP COMMAND
               </span>
               <button
                 type="button"
                 onClick={() => setIsDrawerOpen(false)}
-                className="text-gray-500 hover:text-gray-900 hover:bg-gray-100 p-2 rounded-lg border border-gray-200 cursor-pointer text-base font-bold"
+                className="text-[#B8D8D0] hover:text-[#ffffff] hover:bg-[#076653] p-2 rounded-[8px] border border-[#076653] cursor-pointer"
                 aria-label="Tutup Menu"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto">
-              {renderNavLinks(true)}
-            </div>
-            <div className="p-4 border-t border-gray-100 shrink-0">
-              <div className="flex items-center gap-2 px-3 py-2 bg-green-50 rounded-xl border border-green-100">
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-ping" />
-                <span className="text-[10px] text-green-700 font-bold">SERVER ONLINE</span>
+            <div className="flex-1 overflow-y-auto">{renderNavLinks(true)}</div>
+            <div className="p-4 border-t border-[#076653] shrink-0">
+              <div className="flex items-center gap-2 px-3 py-2 bg-[#061C18] rounded-[8px] border border-[#076653]">
+                <span className="w-2 h-2 rounded-full bg-[#E3EF26] animate-pulse" />
+                <span className="text-[10px] font-mono text-[#E3EF26]">SERVER ONLINE</span>
               </div>
             </div>
           </div>
@@ -462,28 +724,28 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
       {/* 3. MAIN WORKSPACE */}
       <div className="flex-1 flex flex-col min-w-0">
-        
         {/* TOPBAR */}
-        <header className="h-16 bg-white/90 backdrop-blur-md border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 sticky top-0 z-40">
-          
-          {/* Drawer Hamburger & Breadcrumbs */}
+        <header className="h-16 bg-[#082620]/85 backdrop-blur-xl border-b border-[#076653] flex items-center justify-between px-4 sm:px-6 sticky top-0 z-40">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="md:hidden p-2 rounded-lg border border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 cursor-pointer"
-              aria-label="Open navigation drawer"
+              className="md:hidden p-2 rounded-[8px] border border-[#076653] bg-[#061C18] text-[#ffffff] hover:bg-[#076653] cursor-pointer"
+              aria-label="Buka navigasi menu"
             >
               <Menu className="w-5 h-5" />
             </button>
-            
-            {/* Breadcrumb list */}
-            <nav className="hidden sm:flex items-center gap-2 text-xs font-semibold text-green-600/70">
-              <span className="hover:text-green-800 transition-colors">PORTAL</span>
+
+            <nav className="hidden sm:flex items-center gap-2 text-[11px] font-mono text-[#7AA89C]" aria-label="Breadcrumb">
+              <span className="text-[#B8D8D0]">CMD</span>
               {breadcrumbs.map((bc, idx) => (
                 <React.Fragment key={bc.href}>
-                  <span className="text-green-300">/</span>
+                  <span className="text-[#076653]">/</span>
                   <span
-                    className={idx === breadcrumbs.length - 1 ? 'text-green-900 font-black' : 'hover:text-green-800 transition-colors'}
+                    className={
+                      idx === breadcrumbs.length - 1
+                        ? 'text-[#ffffff] font-semibold'
+                        : 'text-[#B8D8D0]'
+                    }
                   >
                     {bc.label}
                   </span>
@@ -492,23 +754,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </nav>
           </div>
 
-          {/* Search Box & Utilities */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Realtime Live Digital Clock */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <LiveClock className="inline-flex scale-90 sm:scale-100 transform origin-right" />
-            
-            {/* Global Search Bar */}
-            <div className="hidden lg:block w-64">
+
+            <div className="hidden lg:block w-60">
               <Input
-                placeholder="Cari tim, no dada..."
+                placeholder="Cari regu, pangkalan..."
                 value={globalSearch}
                 onChange={(e) => setGlobalSearch(e.target.value)}
                 className="py-1.5 text-xs"
-                icon={
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                }
+                icon={<Search className="w-3.5 h-3.5" />}
               />
             </div>
 
@@ -519,12 +774,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   setIsNotificationsOpen(!isNotificationsOpen);
                   if (!isNotificationsOpen) markAllNotificationsAsRead();
                 }}
-                className="p-2.5 rounded-xl border border-green-200 bg-green-50 hover:bg-green-100 text-green-700 hover:text-green-900 transition-colors relative cursor-pointer"
-                aria-label="Notification center"
+                className="p-2 rounded-[8px] border border-[#076653] bg-[#061C18] hover:bg-[#076653] text-[#B8D8D0] hover:text-[#ffffff] transition-colors relative cursor-pointer"
+                aria-label="Pusat notifikasi"
               >
-                <Bell className="w-5 h-5" />
+                <Bell className="w-4 h-4" />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white font-black text-[9px] flex items-center justify-center border-2 border-white animate-bounce">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#E3EF26] text-[#0C342C] font-mono font-bold text-[9px] flex items-center justify-center">
                     {unreadCount}
                   </span>
                 )}
@@ -537,31 +792,31 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 5, scale: 0.95 }}
                     transition={{ duration: 0.18, ease: 'easeOut' }}
-                    className="absolute right-0 mt-2 w-80 rounded-xl border border-green-100 bg-white shadow-xl shadow-green-900/10 z-50 overflow-hidden"
+                    className="absolute right-0 mt-2 w-80 rounded-[12px] bg-[#082620] key-card z-50 overflow-hidden"
                   >
-                    <div className="px-4 py-3 border-b border-green-100 flex justify-between items-center bg-green-50/60">
-                      <span className="text-xs font-black uppercase text-green-900">Notifikasi Terbaru</span>
-                      <Badge variant="danger" className="text-[9px]">Live</Badge>
+                    <div className="px-4 py-3 border-b border-[#076653] flex justify-between items-center bg-[#061C18]">
+                      <span className="text-[11px] font-mono font-semibold uppercase text-[#ffffff]">
+                        Notifikasi Arena
+                      </span>
+                      <Badge variant="danger">LIVE</Badge>
                     </div>
-                    <div className="max-h-64 overflow-y-auto divide-y divide-green-50">
+                    <div className="max-h-64 overflow-y-auto divide-y divide-[#076653]">
                       {notifications.map((notif) => (
                         <div
                           key={notif.id}
                           className={`p-3.5 flex flex-col gap-1 transition-colors ${
-                            notif.unread ? 'bg-green-50/60' : 'hover:bg-green-50/30'
+                            notif.unread ? 'bg-[#061C18]' : 'hover:bg-[#061C18]/60'
                           }`}
                         >
                           <div className="flex justify-between items-start gap-2">
-                            <span className="text-xs font-bold text-green-900 leading-tight">
+                            <span className="text-xs font-semibold text-[#ffffff] leading-tight">
                               {notif.title}
                             </span>
-                            <span className="text-[9px] text-green-600/60 whitespace-nowrap">
+                            <span className="text-[10px] font-mono text-[#7AA89C] whitespace-nowrap">
                               {notif.time}
                             </span>
                           </div>
-                          <p className="text-[11px] text-green-700/70 leading-relaxed">
-                            {notif.message}
-                          </p>
+                          <p className="text-xs text-[#B8D8D0] leading-relaxed">{notif.message}</p>
                         </div>
                       ))}
                     </div>
@@ -572,35 +827,26 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
             {/* Profile Dropdown */}
             {user ? (
-              <div className="flex items-center gap-3">
-                {!isAdminRoute && (
-                  <Link href="/admin">
-                    <Button variant="primary" size="sm" className="text-xs font-black hidden sm:flex items-center gap-1 shadow-sm">
-                      <LayoutDashboard className="w-3.5 h-3.5" /> Portal Admin
-                    </Button>
-                  </Link>
-                )}
-                <Dropdown
-                  align="right"
-                  trigger={
-                    <div className="flex items-center gap-2 cursor-pointer group">
-                      <Avatar name={profile?.full_name || profile?.username || user.email} size="sm" />
-                      <div className="hidden sm:flex flex-col items-start leading-none">
-                        <span className="text-xs font-extrabold text-green-900 group-hover:text-green-700 transition-colors">
-                          {profile?.username || user.email?.split('@')[0]}
-                        </span>
-                        <span className="text-[9px] font-bold text-green-600/70 uppercase tracking-wide mt-0.5">
-                          {profile?.role || 'OPERATOR'}
-                        </span>
-                      </div>
+              <Dropdown
+                align="right"
+                trigger={
+                  <div className="flex items-center gap-2 cursor-pointer group pl-1">
+                    <Avatar name={profile?.full_name || profile?.username || user.email} size="sm" />
+                    <div className="hidden sm:flex flex-col items-start leading-none">
+                      <span className="text-xs font-medium text-[#ffffff] group-hover:text-[#ffffff] transition-colors">
+                        {profile?.username || user.email?.split('@')[0]}
+                      </span>
+                      <span className="text-[10px] font-mono text-[#B8D8D0] uppercase mt-0.5">
+                        {profile?.role || 'OPERATOR'}
+                      </span>
                     </div>
-                  }
-                  items={profileDropdownItems}
-                />
-              </div>
+                  </div>
+                }
+                items={profileDropdownItems}
+              />
             ) : (
               <Link href="/login">
-                <Button variant="primary" size="sm" className="text-xs font-black flex items-center gap-1.5">
+                <Button variant="primary" size="sm" className="gap-1.5">
                   <Key className="w-3.5 h-3.5" /> Login Panitia
                 </Button>
               </Link>
@@ -608,32 +854,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        {/* MAIN WORKING AREA - Page transitions enabled */}
+        {/* MAIN WORKING AREA */}
         <main id="main-content" className="flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
-          {/* Admin Navigation Banner on Public Pages */}
-          {user && !isAdminRoute && (
-            <div className="max-w-7xl mx-auto mb-6 p-4 rounded-2xl bg-gradient-to-r from-green-800 to-green-700 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md border border-green-600">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center font-black text-sm shrink-0">
-                  <Crown className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-black uppercase tracking-wider text-green-100">
-                    Sesi Panitia Aktif ({profile?.role || 'OPERATOR'})
-                  </h4>
-                  <p className="text-xs font-medium text-white/90">
-                    Anda sedang membuka tampilan publik. Klik tombol di kanan untuk kembali ke Dashboard Control Admin.
-                  </p>
-                </div>
-              </div>
-              <Link href="/admin">
-                <Button variant="secondary" size="sm" className="font-black text-xs shrink-0 shadow-md flex items-center gap-1.5">
-                  <ArrowLeft className="w-4 h-4" /> Kembali ke Portal Admin
-                </Button>
-              </Link>
-            </div>
-          )}
-
           {children}
         </main>
       </div>

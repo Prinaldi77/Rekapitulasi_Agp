@@ -72,11 +72,11 @@ export function printSuratKeputusanPDF(competitionName: string, leaderboard: any
 
       const noPes = item.noTampil || item.participant_no || `F-0${rank}`;
       const namaBasis = item.schoolName || item.teamName || 'SMA AGP';
-      const pbbScore = item.juri1Score || 1600;
-      const favorScore = item.juri2Score || 550;
-      const dantonScore = item.juri3Score || 250;
-      const penalty = item.penalty || 0;
-      const totalScore = item.totalScore || (pbbScore + favorScore + dantonScore + penalty);
+      const pbbScore = item.juri1Score ?? 0;
+      const favorScore = item.juri2Score ?? 0;
+      const dantonScore = item.juri3Score ?? 0;
+      const penalty = item.penalty ?? 0;
+      const totalScore = item.totalScore ?? (pbbScore + favorScore + dantonScore + penalty);
 
       return `
         <tr>
@@ -101,13 +101,13 @@ export function printSuratKeputusanPDF(competitionName: string, leaderboard: any
   const topFavor = [...leaderboard].sort((a, b) => (b.juri2Score || 0) - (a.juri2Score || 0)).slice(0, 3);
   const topDanton = [...leaderboard].sort((a, b) => (b.juri3Score || 0) - (a.juri3Score || 0)).slice(0, 3);
 
-  const renderSubCategoryTable = (title: string, dataList: any[]) => {
+  const renderSubCategoryTable = (title: string, dataList: any[], scoreKey: 'juri1Score' | 'juri2Score' | 'juri3Score') => {
     const rows = dataList.map((item, idx) => `
       <tr>
         <td style="text-align: center; font-weight: bold;">${idx === 0 ? '1 + UMUM' : idx + 1}</td>
         <td style="text-align: center; font-family: monospace;">${item.noTampil || `F-0${idx + 1}`}</td>
         <td style="font-size: 8px; font-weight: bold; text-transform: uppercase;">${item.schoolName || item.teamName}</td>
-        <td style="text-align: right; font-weight: bold;">${item.totalScore || 1000}</td>
+        <td style="text-align: right; font-weight: bold;">${item[scoreKey] ?? 0}</td>
       </tr>
     `).join('');
 
@@ -186,10 +186,10 @@ export function printSuratKeputusanPDF(competitionName: string, leaderboard: any
     <body>
 
       <!-- YELLOW BANNER HEADER EXACTLY LIKE PDF PAGE 4 -->
-      <div className="banner-header">
+      <div class="banner-header">
         <h1>REKAPITULASI NILAI LKBB ${competitionName}</h1>
-        <h2>AKTIVITAS GERAKAN PRAMUKA III SE JAWA BARAT</h2>
-        <p>SMKN 1 SOREANG KAB. BANDUNG 2026</p>
+        <h2>LOMBA AKTIVITAS GERAKAN PRAMUKA KE-III (AGP-III) SE-JAWA BARAT OPEN</h2>
+        <p>AMBALAN KI HAJAR DEWANTARA &amp; R.A KARTINI (04.105–04.106) • SMK NEGERI 1 SOREANG KAB. BANDUNG</p>
       </div>
 
       <!-- MAIN RECAP TABLE -->
@@ -202,12 +202,12 @@ export function printSuratKeputusanPDF(competitionName: string, leaderboard: any
             <th colspan="3">KATEGORI NILAI</th>
             <th rowspan="2" style="width: 45px;">PENALTI</th>
             <th rowspan="2" style="width: 55px;">JUMLAH</th>
-            <th rowspan="2" style="width: 140px;">KETERANGAN</th>
+            <th rowspan="2" style="width: 140px;">KETERANGAN (106 TROPHY)</th>
           </tr>
           <tr>
-            <th class="sub-th" style="width: 55px;">PBB DASAR</th>
-            <th class="sub-th" style="width: 50px;">FAVOR</th>
-            <th class="sub-th" style="width: 50px;">DANTON</th>
+            <th class="sub-th" style="width: 55px;">PBB (70%)</th>
+            <th class="sub-th" style="width: 50px;">VAFOR (20%)</th>
+            <th class="sub-th" style="width: 50px;">DANTON (10%)</th>
           </tr>
         </thead>
         <tbody>
@@ -216,18 +216,19 @@ export function printSuratKeputusanPDF(competitionName: string, leaderboard: any
       </table>
 
       <!-- BOTTOM SECTION (3 SUB-TABLES + SIGNATURE) -->
-      <div className="bottom-grid">
-        <div className="bottom-left">
-          ${renderSubCategoryTable('KATEGORI PBB DASAR', topPbb)}
-          ${renderSubCategoryTable('KATEGORI FAVOR (VARIASI FORMASI)', topFavor)}
-          ${renderSubCategoryTable('KATEGORI DANTON TERBAIK', topDanton)}
+      <div class="bottom-grid">
+        <div class="bottom-left">
+          ${renderSubCategoryTable('KATEGORI PBB DASAR TERBAIK (70%)', topPbb, 'juri1Score')}
+          ${renderSubCategoryTable('KATEGORI VARIASI FORMASI TERBAIK (20%)', topFavor, 'juri2Score')}
+          ${renderSubCategoryTable('KATEGORI DANTON TERBAIK (10%)', topDanton, 'juri3Score')}
         </div>
 
-        <div className="bottom-right">
-          <p>Bandung, ${currentDate}</p>
-          <p><strong>KOORDINATOR LKBB</strong></p>
-          <div className="signature-space"></div>
-          <p><strong><u>MUHAMAD RAFLI FAUJI / DEWAN JURI</u></strong></p>
+        <div class="bottom-right">
+          <p>Soreang, Kab. Bandung, ${currentDate}</p>
+          <p><strong>SANGGA KERJA AGP-III SMKN 1 SOREANG</strong></p>
+          <p><strong>KOORDINATOR DEWAN JURI &amp; REKAPITULASI</strong></p>
+          <div class="signature-space"></div>
+          <p><strong><u>DEWAN KEHORMATAN &amp; JURI AGP-III</u></strong></p>
         </div>
       </div>
 
@@ -274,11 +275,11 @@ export function printMateriLombaRecapPDF(jenjang: string, participants: any[]) {
         <td style="font-weight: bold; text-transform: uppercase;">${item.teamName}</td>
         <td style="text-align: center;">${item.gender === 'PUTERA' ? 'PA' : 'PI'}</td>
         <td style="text-transform: uppercase;">${item.schoolName}</td>
-        <td style="text-align: center;">${item.bankSoal}</td>
-        <td style="text-align: center;">${item.semaphore}</td>
-        <td style="text-align: center;">${item.morse}</td>
-        <td style="text-align: center;">${item.miniPionering}</td>
-        <td style="text-align: center;">${item.kebersihan}</td>
+        <td style="text-align: center;">${item.bankSoal ?? '-'}</td>
+        <td style="text-align: center;">${item.semaphore ?? '-'}</td>
+        <td style="text-align: center;">${item.morse ?? '-'}</td>
+        <td style="text-align: center;">${item.miniPionering ?? '-'}</td>
+        <td style="text-align: center;">${item.kebersihan ?? '-'}</td>
         <td style="text-align: right; font-weight: 900; background-color: #f1f5f9;">${item.materiTotal}</td>
       </tr>
     `).join('');
@@ -533,12 +534,13 @@ export function printLembarPenilaianDetailPDF(sheetData: {
       <table class="excel-header">
         <tr>
           <td class="logo-box" rowspan="2">
-            <div style="font-size: 13px; font-weight: 900; color: #047857;">AGP-III</div>
-            <div style="font-size: 8px; color: #475569;">AJANG GELAR PRAMUKA</div>
+            <div style="font-size: 13px; font-weight: 900; color: #047857;">KIRANI AGP-III</div>
+            <div style="font-size: 7.5px; color: #334155; font-weight: bold;">SMKN 1 SOREANG</div>
+            <div style="font-size: 7px; color: #475569;">GUDEP 04.105–04.106</div>
           </td>
           <td class="title-box">
-            <h2>FORMAT PENILAIAN LKBB</h2>
-            <h3>${jenjangTitle}</h3>
+            <h2>FORMAT PENILAIAN LKBB (PERPANG TNI NO. 58 TAHUN 2018)</h2>
+            <h3>${jenjangTitle} • LAPANGAN 20 X 12 M (8 MENIT)</h3>
           </td>
           <td class="meta-box" rowspan="2">
             <div class="meta-row"><span>NO PESERTA:</span> <strong style="font-size: 10px;">${sheetData.noPeserta}</strong></div>
@@ -583,15 +585,15 @@ export function printLembarPenilaianDetailPDF(sheetData: {
       <!-- BOTTOM SUMMARY BOX MATCHING EXCEL IMAGE -->
       <table class="summary-excel">
         <tr>
-          <td>KATEGORI PENILAIAN PBB DASAR</td>
+          <td>KATEGORI PENILAIAN PBB DASAR (BOBOT 70%)</td>
           <td style="text-align: right; width: 70px;">${sheetData.totalPbb} PTS</td>
         </tr>
         <tr>
-          <td>KATEGORI PENILAIAN VARIASI FORMASI</td>
+          <td>KATEGORI PENILAIAN VARIASI FORMASI (BOBOT 20%)</td>
           <td style="text-align: right;">${sheetData.totalVariasi} PTS</td>
         </tr>
         <tr>
-          <td>KATEGORI PENILAIAN DANTON</td>
+          <td>KATEGORI PENILAIAN DANTON (BOBOT 10%)</td>
           <td style="text-align: right;">${sheetData.totalDanton} PTS</td>
         </tr>
         <tr style="background-color: #f1f5f9; font-size: 9.5px;">
@@ -600,7 +602,7 @@ export function printLembarPenilaianDetailPDF(sheetData: {
         </tr>
       </table>
 
-      <div className="clear"></div>
+      <div class="clear"></div>
 
       <script>
         window.onload = function() {

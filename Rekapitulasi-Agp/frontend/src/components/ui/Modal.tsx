@@ -43,13 +43,13 @@ export const Modal: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto" role="dialog" aria-modal="true">
       {/* Backdrop */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.18 }}
-        className="fixed inset-0 bg-green-950/40 backdrop-blur-sm"
+        className="fixed inset-0 bg-[#0C342C]/85 backdrop-blur-md"
         onClick={onClose}
       />
 
@@ -58,18 +58,18 @@ export const Modal: React.FC<ModalProps> = ({
         initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 8 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.2, ease: 'easeOut' }}
-        className={`relative w-full ${sizes[size]} bg-white rounded-2xl border border-green-200 shadow-2xl shadow-green-900/10 flex flex-col overflow-hidden z-10 my-auto max-h-[90vh]`}
+        className={`relative w-full ${sizes[size]} bg-[#082620] rounded-[16px] key-card flex flex-col overflow-hidden z-10 my-auto max-h-[90vh]`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-green-100 bg-green-50/60">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#076653] bg-[#061C18]/80">
           {title ? (
-            <h3 className="text-base font-bold text-green-900 uppercase tracking-wide">{title}</h3>
+            <h3 className="text-sm font-semibold text-[#E3EF26] uppercase tracking-wider">{title}</h3>
           ) : (
             <div />
           )}
           <button
             onClick={onClose}
-            className="text-green-600 hover:text-green-900 hover:bg-green-100 p-1.5 rounded-lg transition-colors cursor-pointer"
+            className="text-[#B8D8D0] hover:text-[#E3EF26] hover:bg-[#076653] p-1.5 rounded-[8px] transition-colors cursor-pointer"
             aria-label="Close dialog"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -79,13 +79,13 @@ export const Modal: React.FC<ModalProps> = ({
         </div>
 
         {/* Body */}
-        <div className="px-6 py-6 overflow-y-auto max-h-[70vh] text-green-900 text-sm leading-relaxed">
+        <div className="px-6 py-6 overflow-y-auto max-h-[70vh] text-[#ffffff] text-sm leading-relaxed">
           {children}
         </div>
 
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-green-100 bg-green-50/40">
+          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#076653] bg-[#061C18]/60">
             {footer}
           </div>
         )}

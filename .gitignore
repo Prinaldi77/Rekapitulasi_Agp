@@ -27,3 +27,13 @@ Thumbs.db
 **/yarn-debug.log*
 **/yarn-error.log*
 **/.pnpm-debug.log*
+
+# Video generation & test artifacts
+.agents/
+.claude/
+data/
+anti-slop/
+my-video/
+Rekapitulasi-Agp/frontend/demo-out/
+skills-lock.json
+

@@ -46,7 +46,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
       {isOpen && (
         <div
-          className={`absolute mt-2 w-56 rounded-xl border border-green-200 bg-white shadow-lg z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ${alignments[align]}`}
+          className={`absolute mt-2 w-56 rounded-[12px] bg-[#082620] key-card z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ${alignments[align]}`}
         >
           <div className="py-1.5 flex flex-col">
             {items.map((item, index) => (
@@ -56,13 +56,13 @@ export const Dropdown: React.FC<DropdownProps> = ({
                   item.onClick();
                   setIsOpen(false);
                 }}
-                className={`flex items-center gap-2.5 px-4 py-2.5 text-sm text-left font-medium transition-colors cursor-pointer w-full ${
+                className={`flex items-center gap-2.5 px-4 py-2.5 text-xs text-left font-medium transition-colors cursor-pointer w-full ${
                   item.danger
-                    ? 'text-red-600 hover:bg-red-50'
-                    : 'text-green-800 hover:bg-green-50 hover:text-green-950'
+                    ? 'text-rose-300 hover:bg-rose-950/60'
+                    : 'text-[#ffffff] hover:bg-[#076653] hover:text-[#E3EF26]'
                 }`}
               >
-                {item.icon && <span className={item.danger ? "text-red-500" : "text-green-600/60"}>{item.icon}</span>}
+                {item.icon && <span className={item.danger ? 'text-rose-400' : 'text-[#E3EF26]'}>{item.icon}</span>}
                 <span className="flex-1">{item.label}</span>
               </button>
             ))}

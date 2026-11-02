@@ -48,14 +48,16 @@ export const ScoreStepper: React.FC<ScoreStepperProps> = ({
   };
 
   return (
-    <div className={`inline-flex items-center gap-1 bg-green-50 p-1 rounded-xl border border-green-300 shadow-sm ${className}`}>
-      {/* Decrement Button */}
+    <div
+      className={`inline-flex items-center gap-1.5 bg-[#082620] p-1 rounded-[10px] border border-[#076653] key-card ${className}`}
+    >
+      {/* Decrement Button (Touch target >= 40-44px) */}
       <button
         type="button"
         onClick={handleDecrement}
         disabled={isMin || disabled}
         aria-label="Kurangi nilai"
-        className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-white border border-green-300 text-green-950 font-black text-base hover:bg-[#052e16] hover:text-white active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center justify-center cursor-pointer shadow-xs"
+        className="w-10 h-10 rounded-[8px] bg-[#076653] border border-[#E3EF26]/25 text-[#ffffff] font-bold text-base hover:bg-[#E3EF26] hover:text-[#0C342C] active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center justify-center cursor-pointer"
       >
         −
       </button>
@@ -80,7 +82,7 @@ export const ScoreStepper: React.FC<ScoreStepperProps> = ({
         }}
         onKeyDown={onKeyDown}
         disabled={disabled}
-        className="w-16 sm:w-20 text-center py-1.5 rounded-lg bg-white border border-green-300 focus:border-green-600 focus:ring-2 focus:ring-green-600/30 outline-none text-sm font-mono font-black text-black shadow-inner"
+        className="w-16 sm:w-20 h-10 text-center rounded-[8px] bg-[#061C18] border border-[#076653] focus:border-[#E3EF26] outline-none text-sm font-mono font-bold text-[#E3EF26] shadow-inner"
         placeholder="-"
       />
 
@@ -90,30 +92,30 @@ export const ScoreStepper: React.FC<ScoreStepperProps> = ({
         onClick={handleIncrement}
         disabled={isMax || disabled}
         aria-label="Tambah nilai"
-        className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-white border border-green-300 text-green-950 font-black text-base hover:bg-[#052e16] hover:text-white active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center justify-center cursor-pointer shadow-xs"
+        className="w-10 h-10 rounded-[8px] bg-[#076653] border border-[#E3EF26]/25 text-[#ffffff] font-bold text-base hover:bg-[#E3EF26] hover:text-[#0C342C] active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all flex items-center justify-center cursor-pointer"
       >
         +
       </button>
 
       {/* Quick Presets: MIN / MAX */}
-      <div className="hidden sm:flex items-center gap-1 ml-1 pl-1 border-l border-green-300">
+      <div className="hidden sm:flex items-center gap-1 ml-1 pl-1.5 border-l border-[#076653]">
         <button
           type="button"
           onClick={() => handleSetPreset(minScore)}
           disabled={disabled}
-          className="px-2 py-1 text-[9px] font-black rounded bg-white text-green-950 border border-green-300 hover:bg-[#052e16] hover:text-white active:scale-95 transition-all cursor-pointer shadow-xs"
-          title={`Set Minimum (${minScore})`}
+          className="px-2.5 h-8 rounded-[6px] bg-[#061C18] hover:bg-[#076653] text-[#B8D8D0] hover:text-[#ffffff] border border-[#076653] text-[10px] font-mono font-medium transition-colors cursor-pointer"
+          title={`Set nilai minimum (${minScore})`}
         >
-          MIN
+          MIN ({minScore})
         </button>
         <button
           type="button"
           onClick={() => handleSetPreset(maxScore)}
           disabled={disabled}
-          className="px-2 py-1 text-[9px] font-black rounded bg-white text-green-950 border border-green-300 hover:bg-[#052e16] hover:text-white active:scale-95 transition-all cursor-pointer shadow-xs"
-          title={`Set Maksimum (${maxScore})`}
+          className="px-2.5 h-8 rounded-[6px] bg-[#076653] hover:bg-[#E3EF26] text-[#E3EF26] hover:text-[#0C342C] border border-[#E3EF26]/35 text-[10px] font-mono font-semibold transition-colors cursor-pointer"
+          title={`Set nilai maksimum (${maxScore})`}
         >
-          MAX
+          MAX ({maxScore})
         </button>
       </div>
     </div>

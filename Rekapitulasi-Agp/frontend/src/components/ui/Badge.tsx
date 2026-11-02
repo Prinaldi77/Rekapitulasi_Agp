@@ -11,15 +11,16 @@ export const Badge: React.FC<BadgeProps> = ({
   variant = 'primary',
   className = '',
 }) => {
-  const baseStyle = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 shadow-xs';
+  const baseStyle =
+    'inline-flex items-center px-2 py-0.5 rounded-[6px] text-[11px] font-mono font-semibold uppercase tracking-[0.05em] transition-all duration-200';
 
   const variants = {
-    primary:   'bg-green-50 text-green-700 border border-green-200/60 font-bold',
-    secondary: 'bg-white text-green-800 border border-green-200/80 font-bold',
-    warning:   'bg-amber-50 text-amber-700 border border-amber-200/60 font-bold',
-    danger:    'bg-red-50 text-red-700 border border-red-200/60 font-bold',
-    info:      'bg-blue-50 text-blue-700 border border-blue-200/60 font-bold',
-    success:   'bg-emerald-50 text-emerald-700 border border-emerald-200/60 font-bold',
+    primary:   'bg-[#076653] text-[#E3EF26] border border-[#E3EF26]/35',
+    secondary: 'bg-[#061C18] text-[#B8D8D0] border border-[#076653]',
+    warning:   'bg-[#076653]/70 text-[#E3EF26] border border-[#E3EF26]/50',
+    danger:    'bg-rose-950/70 text-rose-300 border border-rose-500/40',
+    info:      'bg-[#061C18] text-[#38bdf8] border border-[#38bdf8]/35',
+    success:   'bg-[#076653] text-[#E3EF26] border border-[#E3EF26]/40',
   };
 
   return (

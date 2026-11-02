@@ -15,17 +15,17 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   const shouldReduceMotion = useReducedMotion();
 
   const variants = {
-    text: 'h-4 w-full rounded-md',
-    rect: 'rounded-xl',
+    text: 'h-4 w-full rounded-[6px]',
+    rect: 'rounded-[12px]',
     circle: 'rounded-full',
   };
 
   return (
     <motion.div
       initial={{ opacity: 0.7 }}
-      animate={shouldReduceMotion ? {} : { opacity: 0.35 }}
+      animate={shouldReduceMotion ? {} : { opacity: 0.3 }}
       transition={{ duration: 0.9, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
-      className={`bg-green-100 ${variants[variant]} ${className}`}
+      className={`bg-[#076653]/50 border border-[#076653] ${variants[variant]} ${className}`}
     />
   );
 };

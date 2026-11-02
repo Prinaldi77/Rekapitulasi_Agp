@@ -39,7 +39,7 @@ export function DataTable<T>({
   if (isLoading) {
     return (
       <div className="space-y-3">
-        {[1, 2, 3, 4].map(i => (
+        {[1, 2, 3, 4].map((i) => (
           <Skeleton key={i} className="h-14 w-full" />
         ))}
       </div>
@@ -52,10 +52,10 @@ export function DataTable<T>({
 
   return (
     <div className="space-y-4">
-      <div className="w-full overflow-x-auto touch-pan-x rounded-2xl border border-green-200 bg-white shadow-sm">
+      <div className="w-full overflow-x-auto touch-pan-x rounded-[16px] bg-[#082620] key-card">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-green-200 bg-green-100/90 text-[10px] font-black uppercase text-green-950 tracking-wider">
+            <tr className="border-b border-[#076653] bg-[#061C18] text-[11px] font-mono font-semibold uppercase text-[#E3EF26] tracking-[0.06em]">
               {columns.map((col) => (
                 <th key={col.key} className="py-3.5 px-5">
                   {col.label}
@@ -63,9 +63,9 @@ export function DataTable<T>({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-green-100 text-xs font-semibold text-black">
+          <tbody className="divide-y divide-[#076653]/50 text-xs font-medium text-[#ffffff]">
             {data.map((item, index) => (
-              <tr key={index} className="hover-kirani-row transition-all duration-200 cursor-pointer">
+              <tr key={index} className="hover:bg-[#076653]/35 transition-all duration-150 cursor-pointer">
                 {columns.map((col) => (
                   <td key={col.key} className="py-3.5 px-5">
                     {col.render ? col.render(item, index) : (item as any)[col.key]}

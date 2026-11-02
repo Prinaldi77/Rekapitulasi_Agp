@@ -48,8 +48,8 @@ export const togglePublishStatus = async (
     res.status(200).json({
       success: true,
       message: isPublished
-        ? 'Pengumuman Juara berhasil DIPUBLIKASIKAN ke Portal Publik Peserta! 🚀'
-        : 'Status Penilaian berhasil DITUTUP / DITERKUNCI untuk Publik. 🔒',
+        ? 'Pengumuman Juara berhasil DIPUBLIKASIKAN ke Portal Publik Peserta! '
+        : 'Status Penilaian berhasil DITUTUP / DITERKUNCI untuk Publik. ',
       data: { isPublished },
     });
   } catch (err: any) {

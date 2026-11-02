@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 
 -- 5. TABEL CRITERIA / ASSESSMENT ITEMS (Unsur Penilaian & Bobot Nilai Juri)
 CREATE TABLE IF NOT EXISTS public.criteria (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id VARCHAR(50) PRIMARY KEY,
     category_id UUID REFERENCES public.categories(id) ON DELETE CASCADE NOT NULL,
     group_type TEXT NOT NULL, -- 'PBB_DASAR', 'VARIASI_FORMASI', 'DANTON'
     sub_group TEXT, -- e.g., "Gerakan Diam ke Diam"
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS public.participants (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     category_id UUID REFERENCES public.categories(id) ON DELETE CASCADE NOT NULL,
     show_number INT NOT NULL,
-    participant_no VARCHAR(20) NOT NULL, -- e.g., "A-01", "C-05"
+    participant_no VARCHAR(20) NOT NULL,             -- e.g., "A-01", "C-05"
     team_name TEXT NOT NULL,             -- e.g., "PASBRATA UTAMA"
     school_name TEXT NOT NULL,           -- e.g., "SMAN 1 KOTA BANDUNG"
     gender VARCHAR(10) DEFAULT 'PA',     -- 'PA', 'PI', 'CAMPURAN'
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS public.participants (
 CREATE TABLE IF NOT EXISTS public.scores (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     participant_id UUID REFERENCES public.participants(id) ON DELETE CASCADE NOT NULL,
-    criterion_id UUID REFERENCES public.criteria(id) ON DELETE CASCADE NOT NULL,
+    criterion_id VARCHAR(50) REFERENCES public.criteria(id) ON DELETE CASCADE NOT NULL,
     juri_number INT NOT NULL CHECK (juri_number IN (1, 2, 3)),
     score_value FLOAT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS public.scores (
 CREATE TABLE IF NOT EXISTS public.schedules (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     participant_id UUID UNIQUE REFERENCES public.participants(id) ON DELETE CASCADE NOT NULL,
-    status show_status DEFAULT 'WAITING',
+    status VARCHAR(50) DEFAULT 'WAITING',
     time_slot VARCHAR(50),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

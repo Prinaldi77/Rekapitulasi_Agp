@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import { CheckCircle2, Info, AlertTriangle, XCircle, X } from 'lucide-react';
 
 export interface ToastProps {
   message: string;
@@ -26,37 +27,37 @@ export const Toast: React.FC<ToastProps> = ({
   }, [duration, onClose]);
 
   const icons = {
-    success: '✅',
-    info: 'ℹ️',
-    warning: '⚠️',
-    error: '❌',
+    success: <CheckCircle2 className="w-4 h-4 text-[#E3EF26] shrink-0" />,
+    info:    <Info className="w-4 h-4 text-[#38bdf8] shrink-0" />,
+    warning: <AlertTriangle className="w-4 h-4 text-[#E3EF26] shrink-0" />,
+    error:   <XCircle className="w-4 h-4 text-rose-400 shrink-0" />,
   };
 
   const styles = {
-    success: 'bg-white border-green-200 text-green-900 shadow-green-900/10',
-    info:    'bg-white border-sky-200 text-sky-900 shadow-sky-900/10',
-    warning: 'bg-white border-amber-200 text-amber-900 shadow-amber-900/10',
-    error:   'bg-white border-red-200 text-red-900 shadow-red-900/10',
+    success: 'bg-[#082620] border-[#E3EF26]/50 text-[#ffffff]',
+    info:    'bg-[#082620] border-[#38bdf8]/40 text-[#ffffff]',
+    warning: 'bg-[#082620] border-[#E3EF26]/50 text-[#ffffff]',
+    error:   'bg-rose-950/90 border-rose-500/50 text-[#ffffff]',
   };
 
   return (
     <motion.div
+      role="status"
+      aria-live="polite"
       initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.95 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className={`fixed bottom-5 right-5 z-[9999] flex items-center gap-3 px-5 py-4 rounded-xl border shadow-xl ${styles[type]}`}
+      className={`fixed bottom-5 right-5 z-[9999] flex items-center gap-3 px-4 py-3.5 rounded-[12px] border key-card ${styles[type]}`}
     >
-      <span className="text-base">{icons[type]}</span>
-      <span className="text-sm font-semibold">{message}</span>
+      {icons[type]}
+      <span className="text-xs sm:text-sm font-medium">{message}</span>
       <button
         onClick={onClose}
-        className="ml-3 text-green-600/60 hover:text-green-900 p-1 rounded transition-colors cursor-pointer"
-        aria-label="Dismiss toast"
+        className="ml-2 text-[#B8D8D0] hover:text-[#E3EF26] p-1 rounded-[6px] transition-colors cursor-pointer"
+        aria-label="Tutup notifikasi"
       >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
+        <X className="w-4 h-4" />
       </button>
     </motion.div>
   );

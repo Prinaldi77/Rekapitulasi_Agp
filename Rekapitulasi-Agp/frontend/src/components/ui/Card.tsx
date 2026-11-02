@@ -17,15 +17,15 @@ export const Card: React.FC<CardProps> = ({
   onClick,
 }) => {
   const shouldReduceMotion = useReducedMotion();
-  const clickableStyle = onClick ? 'cursor-pointer active:scale-[0.99] transition-all duration-300' : '';
-  const glowStyle = hoverGlow ? 'hover:shadow-md hover:border-green-300 transition-all duration-300' : '';
+  const clickableStyle = onClick ? 'cursor-pointer active:scale-[0.99] transition-all duration-200' : '';
+  const glowStyle = hoverGlow ? 'key-card-hover' : '';
 
   return (
     <motion.div
       onClick={onClick}
-      whileHover={shouldReduceMotion || !hoverGlow ? {} : { y: -2 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
-      className={`bg-white border border-green-200/80 rounded-2xl p-6 shadow-sm ${clickableStyle} ${glowStyle} ${className}`}
+      whileHover={shouldReduceMotion || !hoverGlow ? {} : { y: -1 }}
+      transition={{ duration: 0.18, ease: 'easeOut' }}
+      className={`bg-[#082620] rounded-[16px] p-6 key-card text-[#ffffff] ${clickableStyle} ${glowStyle} ${className}`}
     >
       {children}
     </motion.div>

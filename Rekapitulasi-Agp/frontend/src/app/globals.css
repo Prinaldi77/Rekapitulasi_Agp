@@ -1,141 +1,149 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-  /* ====================================
-   * BRAND & NEUTRAL PALETTE (Clean Minimalist)
-   * ==================================== */
+@layer base {
+  :root {
+    /* ============================================================
+     * DARK FOREST COMMAND CENTER (#0C342C, #076653, #E3EF26)
+     * ============================================================ */
+    --color-void-black:    #0C342C;
+    --color-ink:           #082620;
+    --color-obsidian:      #061C18;
+    --color-graphite:      #076653;
+    --color-smoke:         #7AA89C;
+    --color-ash:           #B8D8D0;
+    --color-mist:          #E3EF26;
+    --color-iron:          #076653;
+    --color-slate:         #076653;
+    --color-border:        #0d7a64;
+    --color-pure-white:    #ffffff;
+    --color-coral-pulse:   #E3EF26;
+    --color-ember-hush:    #076653;
+    --color-electric-sky:  #38bdf8;
+    --color-cobalt-edge:   #076653;
+    --color-deep-space:    #061C18;
+    --color-info-blue:     #38bdf8;
+    --color-success-green: #E3EF26;
 
-  /* Neutral Gray Scale (Professional & Clean) */
-  --color-neutral-50:  #f9fafb;
-  --color-neutral-100: #f3f4f6;
-  --color-neutral-200: #e5e7eb;
-  --color-neutral-300: #d1d5db;
-  --color-neutral-400: #9ca3af;
-  --color-neutral-500: #6b7280;
-  --color-neutral-600: #4b5563;
-  --color-neutral-700: #374151;
-  --color-neutral-800: #1f2937;
-  --color-neutral-900: #111827;
+    /* Surface Hierarchy (Levels 0-4) */
+    --surface-canvas:      #0C342C;
+    --surface-card:        #082620;
+    --surface-recessed:    #061C18;
+    --surface-badge:       #076653;
+    --surface-accent-tint: #076653;
 
-  /* Primary Accent: Professional Blue or Emerald (Subtle) */
-  --color-brand-primary-50:  #f0fdf4;
-  --color-brand-primary-100: #dcfce7;
-  --color-brand-primary-500: #22c55e;
-  --color-brand-primary-600: #16a34a;
-  --color-brand-primary-700: #15803d;
-  --color-brand-primary-900: #052e16;
+    /* Typography — Font Families */
+    --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-geistmono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Shadows (Minimalist & Soft) */
-  --shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    /* Named Radii */
+    --radius-cards:      16px;
+    --radius-largecards: 20px;
+    --radius-pills:      9999px;
+    --radius-badges:     6px;
+    --radius-inputs:     8px;
+    --radius-buttons:    8px;
 
-  --radius-lg:  8px;
-  --radius-xl:  12px;
-  --radius-2xl: 16px;
-}
+    /* Signature "Keyboard Key" Shadows */
+    --shadow-subtle:   rgba(0, 0, 0, 0.4) 0px 1.5px 0.5px 2.5px, rgb(6, 28, 24) 0px 0px 0.5px 1px, rgba(0, 0, 0, 0.25) 0px 2px 1px 1px inset, rgba(227, 239, 38, 0.15) 0px 1px 1px 1px inset;
+    --shadow-subtle-2: rgb(7, 102, 83) 0px 0px 0px 1px, rgb(8, 38, 32) 0px 0px 0px 1px inset;
+    --shadow-subtle-3: rgba(227, 239, 38, 0.06) 0px 1px 0px 0px inset, rgba(7, 102, 83, 0.55) 0px 0px 0px 1px, rgba(0, 0, 0, 0.4) 0px -1px 0px 0px inset;
+    --shadow-subtle-4: rgba(0, 0, 0, 0.06) 0px 7px 3px 0px, rgba(0, 0, 0, 0.3) 0px 4px 4px 0px;
+    --shadow-xl:       rgba(0, 0, 0, 0.45) 0px 4px 40px 8px, rgba(7, 102, 83, 0.6) 0px 0px 0px 0.5px, rgba(227, 239, 38, 0.2) 0px 0.5px 0px 0px inset;
 
-/* ====================================
- * LIGHT MODE ROOT (High Contrast, Clean)
- * ==================================== */
-:root {
-  --background: #f9fafb; /* neutral-50 */
-  --foreground: #111827; /* neutral-900 */
-  --surface:    #ffffff;
-  --border:     #e5e7eb; /* neutral-200 */
-  --muted:      #6b7280; /* neutral-500 */
+    /* Landing & Root Semantic Mappings */
+    --background:    #0C342C;
+    --foreground:    #ffffff;
+    --surface:       #082620;
+    --border:        #076653;
+    --muted:         #B8D8D0;
+    --color-surface:  #082620;
+    --color-surface2: #076653;
+    --color-textMain: #ffffff;
+    --color-muted:    #B8D8D0;
+  }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--surface-canvas);
+  color: var(--color-pure-white);
+  font-family: var(--font-inter);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Crisp text utility */
-.text-muted-dark {
-  color: var(--foreground) !important;
-}
-
 /* ====================================
- * CLEAN ITEM HOVER EFFECT
+ * KEYBOARD KEY CARD & SURFACE CLASSES
  * ==================================== */
-.item-hover-kirani {
+.key-card {
+  background: var(--surface-card);
+  border-radius: var(--radius-cards);
+  box-shadow: var(--shadow-subtle-3);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid transparent;
 }
 
-.item-hover-kirani:hover {
-  background-color: var(--surface) !important;
-  border-color: var(--border) !important;
-  box-shadow: var(--shadow-soft) !important;
-  transform: translateY(-1px);
+.key-card-hover:hover {
+  box-shadow: rgba(227, 239, 38, 0.14) 0px 1px 0px 0px inset, rgba(227, 239, 38, 0.45) 0px 0px 0px 1px, rgba(0, 0, 0, 0.5) 0px -1px 0px 0px inset;
 }
 
-/* Table Row Clean Hover */
+.glass-nav-pill {
+  background: rgba(8, 38, 32, 0.85);
+  backdrop-filter: blur(48px);
+  -webkit-backdrop-filter: blur(48px);
+  border: 1px solid #076653;
+}
+
+.glass-panel, .card-kirani {
+  background: var(--surface-card);
+  border: 1px solid #076653;
+  border-radius: var(--radius-cards);
+  box-shadow: var(--shadow-subtle-3);
+}
+
+/* Table Row Hover */
 tr.hover-kirani-row {
   transition: all 0.15s ease-in-out;
 }
 
 tr.hover-kirani-row:hover {
-  background-color: var(--color-neutral-50) !important;
+  background-color: #076653 !important;
 }
 
 /* ====================================
- * MINIMALIST CARD / PANEL
- * ==================================== */
-.glass-panel, .card-kirani {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-subtle);
-}
-
-.glass-panel-hover {
-  transition: all 0.2s ease-in-out;
-}
-
-.glass-panel-hover:hover {
-  box-shadow: var(--shadow-soft);
-  border-color: var(--color-neutral-300);
-}
-
-/* ====================================
- * CUSTOM SCROLLBAR (Minimalist)
+ * CUSTOM SCROLLBAR (Minimalist Forest)
  * ==================================== */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #0C342C;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-neutral-300);
+  background: #076653;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-neutral-400);
+  background: #E3EF26;
 }
 
 /* ====================================
- * HERO MESH BACKGROUND (Subtle)
+ * HERO ATMOSPHERIC BACKDROP (Emerald & Lime Glow)
  * ==================================== */
-.bg-kirani-mesh {
+.bg-raycast-hero {
   background:
-    radial-gradient(ellipse 60% 50% at 20% -20%, rgba(34, 197, 94, 0.05) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 80% 110%, rgba(34, 197, 94, 0.03) 0%, transparent 60%),
-    var(--background);
+    radial-gradient(ellipse 58% 48% at 50% 24%, rgba(7, 102, 83, 0.65) 0%, rgba(12, 52, 44, 0.3) 55%, transparent 80%),
+    radial-gradient(ellipse 35% 28% at 65% 28%, rgba(227, 239, 38, 0.16) 0%, transparent 70%),
+    #0C342C;
 }
 
 /* ====================================
  * ACCESSIBILITY & FOCUS VISIBLE (WCAG 2.1 AA)
  * ==================================== */
 *:focus-visible {
-  outline: 2px solid var(--color-brand-primary-500) !important;
+  outline: 2px solid #E3EF26 !important;
   outline-offset: 2px !important;
 }
 
@@ -143,16 +151,40 @@ tr.hover-kirani-row:hover {
   position: absolute;
   top: -100px;
   left: 16px;
-  background: var(--foreground);
-  color: var(--surface);
+  background: #E3EF26;
+  color: #0C342C;
   padding: 8px 16px;
-  border-radius: var(--radius-lg);
-  font-size: 14px;
-  font-weight: 600;
+  border-radius: var(--radius-buttons);
+  font-size: 13px;
+  font-weight: 700;
   z-index: 99999;
   transition: top 0.2s ease-out;
 }
 
 .skip-to-content:focus {
   top: 16px;
+}
+
+/* ====================================
+ * PUBLIC LANDING PAGE UTILITIES
+ * ==================================== */
+.card-hover:hover {
+  border-color: #E3EF26;
+}
+
+.hero-split {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 55%;
+  background-color: #082620;
+  clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%);
+  z-index: 0;
+  border-left: 1px solid #076653;
+  background-image: radial-gradient(#076653 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.text-stroke {
+  -webkit-text-stroke: 1.5px rgba(227, 239, 38, 0.65);
+  color: transparent;
 }
