@@ -167,11 +167,8 @@ export default function UserManagementPage() {
     setIsSubmitting(true);
     try {
       const email = `${cleanUsername}@email.com`;
-      const supabaseUrl =
-        process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yicrnndbulqahzwzdofw.supabase.co';
-      const supabaseAnonKey =
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlpY3JubmRidWxxYWh6d3pkb2Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NDQxNzMsImV4cCI6MjEwMDIyMDE3M30.PFNutAfJLAzwOPmvezIlPjSyBcCxJ2Yyf_c3O9QgirU';
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
       const isolatedClient = createClient(supabaseUrl, supabaseAnonKey, {
         auth: { persistSession: false },
       });
