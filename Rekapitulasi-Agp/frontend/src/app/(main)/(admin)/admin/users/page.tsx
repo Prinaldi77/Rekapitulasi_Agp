@@ -157,8 +157,8 @@ export default function UserManagementPage() {
       return;
     }
 
-    const pwd = createPassword.trim() || 'Password123!';
-    if (pwd.length < 6) {
+    const pwd = createPassword.trim();
+    if (!pwd || pwd.length < 6) {
       setFeedbackType('error');
       setFeedback('Kata sandi (Password) minimal harus 6 karakter.');
       return;
@@ -291,7 +291,7 @@ export default function UserManagementPage() {
   const handleOpenPasswordModal = (u: UserAccount) => {
     setPasswordUserId(u.id);
     setPasswordUsername(u.username);
-    setNewPassword('Password123!');
+    setNewPassword('');
     setIsPasswordModalOpen(true);
   };
 
@@ -568,8 +568,8 @@ export default function UserManagementPage() {
           <Input
             id="create-password"
             label="Password Login *"
-            type="text"
-            placeholder="Contoh: Password123!"
+            type="password"
+            placeholder="Minimal 6 karakter"
             value={createPassword}
             onChange={(e) => setCreatePassword(e.target.value)}
             required
