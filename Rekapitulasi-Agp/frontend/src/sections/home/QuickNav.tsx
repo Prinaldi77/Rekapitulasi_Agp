@@ -1,6 +1,3 @@
-// Lokasi file: src/sections/home/QuickNav.tsx
-// Deskripsi: Komponen navigasi cepat (Quick Navigation Cards) untuk halaman utama.
-
 import React from 'react';
 import Link from 'next/link';
 import { Card } from '@/components/ui';
