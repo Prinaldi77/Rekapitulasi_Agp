@@ -1,7 +1,7 @@
 import { ActionResponse, LeaderboardEntry } from '@/types';
 import { supabase } from './supabase';
 
-let rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+let rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.kiraniagp.my.id/api';
 if (rawApiUrl && !rawApiUrl.endsWith('/api') && !rawApiUrl.endsWith('/api/')) {
   rawApiUrl = `${rawApiUrl.replace(/\/$/, '')}/api`;
 }

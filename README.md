@@ -48,7 +48,7 @@ Aplikasi memisahkan alur kerja antara:
 * **Database & Auth:** Supabase PostgreSQL, Supabase Auth (JWT HttpOnly Session, Row Level Security, bcrypt password hashing).
 * **Deployment & Infrastruktur:**
   * **Frontend:** Vercel Edge Network (Auto-deploy dari branch `main`).
-  * **Backend API:** Render Cloud Web Service (`https://rekapitulasi-agp.onrender.com`).
+  * **Backend API:** Cloudflare Proxied Web Service (`https://api.kiraniagp.my.id`).
   * **Domain & DNS:** Fully Qualified Domain Name (FQDN) `https://www.kiraniagp.my.id` dengan sertifikat SSL/TLS valid (Let's Encrypt).
 
 ---
@@ -124,7 +124,7 @@ Sesuai ketentuan tugas, pengembangan dan audit keamanan aplikasi dibantu oleh **
    ```env
    NEXT_PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
    NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-supabase-anon-key>
-   NEXT_PUBLIC_API_URL=https://rekapitulasi-agp.onrender.com
+   NEXT_PUBLIC_API_URL=https://api.kiraniagp.my.id
    ```
 
 4. **Jalankan Development Server:**
@@ -144,7 +144,7 @@ Sesuai ketentuan tugas, pengembangan dan audit keamanan aplikasi dibantu oleh **
 ## 8. Tautan Resmi Proyek
 
 * **Aplikasi Live (Produksi):** [https://www.kiraniagp.my.id](https://www.kiraniagp.my.id)
-* **Backend API Health Check:** [https://rekapitulasi-agp.onrender.com/health](https://rekapitulasi-agp.onrender.com/health)
+* **Backend API Health Check:** [https://api.kiraniagp.my.id](https://api.kiraniagp.my.id)
 * **Repositori GitHub:** [https://github.com/Prinaldi77/Rekapitulasi_Agp](https://github.com/Prinaldi77/Rekapitulasi_Agp)
 
 ---
