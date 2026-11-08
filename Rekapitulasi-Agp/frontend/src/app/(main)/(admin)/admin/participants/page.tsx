@@ -503,7 +503,7 @@ export default function ParticipantsManagementPage() {
                 ? 'REGU PRAMUKA'
                 : 'KONTINGEN SEKOLAH'}
             </Badge>
-            <span className="text-[11px] font-mono text-[#B8D8D0]">
+            <span className="text-xs font-mono text-[#B8D8D0]">
               [{p.category?.level || 'SMA'}] {p.category?.competition_name || 'LKBB UTAMA'}
             </span>
           </div>
@@ -613,33 +613,33 @@ export default function ParticipantsManagementPage() {
       {/* Ringkasan Kuota 50 Basis & Ketentuan Peserta Juklak AGP-III */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="p-4 space-y-1" hoverGlow={false}>
-          <span className="text-[10px] font-mono uppercase text-[#7AA89C]">KUOTA BASIS SE-JAWA BARAT OPEN</span>
+          <span className="text-xs font-mono uppercase text-[#7AA89C]">KUOTA BASIS SE-JAWA BARAT OPEN</span>
           <div className="text-xl font-mono font-bold text-[#E3EF26]">
             {new Set(participants.map((p) => p.school_name.trim().toUpperCase())).size} / 50{' '}
             <span className="text-xs font-normal text-[#B8D8D0]">Basis</span>
           </div>
-          <span className="text-[11px] text-[#94B8AE] block">Biaya Pendaftaran: Rp 350.000 / Basis</span>
+          <span className="text-xs text-[#94B8AE] block">Biaya Pendaftaran: Rp 350.000 / Basis</span>
         </Card>
         <Card className="p-4 space-y-1" hoverGlow={false}>
-          <span className="text-[10px] font-mono uppercase text-[#7AA89C]">KOMPOSISI REGU KEPRAMUKAAN</span>
+          <span className="text-xs font-mono uppercase text-[#7AA89C]">KOMPOSISI REGU KEPRAMUKAAN</span>
           <div className="text-xl font-mono font-bold text-white">
             8 Orang <span className="text-xs font-normal text-[#B8D8D0]">/ Regu (PA/PI)</span>
           </div>
-          <span className="text-[11px] text-[#94B8AE] block">5 Bank Soal • 1 Semaphore • 1 Morse • 1 Pionering</span>
+          <span className="text-xs text-[#94B8AE] block">5 Bank Soal • 1 Semaphore • 1 Morse • 1 Pionering</span>
         </Card>
         <Card className="p-4 space-y-1" hoverGlow={false}>
-          <span className="text-[10px] font-mono uppercase text-[#7AA89C]">PASUKAN LKBB (PERPANG TNI 58/2018)</span>
+          <span className="text-xs font-mono uppercase text-[#7AA89C]">PASUKAN LKBB (PERPANG TNI 58/2018)</span>
           <div className="text-xl font-mono font-bold text-white">
             16 Orang <span className="text-xs font-normal text-[#B8D8D0]">/ Basis</span>
           </div>
-          <span className="text-[11px] text-[#94B8AE] block">Termasuk 1 Danton • Lapangan 20 x 12 m (8 Menit)</span>
+          <span className="text-xs text-[#94B8AE] block">Termasuk 1 Danton • Lapangan 20 x 12 m (8 Menit)</span>
         </Card>
         <Card className="p-4 space-y-1" hoverGlow={false}>
-          <span className="text-[10px] font-mono uppercase text-[#7AA89C]">TOTAL TERDAFTAR SAAT INI</span>
+          <span className="text-xs font-mono uppercase text-[#7AA89C]">TOTAL TERDAFTAR SAAT INI</span>
           <div className="text-xl font-mono font-bold text-[#56c2ff]">
             {participants.length} <span className="text-xs font-normal text-[#B8D8D0]">Entri Kontingen</span>
           </div>
-          <span className="text-[11px] text-[#94B8AE] block">Golongan A (SD), B (SMP), C (SMA/SMK/MA)</span>
+          <span className="text-xs text-[#94B8AE] block">Golongan A (SD), B (SMP), C (SMA/SMK/MA)</span>
         </Card>
       </div>
 
@@ -755,7 +755,7 @@ export default function ParticipantsManagementPage() {
                   setCompType('LKBB');
                   setGender('CAMPURAN');
                 }}
-                className={`px-2.5 py-2 rounded-lg text-[11px] font-mono transition-all cursor-pointer text-center ${
+                className={`px-2.5 py-2 rounded-lg text-xs font-mono transition-all cursor-pointer text-center ${
                   compType === 'LKBB'
                     ? 'bg-[#076653] text-[#E3EF26] border border-[#E3EF26]/30'
                     : 'bg-[#082620] text-[#B8D8D0] border border-white/[0.06] hover:text-white'
@@ -770,7 +770,7 @@ export default function ParticipantsManagementPage() {
                   setCompType('PRAMUKA_REGU');
                   setGender('PI');
                 }}
-                className={`px-2.5 py-2 rounded-lg text-[11px] font-mono transition-all cursor-pointer text-center ${
+                className={`px-2.5 py-2 rounded-lg text-xs font-mono transition-all cursor-pointer text-center ${
                   compType === 'PRAMUKA_REGU'
                     ? 'bg-[#076653] text-[#E3EF26] border border-[#E3EF26]/30'
                     : 'bg-[#082620] text-[#B8D8D0] border border-white/[0.06] hover:text-white'
@@ -785,7 +785,7 @@ export default function ParticipantsManagementPage() {
                   setCompType('LOMBA_SEKOLAH');
                   setGender('CAMPURAN');
                 }}
-                className={`px-2.5 py-2 rounded-lg text-[11px] font-mono transition-all cursor-pointer text-center ${
+                className={`px-2.5 py-2 rounded-lg text-xs font-mono transition-all cursor-pointer text-center ${
                   compType === 'LOMBA_SEKOLAH'
                     ? 'bg-[#076653] text-[#E3EF26] border border-[#E3EF26]/30'
                     : 'bg-[#082620] text-[#B8D8D0] border border-white/[0.06] hover:text-white'

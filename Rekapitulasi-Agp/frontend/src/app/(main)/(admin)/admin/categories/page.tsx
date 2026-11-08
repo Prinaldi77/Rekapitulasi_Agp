@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, Trash2, Lock, Unlock, Layers, AlertTriangle, Sparkles } from 'lucide-react';
+import { Plus, Trash2, Lock, Unlock, Layers, AlertTriangle, Bookmark } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { Card, Button, Input, Badge, Modal, DataTable, Skeleton, Toast } from '@/components/ui';
 
@@ -329,7 +329,7 @@ export default function CategoriesManagementPage() {
 
           <div className="space-y-1.5">
             <label className="text-xs font-mono text-[#B8D8D0] uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles className="w-3 h-3 text-[#E3EF26]" />
+              <Bookmark className="w-3 h-3 text-[#E3EF26]" />
               Pilih Cepat Template Juklak AGP-III
             </label>
             <select

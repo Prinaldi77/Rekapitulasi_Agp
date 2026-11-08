@@ -37,12 +37,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [globalSearch, setGlobalSearch] = useState('');
-
-  const [notifications, setNotifications] = useState<NotificationItem[]>([
-    { id: '1', title: 'Urutan Tampil', message: 'Regu SMA-02 statusnya diubah menjadi PERFORMING!', time: 'Baru saja', unread: true },
-    { id: '2', title: 'Nilai Terkirim', message: 'Juri 1 menyelesaikan rekap nilai untuk SD-01.', time: '5m lalu', unread: true },
-    { id: '3', title: 'Barak Terisi', message: 'Tim PANG LIMA MUDA menempati Kelas IX-A.', time: '12m lalu', unread: false },
-  ]);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
   const notificationRef = useRef<HTMLDivElement>(null);
 
@@ -115,38 +110,39 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
           setProfile({
             username: uname,
-            full_name: profData?.full_name || (currentUser as any).user_metadata?.full_name || defaultFullName,
+            full_name: profData?.full_name || session?.user?.user_metadata?.full_name || defaultFullName,
             role: effectiveRole,
           });
+        } else {
+          setProfile(null);
         }
       } catch (err) {
-        console.warn('AppLayout getSession notice:', err);
+        console.warn('AppLayout auth check notice:', err);
       }
     };
 
     getSession();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
       try {
         setUser(session?.user ?? null);
         if (session?.user) {
-          const { data } = await supabase
+          const { data: profData } = await supabase
             .from('profiles')
             .select('username, full_name, role')
             .eq('id', session.user.id)
             .maybeSingle();
 
           const metaRole = session.user.user_metadata?.role;
-          const dbRole = data?.role;
+          const dbRole = profData?.role;
           const uname = (
-            data?.username ||
+            profData?.username ||
             session.user.user_metadata?.username ||
             session.user.email?.split('@')[0] ||
             'operator'
           ).toLowerCase();
 
           let effectiveRole: 'SUPER_ADMIN' | 'ADMIN' | 'OPERATOR_REKAP' = 'OPERATOR_REKAP';
-
           if (
             uname === 'superadmin' ||
             uname === 'grandmaster' ||
@@ -168,7 +164,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
           setProfile({
             username: uname,
-            full_name: data?.full_name || session.user.user_metadata?.full_name || defaultFullName,
+            full_name: profData?.full_name || session.user.user_metadata?.full_name || defaultFullName,
             role: effectiveRole,
           });
         } else {
@@ -184,6 +180,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  // Realtime Supabase notifications listener
   useEffect(() => {
     const channel = supabase
       .channel('realtime-app-notifications')
@@ -211,8 +208,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           if (user) {
             const newItem: NotificationItem = {
               id: String(Date.now()),
-              title: 'Nilai Juri Masuk (Internal)',
-              message: `Rekap nilai baru dari Juri telah terisi ke sistem rekapitulasi rahasia.`,
+              title: 'Nilai Juri Masuk',
+              message: `Rekap nilai baru dari Dewan Juri telah terisi ke sistem rekapitulasi.`,
               time: 'Baru saja',
               unread: true,
             };
@@ -275,7 +272,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       let label = seg.toUpperCase();
       if (seg === 'admin') label = 'ADMIN PORTAL';
       else if (seg === 'score-entry') label = 'INPUT NILAI JURI';
-      else if (seg === 'leaderboard') label = 'MASTER RECAP & SK';
+      else if (seg === 'leaderboard') label = 'MASTER REKAP & SK';
       else if (seg === 'users') label = 'KELOLA PANITIA';
       else if (seg === 'schedule-manage') label = 'KELOLA JADWAL';
       else if (seg === 'barack-manage') label = 'KELOLA BARAK';
@@ -372,68 +369,48 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   };
 
   // ============================================================================
-  // PUBLIC WEB SHELL (Non-Admin Routes: /schedule, /barack, /live-score)
-  // Awwwards-Style Glassmorphic Pill Navigation Bar (#0C342C, #076653, #E3EF26)
+  // PUBLIC WEB SHELL (/schedule, /barack, /live-score)
+  // Clean Architectural Bar with Plus Jakarta Sans & JetBrains Mono
   // ============================================================================
   if (!isAdminRoute) {
     const arenaTabs = [
-      { label: 'WAKTU TAMPIL', href: '/schedule', icon: <Clock className="w-3.5 h-3.5" /> },
-      { label: 'LOKASI BARAK', href: '/barack', icon: <Tent className="w-3.5 h-3.5" /> },
-      { label: 'PENGUMUMAN JUARA', href: '/live-score', icon: <Trophy className="w-3.5 h-3.5" /> },
+      { label: 'WAKTU TAMPIL', href: '/schedule', icon: <Clock className="w-4 h-4" /> },
+      { label: 'LOKASI BARAK', href: '/barack', icon: <Tent className="w-4 h-4" /> },
+      { label: 'PENGUMUMAN JUARA', href: '/live-score', icon: <Trophy className="w-4 h-4" /> },
     ];
 
     return (
-      <div className="min-h-screen flex flex-col bg-[#07201B] text-[#F4F9F7] font-inter selection:bg-[#E3EF26] selection:text-[#0C342C] relative overflow-x-hidden">
+      <div className="min-h-screen flex flex-col bg-[#07201B] text-[#FFFFFF] font-sans selection:bg-[#E3EF26] selection:text-[#0C342C] relative overflow-x-hidden">
         <a href="#main-content" className="skip-to-content">
           Lewati ke konten utama
         </a>
 
-        {/* Subtle Ambient Studio Lighting & Fine Grid */}
-        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-          <div
-            className="absolute -top-44 left-1/2 -translate-x-1/2 w-[1000px] h-[480px] rounded-full opacity-30 blur-[140px]"
-            style={{
-              background:
-                'radial-gradient(circle, rgba(7,102,83,0.65) 0%, rgba(227,239,38,0.12) 50%, transparent 75%)',
-            }}
-          />
-          <div
-            className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage:
-                'linear-gradient(to right, #E3EF26 1px, transparent 1px), linear-gradient(to bottom, #E3EF26 1px, transparent 1px)',
-              backgroundSize: '72px 72px',
-            }}
-          />
-        </div>
-
-        {/* Minimalist Awwwards Top Navigation Bar */}
-        <header className="sticky top-0 z-50 px-4 sm:px-8 pt-4 pb-2">
+        {/* Minimalist Top Navigation Bar */}
+        <header className="sticky top-0 z-50 bg-[#07201B]/95 border-b border-[#123E34] backdrop-blur-md px-4 sm:px-8 py-3.5">
           <div className="max-w-[1360px] mx-auto flex items-center justify-between gap-3">
-            {/* Left: Brand Pill with Crisp Kirani Logo */}
+            {/* Left: Brand Link */}
             <Link
               href="/"
-              className="group inline-flex items-center gap-3 pl-2.5 pr-4 py-1.5 rounded-full bg-[#092922]/90 border border-[#076653]/65 backdrop-blur-xl hover:border-[#E3EF26]/65 transition-all duration-300 shrink-0 shadow-[0_10px_28px_rgba(0,0,0,0.4)]"
+              className="inline-flex items-center gap-3 py-1 px-2.5 rounded-lg hover:bg-[#0A2620] transition-colors shrink-0"
             >
               <img
                 src="/kirani.svg"
                 alt="Logo Kirani AGP"
-                className="w-9 h-9 sm:w-10 sm:h-10 object-contain shrink-0 drop-shadow-[0_2px_8px_rgba(227,239,38,0.28)] group-hover:scale-105 transition-transform duration-300"
+                className="w-9 h-9 sm:w-10 sm:h-10 object-contain shrink-0"
               />
-              <div className="flex flex-col leading-none">
-                <span className="text-xs sm:text-[13px] font-black tracking-[0.14em] uppercase text-white">
+              <div className="flex flex-col leading-tight">
+                <span className="text-sm font-bold tracking-wider uppercase text-white">
                   KIRANI<span className="text-[#E3EF26]">.ARENA</span>
                 </span>
-                <span className="text-[9px] font-mono tracking-[0.15em] text-[#E3EF26] mt-0.5 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#E3EF26] animate-pulse" />
-                  PORTAL ARENA
+                <span className="text-xs font-mono tracking-wider text-[#A7C7BE]">
+                  PORTAL RESMI AGP
                 </span>
               </div>
             </Link>
 
-            {/* Center: Segmented Pill Switcher with Framer Motion layoutId */}
+            {/* Center: Segmented Navigation Switcher with Framer Motion layoutId */}
             <nav
-              className="hidden md:flex items-center gap-1 p-1.5 rounded-full bg-[#092922]/90 border border-[#076653]/65 backdrop-blur-2xl shadow-[0_16px_36px_rgba(0,0,0,0.45)]"
+              className="hidden md:flex items-center gap-1.5 p-1 rounded-xl bg-[#0A2620] border border-[#1E564A]"
               aria-label="Navigasi Arena Publik"
             >
               {arenaTabs.map((link) => {
@@ -442,15 +419,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`relative px-4 py-1.5 rounded-full text-[11px] font-bold tracking-[0.12em] uppercase transition-colors duration-300 flex items-center gap-2 ${
-                      isActive ? 'text-[#0C342C]' : 'text-[#A9C6BE] hover:text-white'
+                    className={`relative px-4 py-1.5 rounded-lg text-xs font-bold tracking-wider uppercase transition-colors flex items-center gap-2 ${
+                      isActive ? 'text-[#0C342C]' : 'text-[#C5E0D8] hover:text-white'
                     }`}
                   >
                     {isActive && (
                       <motion.span
                         layoutId="arena-nav-pill"
-                        transition={{ type: 'spring', stiffness: 360, damping: 32 }}
-                        className="absolute inset-0 rounded-full bg-[#E3EF26] shadow-[0_0_20px_rgba(227,239,38,0.4)]"
+                        transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                        className="absolute inset-0 rounded-lg bg-[#E3EF26]"
                       />
                     )}
                     <span className="relative z-10 flex items-center gap-1.5">
@@ -462,49 +439,50 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               })}
             </nav>
 
-            {/* Right: Live Clock + Juklak Download + Back to Landing Page (or Admin if committee logged in) */}
+            {/* Right Actions */}
             <div className="flex items-center gap-2.5">
               <LiveClock className="hidden lg:inline-flex" />
               <a
-                href="/Juklak_AGP_III_SMKN1_Soreang.pdf"
-                download="Surat_Edaran_dan_JUKLAK_AGP_Vol_III_SMKN1_Soreang.pdf"
-                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#092922]/90 border border-[#E3EF26]/45 text-xs font-semibold text-[#E3EF26] hover:bg-[#E3EF26] hover:text-[#0C342C] backdrop-blur-xl transition-all"
+                href="/Juklak_AGP_IV_SMKN1_Soreang.pdf"
+                download="Juklak_Resmi_AGP_IV_SMKN1_Soreang.pdf"
+                className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#0A2620] border border-[#1E564A] text-xs font-bold text-[#E3EF26] hover:bg-[#0E332B] hover:border-[#E3EF26] transition-colors"
               >
-                <FileText className="w-3.5 h-3.5" />
+                <FileText className="w-4 h-4" />
                 <span>Unduh Juklak</span>
               </a>
+
               {user ? (
                 <Link
                   href="/admin"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#E3EF26] text-[#0C342C] text-xs font-extrabold tracking-wide shadow-[0_10px_24px_rgba(227,239,38,0.25)] hover:bg-[#eef842] transition-all"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E3EF26] text-[#0C342C] text-xs font-bold hover:bg-[#d8e420] transition-colors shadow-sm"
                 >
-                  <LayoutDashboard className="w-3.5 h-3.5" />
+                  <LayoutDashboard className="w-4 h-4" />
                   <span>Dashboard Panitia</span>
                 </Link>
               ) : (
                 <Link
                   href="/"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#092922]/90 border border-[#076653]/70 text-xs font-semibold text-[#D7EAE3] hover:border-[#E3EF26] hover:text-[#E3EF26] backdrop-blur-xl transition-all"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0A2620] border border-[#1E564A] text-xs font-semibold text-white hover:border-[#E3EF26] hover:text-[#E3EF26] transition-colors"
                 >
-                  <Home className="w-3.5 h-3.5 text-[#E3EF26]" />
-                  <span>Beranda Event</span>
+                  <Home className="w-4 h-4 text-[#E3EF26]" />
+                  <span>Beranda</span>
                 </Link>
               )}
             </div>
           </div>
 
-          {/* Mobile Segmented Sub-navigation Bar */}
-          <div className="md:hidden max-w-[1360px] mx-auto mt-2.5 p-1 rounded-full bg-[#092922]/95 border border-[#076653]/65 backdrop-blur-xl flex items-center justify-between gap-1 overflow-x-auto">
+          {/* Mobile Navigation */}
+          <div className="md:hidden max-w-[1360px] mx-auto mt-3 p-1 rounded-xl bg-[#0A2620] border border-[#1E564A] flex items-center justify-between gap-1 overflow-x-auto">
             {arenaTabs.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase whitespace-nowrap transition-all ${
+                  className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold tracking-wider uppercase whitespace-nowrap transition-colors ${
                     isActive
-                      ? 'bg-[#E3EF26] text-[#0C342C] shadow-[0_0_16px_rgba(227,239,38,0.3)]'
-                      : 'text-[#A9C6BE] hover:text-white'
+                      ? 'bg-[#E3EF26] text-[#0C342C]'
+                      : 'text-[#C5E0D8] hover:text-white'
                   }`}
                 >
                   {link.icon}
@@ -521,23 +499,23 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           className="relative z-10 flex-1 w-full max-w-[1360px] mx-auto px-4 py-6 sm:px-8 sm:py-10"
         >
           {user && (
-            <div className="mb-6 p-4 rounded-2xl bg-[#092922]/90 border border-[#E3EF26]/45 backdrop-blur-xl text-[#ffffff] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_16px_40px_rgba(0,0,0,0.4)]">
+            <div className="mb-6 p-4 rounded-xl bg-[#0A2620] border border-[#E3EF26]/50 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#0C342C] border border-[#E3EF26]/50 flex items-center justify-center text-[#E3EF26] shrink-0">
+                <div className="w-9 h-9 rounded-lg bg-[#0E332B] border border-[#E3EF26]/50 flex items-center justify-center text-[#E3EF26] shrink-0">
                   <Crown className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-[11px] font-mono font-semibold uppercase tracking-wider text-[#E3EF26]">
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-[#E3EF26]">
                     Sesi Panitia Aktif ({profile?.role || 'OPERATOR'})
                   </h4>
-                  <p className="text-xs text-[#D7EAE3]">
-                    Anda sedang memantau Portal Live Arena Publik. Klik tombol di kanan untuk kembali ke ruang Rekapitulasi Panitia.
+                  <p className="text-xs text-[#C5E0D8]">
+                    Anda sedang memantau Portal Live Arena Publik. Klik tombol di samping untuk kembali ke Dashboard Panitia.
                   </p>
                 </div>
               </div>
               <Link href="/admin">
                 <Button variant="primary" size="sm" className="shrink-0 gap-1.5">
-                  <ArrowLeft className="w-3.5 h-3.5" /> Kembali ke Portal Panitia
+                  <ArrowLeft className="w-4 h-4" /> Kembali ke Dashboard
                 </Button>
               </Link>
             </div>
@@ -547,17 +525,17 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </main>
 
         {/* Footer Meta Strip */}
-        <footer className="relative z-10 border-t border-[#076653]/40 bg-[#061A15]/80 py-6 px-4 text-center">
-          <div className="max-w-[1360px] mx-auto flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono uppercase tracking-[0.14em] text-[#7FA69A]">
-            <span className="text-[#B8D8D0]">AGP-III • SMKN 1 SOREANG LIVE ARENA PORTAL (04.105–04.106)</span>
+        <footer className="border-t border-[#123E34] bg-[#051713] py-6 px-4 text-center">
+          <div className="max-w-[1360px] mx-auto flex flex-wrap items-center justify-between gap-3 text-xs font-mono uppercase tracking-wider text-[#A7C7BE]">
+            <span className="text-[#FFFFFF]">KIRANI AGP • SMKN 1 SOREANG LIVE ARENA PORTAL</span>
             <div className="flex items-center gap-4">
               <Link href="/" className="hover:text-[#E3EF26] transition-colors">
                 BERANDA EVENT
               </Link>
               <span>•</span>
               <a
-                href="/Juklak_AGP_III_SMKN1_Soreang.pdf"
-                download="Surat_Edaran_dan_JUKLAK_AGP_Vol_III_SMKN1_Soreang.pdf"
+                href="/Juklak_AGP_IV_SMKN1_Soreang.pdf"
+                download="Juklak_Resmi_AGP_IV_SMKN1_Soreang.pdf"
                 className="text-[#E3EF26] hover:underline"
               >
                 UNDUH JUKLAK PDF
@@ -582,17 +560,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   // ============================================================================
-  // COMMITTEE ADMIN SHELL (/admin/*) — Midnight Command Center Cockpit
+  // COMMITTEE ADMIN SHELL (/admin/*)
+  // Clean Professional Workspace with Plus Jakarta Sans & JetBrains Mono
   // ============================================================================
   const renderNavLinks = (isMobile: boolean = false) => {
     return (
       <nav className="flex flex-col gap-1 px-3 py-4" aria-label="Menu Navigasi Panitia">
         <div
-          className={`px-3 mb-2 text-[10px] font-mono font-medium text-[#7AA89C] tracking-[0.08em] uppercase ${
+          className={`px-3 mb-2 text-xs font-mono font-bold text-[#A7C7BE] tracking-wider uppercase ${
             isSidebarCollapsed && !isMobile ? 'text-center' : ''
           }`}
         >
-          {isSidebarCollapsed && !isMobile ? 'CMD' : 'Command Center'}
+          {isSidebarCollapsed && !isMobile ? 'CMD' : 'Menu Panitia'}
         </div>
         {currentLinks.map((link) => {
           const isActive = pathname === link.href;
@@ -602,13 +581,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               key={link.href}
               href={link.href}
               onClick={() => isMobile && setIsDrawerOpen(false)}
-              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-[8px] text-[13px] font-medium transition-all duration-150 ${
+              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-[#076653] text-[#ffffff] border border-[#076653] shadow-[rgba(255,255,255,0.06)_0px_1px_0px_0px_inset]'
-                  : 'text-[#B8D8D0] hover:text-[#ffffff] hover:bg-[#061C18] border border-transparent'
+                  ? 'bg-[#0E332B] text-[#FFFFFF] border border-[#1E564A]'
+                  : 'text-[#C5E0D8] hover:text-[#FFFFFF] hover:bg-[#061C18] border border-transparent'
               }`}
             >
-              <span className={`shrink-0 flex items-center justify-center ${isActive ? 'text-[#E3EF26]' : 'text-[#7AA89C]'}`}>
+              <span className={`shrink-0 flex items-center justify-center ${isActive ? 'text-[#E3EF26]' : 'text-[#A7C7BE]'}`}>
                 {link.icon}
               </span>
               {(!isSidebarCollapsed || isMobile) && <span className="truncate">{link.label}</span>}
@@ -620,7 +599,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#0C342C] text-[#ffffff] font-inter">
+    <div className="min-h-screen flex bg-[#07201B] text-[#FFFFFF] font-sans">
       <a href="#main-content" className="skip-to-content">
         Lewati ke konten utama
       </a>
@@ -629,22 +608,22 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <motion.aside
         animate={{ width: isSidebarCollapsed ? 76 : 252 }}
         transition={{ duration: shouldReduceMotion ? 0 : 0.2, ease: 'easeOut' }}
-        className="hidden md:flex flex-col flex-shrink-0 sticky top-0 h-screen overflow-hidden bg-[#082620] border-r border-[#076653] z-30"
+        className="hidden md:flex flex-col flex-shrink-0 sticky top-0 h-screen overflow-hidden bg-[#0A2620] border-r border-[#1E564A] z-30"
       >
-        {/* Brand Header with Crisp Kirani Logo */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-[#076653] shrink-0">
+        {/* Brand Header */}
+        <div className="h-16 flex items-center justify-between px-4 border-b border-[#1E564A] shrink-0">
           {!isSidebarCollapsed ? (
             <Link href="/admin" className="flex items-center gap-3 group min-w-0">
               <img
                 src="/kirani.svg"
                 alt="Logo Kirani AGP"
-                className="w-9 h-9 object-contain shrink-0 drop-shadow-[0_2px_8px_rgba(227,239,38,0.25)] group-hover:scale-105 transition-transform"
+                className="w-9 h-9 object-contain shrink-0"
               />
               <div className="flex flex-col min-w-0">
-                <span className="text-[13px] font-black tracking-wider text-[#ffffff] leading-none truncate">
+                <span className="text-sm font-bold tracking-wider text-white leading-tight truncate">
                   KIRANI<span className="text-[#E3EF26]">.AGP</span>
                 </span>
-                <span className="text-[9px] font-mono text-[#B8D8D0] leading-none mt-1 truncate">
+                <span className="text-xs font-mono text-[#A7C7BE] leading-tight truncate">
                   REKAPITULASI PANITIA
                 </span>
               </div>
@@ -661,7 +640,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
           <button
             onClick={toggleSidebar}
-            className="p-1.5 rounded-[8px] border border-[#076653] bg-[#061C18] hover:bg-[#076653] text-[#B8D8D0] hover:text-[#ffffff] transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg border border-[#1E564A] bg-[#07201B] hover:bg-[#0E332B] text-[#C5E0D8] hover:text-white transition-colors cursor-pointer"
             title={isSidebarCollapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'}
             aria-label={isSidebarCollapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'}
           >
@@ -673,19 +652,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="flex-1 overflow-y-auto">{renderNavLinks(false)}</div>
 
         {/* Footer Area with Server Status */}
-        <div className={`p-4 border-t border-[#076653] flex flex-col gap-2 ${isSidebarCollapsed ? 'items-center' : ''}`}>
+        <div className={`p-4 border-t border-[#1E564A] flex flex-col gap-2 ${isSidebarCollapsed ? 'items-center' : ''}`}>
           {!isSidebarCollapsed ? (
             <>
-              <div className="flex items-center gap-2 px-3 py-2 bg-[#061C18] rounded-[8px] border border-[#076653]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#E3EF26] animate-pulse" />
-                <span className="text-[10px] font-mono text-[#E3EF26] font-medium">LAN / CLOUD ONLINE</span>
+              <div className="flex items-center gap-2 px-3 py-2 bg-[#07201B] rounded-lg border border-[#123E34]">
+                <span className="w-2 h-2 rounded-full bg-[#E3EF26]" />
+                <span className="text-xs font-mono text-[#E3EF26] font-semibold">SERVER TERHUBUNG</span>
               </div>
-              <div className="text-[11px] font-mono text-[#7AA89C] text-center mt-0.5">
-                v1.2.0 | AGP 2026
+              <div className="text-xs font-mono text-[#A7C7BE] text-center mt-0.5">
+                AGP-IV SMKN 1 Soreang
               </div>
             </>
           ) : (
-            <span className="w-2 h-2 rounded-full bg-[#E3EF26] animate-pulse" title="Server Online" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#E3EF26]" title="Server Online" />
           )}
         </div>
       </motion.aside>
@@ -694,28 +673,28 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {isDrawerOpen && (
         <div className="fixed inset-0 z-50 md:hidden flex animate-in fade-in duration-200">
           <div
-            className="fixed inset-0 bg-[#0C342C]/80 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/75"
             onClick={() => setIsDrawerOpen(false)}
           />
-          <div className="relative w-72 h-full flex flex-col z-10 bg-[#082620] border-r border-[#076653] shadow-2xl animate-in slide-in-from-left duration-250">
-            <div className="h-16 flex items-center justify-between px-4 border-b border-[#076653] shrink-0">
-              <span className="text-xs font-mono font-semibold text-[#ffffff] uppercase tracking-widest flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rotate-45 bg-[#E3EF26] inline-block" /> AGP COMMAND
+          <div className="relative w-72 h-full flex flex-col z-10 bg-[#0A2620] border-r border-[#1E564A] shadow-2xl animate-in slide-in-from-left duration-250">
+            <div className="h-16 flex items-center justify-between px-4 border-b border-[#1E564A] shrink-0">
+              <span className="text-xs font-mono font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <span className="w-2.5 h-2.5 bg-[#E3EF26] inline-block" /> AGP COMMAND
               </span>
               <button
                 type="button"
                 onClick={() => setIsDrawerOpen(false)}
-                className="text-[#B8D8D0] hover:text-[#ffffff] hover:bg-[#076653] p-2 rounded-[8px] border border-[#076653] cursor-pointer"
+                className="text-[#C5E0D8] hover:text-white hover:bg-[#0E332B] p-2 rounded-lg border border-[#1E564A] cursor-pointer"
                 aria-label="Tutup Menu"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
             <div className="flex-1 overflow-y-auto">{renderNavLinks(true)}</div>
-            <div className="p-4 border-t border-[#076653] shrink-0">
-              <div className="flex items-center gap-2 px-3 py-2 bg-[#061C18] rounded-[8px] border border-[#076653]">
-                <span className="w-2 h-2 rounded-full bg-[#E3EF26] animate-pulse" />
-                <span className="text-[10px] font-mono text-[#E3EF26]">SERVER ONLINE</span>
+            <div className="p-4 border-t border-[#1E564A] shrink-0">
+              <div className="flex items-center gap-2 px-3 py-2 bg-[#07201B] rounded-lg border border-[#123E34]">
+                <span className="w-2 h-2 rounded-full bg-[#E3EF26]" />
+                <span className="text-xs font-mono text-[#E3EF26] font-semibold">SERVER TERHUBUNG</span>
               </div>
             </div>
           </div>
@@ -725,26 +704,26 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* 3. MAIN WORKSPACE */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* TOPBAR */}
-        <header className="h-16 bg-[#082620]/85 backdrop-blur-xl border-b border-[#076653] flex items-center justify-between px-4 sm:px-6 sticky top-0 z-40">
+        <header className="h-16 bg-[#0A2620] border-b border-[#1E564A] flex items-center justify-between px-4 sm:px-6 sticky top-0 z-40">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="md:hidden p-2 rounded-[8px] border border-[#076653] bg-[#061C18] text-[#ffffff] hover:bg-[#076653] cursor-pointer"
+              className="md:hidden p-2 rounded-lg border border-[#1E564A] bg-[#07201B] text-white hover:bg-[#0E332B] cursor-pointer"
               aria-label="Buka navigasi menu"
             >
               <Menu className="w-5 h-5" />
             </button>
 
-            <nav className="hidden sm:flex items-center gap-2 text-[11px] font-mono text-[#7AA89C]" aria-label="Breadcrumb">
-              <span className="text-[#B8D8D0]">CMD</span>
+            <nav className="hidden sm:flex items-center gap-2 text-xs font-mono text-[#A7C7BE]" aria-label="Breadcrumb">
+              <span className="text-white font-semibold">CMD</span>
               {breadcrumbs.map((bc, idx) => (
                 <React.Fragment key={bc.href}>
-                  <span className="text-[#076653]">/</span>
+                  <span className="text-[#1E564A]">/</span>
                   <span
                     className={
                       idx === breadcrumbs.length - 1
-                        ? 'text-[#ffffff] font-semibold'
-                        : 'text-[#B8D8D0]'
+                        ? 'text-[#E3EF26] font-bold'
+                        : 'text-[#C5E0D8]'
                     }
                   >
                     {bc.label}
@@ -763,7 +742,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 value={globalSearch}
                 onChange={(e) => setGlobalSearch(e.target.value)}
                 className="py-1.5 text-xs"
-                icon={<Search className="w-3.5 h-3.5" />}
+                icon={<Search className="w-4 h-4 text-[#A7C7BE]" />}
               />
             </div>
 
@@ -774,12 +753,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   setIsNotificationsOpen(!isNotificationsOpen);
                   if (!isNotificationsOpen) markAllNotificationsAsRead();
                 }}
-                className="p-2 rounded-[8px] border border-[#076653] bg-[#061C18] hover:bg-[#076653] text-[#B8D8D0] hover:text-[#ffffff] transition-colors relative cursor-pointer"
+                className="p-2 rounded-lg border border-[#1E564A] bg-[#07201B] hover:bg-[#0E332B] text-[#C5E0D8] hover:text-white transition-colors relative cursor-pointer"
                 aria-label="Pusat notifikasi"
               >
                 <Bell className="w-4 h-4" />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#E3EF26] text-[#0C342C] font-mono font-bold text-[9px] flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#E3EF26] text-[#0C342C] font-mono font-bold text-xs flex items-center justify-center">
                     {unreadCount}
                   </span>
                 )}
@@ -792,33 +771,40 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 5, scale: 0.95 }}
                     transition={{ duration: 0.18, ease: 'easeOut' }}
-                    className="absolute right-0 mt-2 w-80 rounded-[12px] bg-[#082620] key-card z-50 overflow-hidden"
+                    className="absolute right-0 mt-2 w-80 rounded-xl bg-[#0A2620] border border-[#1E564A] z-50 overflow-hidden shadow-2xl"
                   >
-                    <div className="px-4 py-3 border-b border-[#076653] flex justify-between items-center bg-[#061C18]">
-                      <span className="text-[11px] font-mono font-semibold uppercase text-[#ffffff]">
+                    <div className="px-4 py-3 border-b border-[#1E564A] flex justify-between items-center bg-[#07201B]">
+                      <span className="text-xs font-mono font-bold uppercase text-white">
                         Notifikasi Arena
                       </span>
-                      <Badge variant="danger">LIVE</Badge>
+                      {unreadCount > 0 && <Badge variant="primary">{unreadCount} Baru</Badge>}
                     </div>
-                    <div className="max-h-64 overflow-y-auto divide-y divide-[#076653]">
-                      {notifications.map((notif) => (
-                        <div
-                          key={notif.id}
-                          className={`p-3.5 flex flex-col gap-1 transition-colors ${
-                            notif.unread ? 'bg-[#061C18]' : 'hover:bg-[#061C18]/60'
-                          }`}
-                        >
-                          <div className="flex justify-between items-start gap-2">
-                            <span className="text-xs font-semibold text-[#ffffff] leading-tight">
-                              {notif.title}
-                            </span>
-                            <span className="text-[10px] font-mono text-[#7AA89C] whitespace-nowrap">
-                              {notif.time}
-                            </span>
-                          </div>
-                          <p className="text-xs text-[#B8D8D0] leading-relaxed">{notif.message}</p>
+
+                    <div className="max-h-64 overflow-y-auto divide-y divide-[#123E34]">
+                      {notifications.length === 0 ? (
+                        <div className="p-4 text-center text-xs text-[#A7C7BE]">
+                          Belum ada notifikasi baru.
                         </div>
-                      ))}
+                      ) : (
+                        notifications.map((notif) => (
+                          <div
+                            key={notif.id}
+                            className={`p-3.5 flex flex-col gap-1 transition-colors ${
+                              notif.unread ? 'bg-[#0E332B]' : 'hover:bg-[#0E332B]/60'
+                            }`}
+                          >
+                            <div className="flex justify-between items-start gap-2">
+                              <span className="text-xs font-bold text-white leading-tight">
+                                {notif.title}
+                              </span>
+                              <span className="text-xs font-mono text-[#A7C7BE] whitespace-nowrap">
+                                {notif.time}
+                              </span>
+                            </div>
+                            <p className="text-xs text-[#C5E0D8] leading-relaxed">{notif.message}</p>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </motion.div>
                 )}
@@ -833,10 +819,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   <div className="flex items-center gap-2 cursor-pointer group pl-1">
                     <Avatar name={profile?.full_name || profile?.username || user.email} size="sm" />
                     <div className="hidden sm:flex flex-col items-start leading-none">
-                      <span className="text-xs font-medium text-[#ffffff] group-hover:text-[#ffffff] transition-colors">
+                      <span className="text-xs font-semibold text-white transition-colors">
                         {profile?.username || user.email?.split('@')[0]}
                       </span>
-                      <span className="text-[10px] font-mono text-[#B8D8D0] uppercase mt-0.5">
+                      <span className="text-xs font-mono text-[#A7C7BE] uppercase mt-0.5">
                         {profile?.role || 'OPERATOR'}
                       </span>
                     </div>
@@ -847,7 +833,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             ) : (
               <Link href="/login">
                 <Button variant="primary" size="sm" className="gap-1.5">
-                  <Key className="w-3.5 h-3.5" /> Login Panitia
+                  <Key className="w-4 h-4" /> Login Panitia
                 </Button>
               </Link>
             )}

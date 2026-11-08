@@ -397,7 +397,7 @@ export default function ScheduleManagePage() {
           {/* Timer Display & Action Buttons */}
           <div className="flex flex-wrap items-center gap-4 bg-[#061C18] p-4 rounded-xl border border-white/[0.08]">
             <div className="text-center font-mono pr-4 border-r border-white/[0.08]">
-              <div className="text-[10px] uppercase tracking-wider text-[#7AA89C]">
+              <div className="text-xs uppercase tracking-wider text-[#7AA89C]">
                 Waktu Arena
               </div>
               <div className="text-3xl sm:text-4xl font-semibold text-white tracking-widest leading-none mt-1">
@@ -433,7 +433,7 @@ export default function ScheduleManagePage() {
                 <button
                   type="button"
                   onClick={() => handleResetTimer(8)}
-                  className={`px-2.5 py-1 text-[11px] font-mono rounded-md transition-all cursor-pointer ${
+                  className={`px-2.5 py-1 text-xs font-mono rounded-md transition-all cursor-pointer ${
                     allocatedMinutes === 8
                       ? 'bg-[#076653] text-[#E3EF26] border border-[#E3EF26]/30'
                       : 'text-[#B8D8D0] hover:text-white'
@@ -444,7 +444,7 @@ export default function ScheduleManagePage() {
                 <button
                   type="button"
                   onClick={() => handleResetTimer(10)}
-                  className={`px-2.5 py-1 text-[11px] font-mono rounded-md transition-all cursor-pointer ${
+                  className={`px-2.5 py-1 text-xs font-mono rounded-md transition-all cursor-pointer ${
                     allocatedMinutes === 10
                       ? 'bg-[#076653] text-[#E3EF26] border border-[#E3EF26]/30'
                       : 'text-[#B8D8D0] hover:text-white'
@@ -455,7 +455,7 @@ export default function ScheduleManagePage() {
                 <button
                   type="button"
                   onClick={() => handleResetTimer(15)}
-                  className={`px-2.5 py-1 text-[11px] font-mono rounded-md transition-all cursor-pointer ${
+                  className={`px-2.5 py-1 text-xs font-mono rounded-md transition-all cursor-pointer ${
                     allocatedMinutes === 15
                       ? 'bg-[#076653] text-[#E3EF26] border border-[#E3EF26]/30'
                       : 'text-[#B8D8D0] hover:text-white'
@@ -554,10 +554,10 @@ export default function ScheduleManagePage() {
 
                     <div>
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <Badge variant="primary" className="text-[10px]">
+                        <Badge variant="primary" className="text-xs">
                           {item.jenjang}
                         </Badge>
-                        <span className="px-2 py-0.5 rounded bg-[#061C18] border border-white/[0.08] font-mono text-[11px] text-[#E3EF26]">
+                        <span className="px-2 py-0.5 rounded bg-[#061C18] border border-white/[0.08] font-mono text-xs text-[#E3EF26]">
                           {item.participantNo}
                         </span>
                         <span className="text-xs text-[#7AA89C] font-mono">{item.category}</span>
@@ -575,7 +575,7 @@ export default function ScheduleManagePage() {
                         size="sm"
                         variant={item.status === 'NOW PERFORMING' ? 'danger' : 'outline'}
                         onClick={() => handleStatusChange(item.id, 'NOW PERFORMING')}
-                        className="text-[11px] font-mono py-1.5 px-2.5 gap-1"
+                        className="text-xs font-mono py-1.5 px-2.5 gap-1"
                       >
                         <Radio className="w-3 h-3" />
                         NOW PERFORMING
@@ -584,7 +584,7 @@ export default function ScheduleManagePage() {
                         size="sm"
                         variant={item.status === 'STANDBY' ? 'secondary' : 'outline'}
                         onClick={() => handleStatusChange(item.id, 'STANDBY')}
-                        className="text-[11px] font-mono py-1.5 px-2.5 gap-1"
+                        className="text-xs font-mono py-1.5 px-2.5 gap-1"
                       >
                         <Clock className="w-3 h-3" />
                         STANDBY
@@ -593,7 +593,7 @@ export default function ScheduleManagePage() {
                         size="sm"
                         variant={item.status === 'NEXT' ? 'primary' : 'outline'}
                         onClick={() => handleStatusChange(item.id, 'NEXT')}
-                        className="text-[11px] font-mono py-1.5 px-2.5 gap-1"
+                        className="text-xs font-mono py-1.5 px-2.5 gap-1"
                       >
                         <ArrowRight className="w-3 h-3" />
                         NEXT
@@ -602,7 +602,7 @@ export default function ScheduleManagePage() {
                         size="sm"
                         variant={item.status === 'COMPLETED' ? 'secondary' : 'outline'}
                         onClick={() => handleStatusChange(item.id, 'COMPLETED')}
-                        className="text-[11px] font-mono py-1.5 px-2.5 gap-1"
+                        className="text-xs font-mono py-1.5 px-2.5 gap-1"
                       >
                         <CheckCircle2 className="w-3 h-3" />
                         COMPLETED
@@ -616,7 +616,7 @@ export default function ScheduleManagePage() {
                       </button>
                     </div>
 
-                    <span className="text-[11px] font-mono text-[#7AA89C]">
+                    <span className="text-xs font-mono text-[#7AA89C]">
                       Est. Jam: <strong className="text-[#ffffff]">{item.timeSlot}</strong>
                     </span>
                   </div>
@@ -643,7 +643,7 @@ export default function ScheduleManagePage() {
                   <div className="p-4 rounded-xl border border-white/[0.06] bg-[#061C18]">
                     <div className="flex justify-between items-start gap-4">
                       <div>
-                        <span className="text-[11px] font-mono text-[#7AA89C]">
+                        <span className="text-xs font-mono text-[#7AA89C]">
                           Urutan #{idx + 1} &bull; {item.timeSlot}
                         </span>
                         <h4 className="text-sm font-medium text-white mt-0.5">
@@ -678,7 +678,7 @@ export default function ScheduleManagePage() {
                 >
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-mono text-[#ffffff]">{item.timeSlot}</span>
-                    <Badge variant="primary" className="text-[10px]">
+                    <Badge variant="primary" className="text-xs">
                       {item.jenjang}
                     </Badge>
                   </div>

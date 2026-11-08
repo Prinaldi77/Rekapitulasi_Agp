@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Button, Badge } from '@/components/ui';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Trash2, Sparkles, CheckCircle2, AlertTriangle, XCircle } from 'lucide-react';
+import { Camera, Trash2, ScanLine, CheckCircle2, AlertTriangle, XCircle } from 'lucide-react';
 
 interface OcrScore {
   criteriaName: string;
@@ -195,8 +195,8 @@ export default function ScoreOcrUploader({ criteriaNames = [], onConfirm, onClos
             <span className="text-xs font-medium text-[#ffffff]">Ekstrak Angka Nilai Otomatis</span>
           </div>
           <Button variant="primary" onClick={handleScan} isLoading={isProcessing} className="w-full gap-2">
-            <Sparkles className="w-4 h-4" />
-            <span>{isProcessing ? 'AI sedang membaca lembar nilai...' : 'Scan Lembar Nilai dengan AI OCR'}</span>
+            <ScanLine className="w-4 h-4" />
+            <span>{isProcessing ? 'Sistem sedang memproses lembar nilai...' : 'Scan & Ekstrak Nilai OCR'}</span>
           </Button>
         </motion.div>
       )}

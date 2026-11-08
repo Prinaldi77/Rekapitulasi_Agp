@@ -103,7 +103,7 @@ export const ScoreStepper: React.FC<ScoreStepperProps> = ({
           type="button"
           onClick={() => handleSetPreset(minScore)}
           disabled={disabled}
-          className="px-2.5 h-8 rounded-[6px] bg-[#061C18] hover:bg-[#076653] text-[#B8D8D0] hover:text-[#ffffff] border border-[#076653] text-[10px] font-mono font-medium transition-colors cursor-pointer"
+          className="px-2.5 h-8 rounded-md bg-[#061C18] hover:bg-[#076653] text-[#B8D8D0] hover:text-[#ffffff] border border-[#076653] text-xs font-mono font-medium transition-colors cursor-pointer"
           title={`Set nilai minimum (${minScore})`}
         >
           MIN ({minScore})
@@ -112,7 +112,7 @@ export const ScoreStepper: React.FC<ScoreStepperProps> = ({
           type="button"
           onClick={() => handleSetPreset(maxScore)}
           disabled={disabled}
-          className="px-2.5 h-8 rounded-[6px] bg-[#076653] hover:bg-[#E3EF26] text-[#E3EF26] hover:text-[#0C342C] border border-[#E3EF26]/35 text-[10px] font-mono font-semibold transition-colors cursor-pointer"
+          className="px-2.5 h-8 rounded-md bg-[#076653] hover:bg-[#E3EF26] text-[#E3EF26] hover:text-[#0C342C] border border-[#E3EF26]/35 text-xs font-mono font-semibold transition-colors cursor-pointer"
           title={`Set nilai maksimum (${maxScore})`}
         >
           MAX ({maxScore})

@@ -181,6 +181,7 @@ export default function AdminDashboard() {
           participantsPending: participantsPendingCount,
         });
 
+        // Real Top 5 Leaderboard Preview from Supabase
         const { data: leaderboards } = await supabase
           .from('participants')
           .select('*, scores(*)')
@@ -201,6 +202,54 @@ export default function AdminDashboard() {
           setLeaderboardPreview(processed);
         }
 
+        // Real Audit Logs from Supabase audit_logs table
+        try {
+          const { data: realLogs } = await supabase
+            .from('audit_logs')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(5);
+
+          if (realLogs && realLogs.length > 0) {
+            setAuditLogs(
+              realLogs.map((l: any) => ({
+                id: l.id,
+                type: 'system',
+                message: l.action || l.description || l.details || 'Aktivitas audit sistem',
+                time: new Date(l.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+              }))
+            );
+          } else {
+            setAuditLogs([]);
+          }
+        } catch {
+          setAuditLogs([]);
+        }
+
+        // Real Recent Operational Activities from schedules
+        try {
+          const { data: recentScheds } = await supabase
+            .from('schedules')
+            .select('*, participant:participants(team_name)')
+            .order('updated_at', { ascending: false })
+            .limit(4);
+
+          if (recentScheds && recentScheds.length > 0) {
+            setActivities(
+              recentScheds.map((s: any) => ({
+                id: s.id,
+                type: 'schedule',
+                message: `Status urutan tampil ${s.participant?.team_name || 'Regu'} diperbarui menjadi ${s.status}.`,
+                time: new Date(s.updated_at || Date.now()).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+              }))
+            );
+          } else {
+            setActivities([]);
+          }
+        } catch {
+          setActivities([]);
+        }
+
         if (typeof window !== 'undefined') {
           const lastInputStr = localStorage.getItem('agp_last_score_entry');
           if (lastInputStr) {
@@ -211,48 +260,6 @@ export default function AdminDashboard() {
             }
           }
         }
-
-        setActivities([
-          {
-            id: '1',
-            type: 'score',
-            message: 'Lembar Nilai LKBB Juri 2 untuk SMA-02 berhasil disimpan.',
-            time: '2 menit lalu',
-          },
-          {
-            id: '2',
-            type: 'schedule',
-            message: 'Status urutan tampil SMA-01 diperbarui menjadi PERFORMING.',
-            time: '10 menit lalu',
-          },
-          {
-            id: '3',
-            type: 'barack',
-            message: 'Alokasi Barak Kelas X-1 untuk SMP-03 tersimpan.',
-            time: '20 menit lalu',
-          },
-        ]);
-
-        setAuditLogs([
-          {
-            id: 'a1',
-            type: 'system',
-            message: 'Pencadangan basis data otomatis terjadwal berhasil diselesaikan.',
-            time: '1 jam lalu',
-          },
-          {
-            id: 'a2',
-            type: 'user',
-            message: 'Operator @operator_lkbb_sma memperbarui nilai peserta SMA-04.',
-            time: '2 jam lalu',
-          },
-          {
-            id: 'a3',
-            type: 'system',
-            message: 'Status publikasi pengumuman juara diperbarui oleh @grandmaster.',
-            time: '4 jam lalu',
-          },
-        ]);
       } catch (err) {
         console.error('Error loading dashboard:', err);
       } finally {
@@ -274,56 +281,50 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-28 rounded-2xl" />
+            <Skeleton key={i} className="h-28 rounded-xl" />
           ))}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Skeleton className="h-80 lg:col-span-2 rounded-2xl" />
-          <Skeleton className="h-80 rounded-2xl" />
+          <Skeleton className="h-80 lg:col-span-2 rounded-xl" />
+          <Skeleton className="h-80 rounded-xl" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-7xl mx-auto">
       {toastMsg && <Toast message={toastMsg} type="info" onClose={() => setToastMsg(null)} />}
 
-      {/* Awwwards 3D Command Center Banner */}
+      {/* Command Center Banner */}
       <motion.div
-        initial={{ opacity: 0, y: 18 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.65, ease: EASE_AWWWARDS }}
-        className="relative overflow-hidden rounded-[28px] bg-[#092922]/90 border border-[#076653]/80 p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6 backdrop-blur-xl shadow-[0_24px_60px_rgba(0,0,0,0.5)]"
+        className="rounded-2xl bg-[#0A2620] border border-[#1E564A] p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6 shadow-sm"
       >
-        <img
-          src="/images/landing/card-knowledge.jpg"
-          alt="AGP Command Center"
-          className="absolute right-0 top-0 h-full w-80 object-cover opacity-20 pointer-events-none select-none"
-        />
-
-        <div className="flex items-start sm:items-center gap-5 relative z-10 max-w-2xl">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#0C342C] border border-[#076653] flex items-center justify-center shrink-0 shadow-[0_8px_24px_rgba(0,0,0,0.4)]">
+        <div className="flex items-start sm:items-center gap-5 max-w-2xl">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-[#0E332B] border border-[#1E564A] flex items-center justify-center shrink-0">
             <img
               src="/kirani.svg"
               alt="Logo Kirani AGP"
-              className="w-11 h-11 sm:w-12 sm:h-12 object-contain drop-shadow-[0_2px_8px_rgba(227,239,38,0.25)]"
+              className="w-10 h-10 sm:w-11 sm:h-11 object-contain"
             />
           </div>
           <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0C342C] border border-[#076653] text-[10px] font-mono uppercase tracking-[0.16em] text-[#E3EF26]">
-              <span className="w-2 h-2 rounded-full bg-[#E3EF26] animate-pulse" />
-              <span>KIRANI AGP-III • SMKN 1 SOREANG (04.105–04.106)</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0E332B] border border-[#1E564A] text-xs font-mono uppercase tracking-wider text-[#E3EF26]">
+              <span className="w-2 h-2 rounded-full bg-[#E3EF26]" />
+              <span>KIRANI AGP • SMKN 1 SOREANG (04.105–04.106)</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
               Selamat Datang, <span className="text-[#E3EF26]">{userName || 'Panitia AGP'}</span>
             </h1>
-            <p className="text-[#94B8AE] text-xs sm:text-sm leading-relaxed">
+            <p className="text-[#C5E0D8] text-xs sm:text-sm leading-relaxed">
               {userRole === 'SUPER_ADMIN'
-                ? 'Otoritas penuh sebagai Sekretaris Utama (Super Admin) untuk validasi rekapitulasi nilai 106 Trophy, penerbitan SK Juara AGP-III, dan konfigurasi sistem.'
+                ? 'Otoritas penuh sebagai Sekretaris Utama (Super Admin) untuk validasi rekapitulasi nilai 106 Trophy, penerbitan SK Juara AGP, dan konfigurasi sistem.'
                 : userRole === 'ADMIN'
                   ? 'Mengelola operasional master data kontingen peserta (Kuota 50 Basis), giliran tampil arena (8 Menit), serta alokasi ruangan barak SMKN 1 Soreang.'
                   : 'Ruang kerja cepat Operator Entri Nilai (PJ Rekap) untuk tabulasi lembar nilai dewan juri Periode I–IV dan pemantauan klasemen.'}
@@ -331,24 +332,24 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:items-end gap-3 relative z-10">
+        <div className="flex flex-col sm:items-end gap-3">
           <div className="flex items-center gap-2 self-start sm:self-end">
             <a
-              href="/Juklak_AGP_III_SMKN1_Soreang.pdf"
-              download="Surat_Edaran_dan_JUKLAK_AGP_Vol_III_SMKN1_Soreang.pdf"
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#061C18] border border-[#E3EF26]/45 text-[11px] font-mono font-bold text-[#E3EF26] hover:bg-[#E3EF26] hover:text-[#0C342C] transition-all"
+              href="/Juklak_AGP_IV_SMKN1_Soreang.pdf"
+              download="Juklak_Resmi_AGP_IV_SMKN1_Soreang.pdf"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#07201B] border border-[#1E564A] text-xs font-mono font-bold text-[#E3EF26] hover:bg-[#0E332B] hover:border-[#E3EF26] transition-colors"
             >
-              <FileText className="w-3 h-3" />
+              <FileText className="w-4 h-4" />
               <span>Unduh Juklak PDF</span>
             </a>
-            <Badge variant="danger" className="gap-1.5 py-1 px-3">
-              <Crown className="w-3.5 h-3.5" />
+            <Badge variant="danger" className="gap-1.5 py-1.5 px-3">
+              <Crown className="w-4 h-4" />
               <span>{userRole}</span>
             </Badge>
           </div>
 
-          {/* Segmented Role Switcher Pill */}
-          <div className="inline-flex items-center gap-1 rounded-full bg-[#061C18] p-1.5 border border-[#076653]">
+          {/* Role Switcher Pill */}
+          <div className="inline-flex items-center gap-1 rounded-lg bg-[#07201B] p-1 border border-[#1E564A]">
             {(['SUPER_ADMIN', 'ADMIN', 'OPERATOR_REKAP'] as const).map((r) => {
               const active = userRole === r;
               return (
@@ -356,15 +357,15 @@ export default function AdminDashboard() {
                   key={r}
                   type="button"
                   onClick={() => handleRoleSwitch(r)}
-                  className={`relative px-3.5 py-1.5 rounded-full text-[11px] font-mono font-bold transition-colors cursor-pointer ${
-                    active ? 'text-[#0C342C]' : 'text-[#94B8AE] hover:text-white'
+                  className={`relative px-3.5 py-1.5 rounded-md text-xs font-mono font-bold transition-colors cursor-pointer ${
+                    active ? 'text-[#0C342C]' : 'text-[#A7C7BE] hover:text-white'
                   }`}
                 >
                   {active && (
                     <motion.span
                       layoutId="admin-role-pill"
-                      transition={{ type: 'spring', stiffness: 360, damping: 30 }}
-                      className="absolute inset-0 rounded-full bg-[#E3EF26]"
+                      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                      className="absolute inset-0 rounded-md bg-[#E3EF26]"
                     />
                   )}
                   <span className="relative z-10">
@@ -416,48 +417,48 @@ export default function AdminDashboard() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: idx * 0.05, ease: EASE_AWWWARDS }}
-                className={`rounded-[22px] p-5 sm:p-6 border backdrop-blur-xl ${
+                className={`rounded-xl p-5 sm:p-6 border ${
                   item.highlight
-                    ? 'bg-[#0C342C]/90 border-[#E3EF26]/55'
-                    : 'bg-[#092922]/85 border-[#076653]/70'
+                    ? 'bg-[#0E332B] border-[#E3EF26]'
+                    : 'bg-[#0A2620] border-[#1E564A]'
                 }`}
               >
-                <div className="text-[11px] font-mono text-[#94B8AE] uppercase tracking-wider mb-2">
+                <div className="text-xs font-mono text-[#A7C7BE] uppercase tracking-wider mb-2">
                   {item.label}
                 </div>
                 <div className="text-2xl sm:text-3xl font-mono font-black text-white">
                   <span className={item.highlight ? 'text-[#E3EF26]' : 'text-white'}>
                     {item.val}
                   </span>{' '}
-                  <span className="text-xs font-normal text-[#8AB0A5]">{item.sub}</span>
+                  <span className="text-xs font-normal text-[#C5E0D8]">{item.sub}</span>
                 </div>
-                <p className="text-xs text-[#7FA69A] mt-1.5">{item.desc}</p>
+                <p className="text-xs text-[#A7C7BE] mt-1.5">{item.desc}</p>
               </motion.div>
             ))}
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
-              <div className="rounded-[24px] bg-[#092922]/85 border border-[#076653]/70 p-6 backdrop-blur-xl">
+              <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-xs font-mono font-bold uppercase text-white tracking-wider">
                     Progres Rekapitulasi Lomba
                   </h3>
                   <Badge variant="success">{stats.progressOverall}% SELESAI</Badge>
                 </div>
-                <div className="w-full h-3 rounded-full bg-[#061C18] border border-[#076653] overflow-hidden mb-2.5">
+                <div className="w-full h-3 rounded-full bg-[#07201B] border border-[#123E34] overflow-hidden mb-2.5">
                   <div
                     className="h-full rounded-full bg-[#E3EF26] transition-all duration-700"
                     style={{ width: `${stats.progressOverall}%` }}
                   />
                 </div>
-                <p className="text-xs text-[#94B8AE]">
+                <p className="text-xs text-[#C5E0D8]">
                   Rasio kontingen pangkalan yang telah memiliki rekapitulasi nilai dewan juri.
                 </p>
               </div>
 
-              <div className="rounded-[24px] bg-[#092922]/85 border border-[#076653]/70 p-6 backdrop-blur-xl">
-                <div className="flex justify-between items-center mb-5 pb-3 border-b border-[#076653]/50">
+              <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-6">
+                <div className="flex justify-between items-center mb-5 pb-3 border-b border-[#123E34]">
                   <h3 className="text-xs font-mono font-bold uppercase text-white tracking-wider">
                     Peringkat 5 Teratas Sementara
                   </h3>
@@ -466,30 +467,30 @@ export default function AdminDashboard() {
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-[#E3EF26] hover:underline"
                   >
                     <span>Buka Master Leaderboard</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
+                    <ArrowUpRight className="w-4 h-4" />
                   </Link>
                 </div>
                 {leaderboardPreview.length === 0 ? (
                   <EmptyState
                     title="Klasemen Kosong"
-                    description="Belum ada skor lomba yang diinput."
+                    description="Belum ada skor lomba yang diinput ke sistem."
                   />
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
-                        <tr className="border-b border-[#076653]/50 text-[11px] font-mono uppercase text-[#8AB0A5]">
+                        <tr className="border-b border-[#123E34] text-xs font-mono uppercase text-[#A7C7BE]">
                           <th className="py-2.5">Regu</th>
                           <th className="py-2.5">Pangkalan</th>
                           <th className="py-2.5 text-right">Total Skor</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-[#076653]/35 text-xs">
+                      <tbody className="divide-y divide-[#123E34] text-xs">
                         {leaderboardPreview.map((item) => (
-                          <tr key={item.id} className="hover:bg-[#061C18]/60 transition-colors">
-                            <td className="py-3 font-bold text-white">{item.teamName}</td>
-                            <td className="py-3 text-[#94B8AE]">{item.schoolName}</td>
-                            <td className="py-3 text-right font-mono font-bold text-[#E3EF26]">
+                          <tr key={item.id} className="hover:bg-[#07201B] transition-colors">
+                            <td className="py-3 font-bold text-white text-sm">{item.teamName}</td>
+                            <td className="py-3 text-[#C5E0D8]">{item.schoolName}</td>
+                            <td className="py-3 text-right font-mono font-bold text-sm text-[#E3EF26]">
                               {item.score} PTS
                             </td>
                           </tr>
@@ -502,7 +503,7 @@ export default function AdminDashboard() {
             </div>
 
             <div className="space-y-6">
-              <div className="rounded-[24px] bg-[#092922]/85 border border-[#076653]/70 p-6 backdrop-blur-xl">
+              <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-6">
                 <h3 className="text-xs font-mono font-bold uppercase text-white tracking-wider mb-4">
                   Pintasan Kendali Grand Master
                 </h3>
@@ -542,26 +543,30 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div className="rounded-[24px] bg-[#092922]/85 border border-[#076653]/70 p-6 backdrop-blur-xl">
+              <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <ShieldAlert className="w-4 h-4 text-[#E3EF26]" />
                   <h3 className="text-xs font-mono font-bold uppercase text-white tracking-wider">
-                    Catatan Audit Terbaru
+                    Catatan Audit Sistem
                   </h3>
                 </div>
-                <div className="flex flex-col gap-3">
-                  {auditLogs.map((log) => (
-                    <div
-                      key={log.id}
-                      className="p-3.5 rounded-xl bg-[#061C18]/90 border border-[#076653]/60 text-xs"
-                    >
-                      <p className="text-white leading-relaxed">{log.message}</p>
-                      <span className="text-[10px] font-mono text-[#E3EF26] mt-1 block">
-                        {log.time}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                {auditLogs.length === 0 ? (
+                  <p className="text-xs text-[#A7C7BE]">Belum ada aktivitas audit sistem yang tercatat.</p>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    {auditLogs.map((log) => (
+                      <div
+                        key={log.id}
+                        className="p-3.5 rounded-lg bg-[#07201B] border border-[#123E34] text-xs"
+                      >
+                        <p className="text-white leading-relaxed">{log.message}</p>
+                        <span className="text-xs font-mono text-[#E3EF26] mt-1 block">
+                          {log.time}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -572,32 +577,32 @@ export default function AdminDashboard() {
       {userRole === 'ADMIN' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="rounded-[22px] bg-[#092922]/85 border border-[#076653]/70 p-5">
-              <div className="text-[11px] font-mono text-[#94B8AE] uppercase mb-2">
+            <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-5">
+              <div className="text-xs font-mono text-[#A7C7BE] uppercase mb-2">
                 TOTAL PESERTA
               </div>
               <div className="text-2xl font-mono font-black text-white">
                 {stats.totalParticipants} Regu
               </div>
             </div>
-            <div className="rounded-[22px] bg-[#092922]/85 border border-[#076653]/70 p-5">
-              <div className="text-[11px] font-mono text-[#94B8AE] uppercase mb-2">
+            <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-5">
+              <div className="text-xs font-mono text-[#A7C7BE] uppercase mb-2">
                 RUANG BARAK
               </div>
               <div className="text-2xl font-mono font-black text-[#E3EF26]">
                 {stats.totalBaracks} Ruang
               </div>
             </div>
-            <div className="rounded-[22px] bg-[#092922]/85 border border-[#076653]/70 p-5">
-              <div className="text-[11px] font-mono text-[#94B8AE] uppercase mb-2">
+            <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-5">
+              <div className="text-xs font-mono text-[#A7C7BE] uppercase mb-2">
                 JADWAL ARENA
               </div>
               <div className="text-2xl font-mono font-black text-white">
                 {stats.totalSchedules} Slot
               </div>
             </div>
-            <div className="rounded-[22px] bg-[#092922]/85 border border-[#076653]/70 p-5">
-              <div className="text-[11px] font-mono text-[#94B8AE] uppercase mb-2">
+            <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-5">
+              <div className="text-xs font-mono text-[#A7C7BE] uppercase mb-2">
                 NILAI MASUK
               </div>
               <div className="text-2xl font-mono font-black text-[#E3EF26]">
@@ -607,26 +612,30 @@ export default function AdminDashboard() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 rounded-[24px] bg-[#092922]/85 border border-[#076653]/70 p-6">
+            <div className="lg:col-span-2 rounded-xl bg-[#0A2620] border border-[#1E564A] p-6">
               <h3 className="text-xs font-mono font-bold uppercase text-white tracking-wider mb-4">
                 Aktivitas Operasional Lapangan
               </h3>
-              <div className="space-y-3">
-                {activities.map((act) => (
-                  <div
-                    key={act.id}
-                    className="p-4 rounded-xl bg-[#061C18]/90 border border-[#076653]/60 text-xs flex justify-between items-center gap-4"
-                  >
-                    <span className="text-white">{act.message}</span>
-                    <span className="text-[10px] font-mono text-[#E3EF26] shrink-0">
-                      {act.time}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              {activities.length === 0 ? (
+                <p className="text-xs text-[#A7C7BE]">Belum ada aktivitas operasional lapangan.</p>
+              ) : (
+                <div className="space-y-3">
+                  {activities.map((act) => (
+                    <div
+                      key={act.id}
+                      className="p-4 rounded-lg bg-[#07201B] border border-[#123E34] text-xs flex justify-between items-center gap-4"
+                    >
+                      <span className="text-white">{act.message}</span>
+                      <span className="text-xs font-mono text-[#E3EF26] shrink-0">
+                        {act.time}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            <div className="rounded-[24px] bg-[#092922]/85 border border-[#076653]/70 p-6">
+            <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-6">
               <h3 className="text-xs font-mono font-bold uppercase text-white tracking-wider mb-4">
                 Pintasan Operasional
               </h3>
@@ -661,32 +670,32 @@ export default function AdminDashboard() {
       {userRole === 'OPERATOR_REKAP' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="rounded-[22px] bg-[#092922]/85 border border-[#076653]/70 p-5">
-              <div className="text-[11px] font-mono text-[#94B8AE] uppercase mb-2">
+            <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-5">
+              <div className="text-xs font-mono text-[#A7C7BE] uppercase mb-2">
                 SUDAH DIINPUT
               </div>
               <div className="text-2xl font-mono font-black text-[#E3EF26]">
                 {stats.sheetsEntered} Item
               </div>
             </div>
-            <div className="rounded-[22px] bg-[#092922]/85 border border-[#076653]/70 p-5">
-              <div className="text-[11px] font-mono text-[#94B8AE] uppercase mb-2">
+            <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-5">
+              <div className="text-xs font-mono text-[#A7C7BE] uppercase mb-2">
                 BELUM DIINPUT
               </div>
               <div className="text-2xl font-mono font-black text-white">
                 {stats.sheetsPending} Lembar
               </div>
             </div>
-            <div className="rounded-[22px] bg-[#092922]/85 border border-[#076653]/70 p-5">
-              <div className="text-[11px] font-mono text-[#94B8AE] uppercase mb-2">
+            <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-5">
+              <div className="text-xs font-mono text-[#A7C7BE] uppercase mb-2">
                 PESERTA DINILAI
               </div>
               <div className="text-2xl font-mono font-black text-white">
                 {stats.participantsGraded} Tim
               </div>
             </div>
-            <div className="rounded-[22px] bg-[#092922]/85 border border-[#076653]/70 p-5">
-              <div className="text-[11px] font-mono text-[#94B8AE] uppercase mb-2">
+            <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-5">
+              <div className="text-xs font-mono text-[#A7C7BE] uppercase mb-2">
                 PROGRES REKAP
               </div>
               <div className="text-2xl font-mono font-black text-[#E3EF26]">
@@ -696,8 +705,8 @@ export default function AdminDashboard() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 rounded-[24px] bg-[#092922]/85 border border-[#076653]/70 p-6">
-              <div className="flex justify-between items-center mb-4 pb-3 border-b border-[#076653]/50">
+            <div className="lg:col-span-2 rounded-xl bg-[#0A2620] border border-[#1E564A] p-6">
+              <div className="flex justify-between items-center mb-4 pb-3 border-b border-[#123E34]">
                 <h3 className="text-xs font-mono font-bold uppercase text-white tracking-wider">
                   Peringkat Sementara
                 </h3>
@@ -718,18 +727,18 @@ export default function AdminDashboard() {
                   {leaderboardPreview.map((item, index) => (
                     <div
                       key={item.id}
-                      className="p-4 rounded-xl bg-[#061C18]/90 border border-[#076653]/60 flex items-center justify-between"
+                      className="p-4 rounded-lg bg-[#07201B] border border-[#123E34] flex items-center justify-between"
                     >
                       <div>
                         <span className="text-xs font-mono text-[#E3EF26] font-bold mr-2.5">
                           #{index + 1}
                         </span>
                         <span className="text-sm font-bold text-white">{item.teamName}</span>
-                        <span className="text-xs text-[#94B8AE] block mt-0.5">
+                        <span className="text-xs text-[#C5E0D8] block mt-0.5">
                           {item.schoolName}
                         </span>
                       </div>
-                      <span className="font-mono font-black text-sm text-[#E3EF26]">
+                      <span className="font-mono font-bold text-sm text-[#E3EF26]">
                         {item.score} PTS
                       </span>
                     </div>
@@ -738,7 +747,7 @@ export default function AdminDashboard() {
               )}
             </div>
 
-            <div className="rounded-[24px] bg-[#092922]/85 border border-[#076653]/70 p-6">
+            <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-6">
               <h3 className="text-xs font-mono font-bold uppercase text-white tracking-wider mb-4">
                 Aksi Cepat Operator Rekap
               </h3>
@@ -759,12 +768,7 @@ export default function AdminDashboard() {
                 )}
                 <Link href="/admin/leaderboard">
                   <Button variant="outline" className="w-full justify-start gap-2">
-                    <Trophy className="w-4 h-4" /> Lihat Rekap Nilai Lomba
-                  </Button>
-                </Link>
-                <Link href="/live-score">
-                  <Button variant="outline" className="w-full justify-start gap-2">
-                    <FileText className="w-4 h-4" /> Pratinjau Halaman Publik
+                    <Trophy className="w-4 h-4" /> Pantau Rekap Nilai
                   </Button>
                 </Link>
               </div>

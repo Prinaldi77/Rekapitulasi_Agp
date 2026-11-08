@@ -19,7 +19,7 @@ const Hero: React.FC<HeroProps> = ({ isPublished }) => {
       <div className="flex justify-center">
         <Badge 
           variant="primary" 
-          className="font-bold text-[10px] sm:text-xs uppercase tracking-[0.2em] py-1.5 px-4 bg-green-50 text-green-700 border border-green-200/50 shadow-sm rounded-full"
+          className="font-bold text-xs sm:text-xs uppercase tracking-[0.2em] py-1.5 px-4 bg-green-50 text-green-700 border border-green-200/50 shadow-sm rounded-full"
         >
           <span className="flex items-center gap-1.5">
             <Trophy className="w-3.5 h-3.5" /> Portal Informasi & Live Score AGP 2026
@@ -52,7 +52,7 @@ const Hero: React.FC<HeroProps> = ({ isPublished }) => {
             </div>
             <Badge 
               variant={isPublished ? 'success' : 'warning'} 
-              className="text-[10px] font-extrabold uppercase shadow-sm px-3 py-1"
+              className="text-xs font-extrabold uppercase shadow-sm px-3 py-1"
             >
               <span className="flex items-center gap-1">
                 {isPublished ? <LockOpen className="w-3 h-3" /> : <Lock className="w-3 h-3" />} 

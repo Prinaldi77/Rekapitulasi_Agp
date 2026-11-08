@@ -46,13 +46,13 @@ export const LiveClock: React.FC<LiveClockProps> = ({ showSeconds = true, classN
 
   return (
     <div
-      className={`inline-flex items-center gap-2 bg-[#061C18] text-[#ffffff] px-3 py-1.5 rounded-[8px] border border-[#076653] ${className}`}
+      className={`inline-flex items-center gap-2 bg-[#061C18] text-[#ffffff] px-3 py-1.5 rounded-lg border border-[#076653] ${className}`}
     >
-      <span className="w-1.5 h-1.5 rounded-full bg-[#E3EF26] animate-pulse shrink-0" />
+      <span className="w-2 h-2 rounded-full bg-[#E3EF26] shrink-0" />
       <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 leading-none font-mono">
         <span className="font-semibold text-xs text-[#E3EF26] tracking-wider">{timeStr}</span>
         <span className="hidden md:inline text-[#7AA89C]">|</span>
-        <span className="hidden md:inline text-[11px] font-normal text-[#B8D8D0]">{dateStr}</span>
+        <span className="hidden md:inline text-xs font-normal text-[#B8D8D0]">{dateStr}</span>
       </div>
     </div>
   );
@@ -115,7 +115,7 @@ export const PerformanceTimer: React.FC<PerformanceTimerProps> = ({
     >
       <Timer className="w-4 h-4 shrink-0" />
       <div className="flex flex-col">
-        <span className="text-[10px] uppercase font-medium tracking-wider text-[#B8D8D0]">
+        <span className="text-xs uppercase font-medium tracking-wider text-[#B8D8D0]">
           {isDanger ? 'Sisa Waktu Tampil!' : isWarning ? 'Persiapan Akhir' : 'Durasi Waktu Arena'}
         </span>
         <span className="text-base font-bold tracking-widest leading-tight text-[#ffffff]">

@@ -55,7 +55,7 @@ export function DataTable<T>({
       <div className="w-full overflow-x-auto touch-pan-x rounded-[16px] bg-[#082620] key-card">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-[#076653] bg-[#061C18] text-[11px] font-mono font-semibold uppercase text-[#E3EF26] tracking-[0.06em]">
+            <tr className="border-b border-[#076653] bg-[#061C18] text-xs font-mono font-semibold uppercase text-[#E3EF26] tracking-wider">
               {columns.map((col) => (
                 <th key={col.key} className="py-3.5 px-5">
                   {col.label}

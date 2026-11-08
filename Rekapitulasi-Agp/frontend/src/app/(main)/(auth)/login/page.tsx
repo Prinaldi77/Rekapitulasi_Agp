@@ -166,13 +166,13 @@ function LoginForm() {
           <img
             src="/kirani.svg"
             alt="Logo KIRANI AGP"
-            className="w-12 h-12 object-contain transition-transform group-hover:scale-105"
+            className="w-12 h-12 object-contain group-hover:opacity-90 transition-opacity"
           />
           <div className="text-left">
             <div className="text-base font-extrabold tracking-tight text-white leading-none">
               KIRANI <span className="text-[#E3EF26]">AGP-III</span>
             </div>
-            <div className="text-[11px] font-mono tracking-wider text-[#94B8AE] uppercase mt-1">
+            <div className="text-xs font-mono tracking-wider text-[#94B8AE] uppercase mt-1">
               Rekapitulasi Nilai
             </div>
           </div>
@@ -201,7 +201,7 @@ function LoginForm() {
           <div>
             <label
               htmlFor="identifier-input"
-              className="block text-[11px] font-mono font-medium text-[#B8D8D0] tracking-[0.06em] uppercase mb-1.5"
+              className="block text-xs font-mono font-medium text-[#B8D8D0] tracking-[0.06em] uppercase mb-1.5"
             >
               Email atau Username
             </label>
@@ -224,7 +224,7 @@ function LoginForm() {
             <div className="flex items-center justify-between mb-1.5">
               <label
                 htmlFor="password-input"
-                className="block text-[11px] font-mono font-medium text-[#B8D8D0] tracking-[0.06em] uppercase"
+                className="block text-xs font-mono font-medium text-[#B8D8D0] tracking-[0.06em] uppercase"
               >
                 Kata Sandi
               </label>
@@ -296,11 +296,11 @@ function LoginForm() {
 
       {/* Institutional Security Notice */}
       <div className="mt-6 text-center space-y-2">
-        <p className="text-[11px] text-[#698E84] flex items-center justify-center gap-1.5">
+        <p className="text-xs text-[#698E84] flex items-center justify-center gap-1.5">
           <Lock className="w-3 h-3 text-[#E3EF26]/80" />
           <span>Akses terenkripsi khusus panitia &amp; operator resmi AGP</span>
         </p>
-        <p className="text-[11px] text-[#4E7067]">
+        <p className="text-xs text-[#4E7067]">
           &copy; {new Date().getFullYear()} KIRANI AGP-III &bull; Seluruh Hak Cipta Dilindungi
         </p>
       </div>

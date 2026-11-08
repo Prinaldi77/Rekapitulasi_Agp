@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { ChevronUp, ChevronDown, ArrowUp, ArrowDown, Search, Sparkles, Printer, RotateCcw, AlertTriangle, CheckCircle2, FileCheck2 } from 'lucide-react';
+import { ChevronUp, ChevronDown, ArrowUp, ArrowDown, Search, ScanLine, Printer, RotateCcw, AlertTriangle, CheckCircle2, FileCheck2 } from 'lucide-react';
 import { SchoolLevel } from '@/lib/dynamicStore';
 import { supabase } from '@/lib/supabase';
 import { printLembarPenilaianDetailPDF } from '@/lib/pdf';
@@ -625,7 +625,7 @@ export default function RapidScoreEntryPage() {
                           <Badge variant={isActive ? 'danger' : 'secondary'}>{p.category?.level || jenjang}</Badge>
                         </div>
                         <span className="font-medium truncate text-[#ffffff]">{p.team_name}</span>
-                        <span className="text-[11px] text-[#7AA89C] truncate">{p.school_name}</span>
+                        <span className="text-xs text-[#7AA89C] truncate">{p.school_name}</span>
                       </button>
                     );
                   })
@@ -634,7 +634,7 @@ export default function RapidScoreEntryPage() {
             </Card>
 
             <Card className="p-4 space-y-2 text-xs" hoverGlow={false}>
-              <div className="font-mono font-semibold text-[#ffffff] uppercase tracking-wider text-[11px]">
+              <div className="font-mono font-semibold text-[#ffffff] uppercase tracking-wider text-xs">
                 Navigasi Keyboard Cepat
               </div>
               <p className="text-[#B8D8D0] leading-relaxed text-xs">
@@ -677,7 +677,7 @@ export default function RapidScoreEntryPage() {
                         key={g}
                         type="button"
                         onClick={() => setGenderRegu(g)}
-                        className={`px-3 py-1.5 text-[11px] font-mono font-medium rounded-[6px] transition-all cursor-pointer ${
+                        className={`px-3 py-1.5 text-xs font-mono font-medium rounded-[6px] transition-all cursor-pointer ${
                           genderRegu === g
                             ? 'bg-[#E3EF26] text-[#0C342C] font-semibold'
                             : 'text-[#B8D8D0] hover:text-[#ffffff]'
@@ -694,7 +694,7 @@ export default function RapidScoreEntryPage() {
                         key={j}
                         type="button"
                         onClick={() => setJenjang(j)}
-                        className={`px-3 py-1.5 text-[11px] font-mono font-medium rounded-[6px] transition-all cursor-pointer ${
+                        className={`px-3 py-1.5 text-xs font-mono font-medium rounded-[6px] transition-all cursor-pointer ${
                           jenjang === j
                             ? 'bg-[#E3EF26] text-[#0C342C] font-semibold'
                             : 'text-[#B8D8D0] hover:text-[#ffffff]'
@@ -712,7 +712,7 @@ export default function RapidScoreEntryPage() {
                           key={num}
                           type="button"
                           onClick={() => setSelectedJuri(num as any)}
-                          className={`px-3 py-1.5 text-[11px] font-mono font-medium rounded-[6px] transition-all cursor-pointer ${
+                          className={`px-3 py-1.5 text-xs font-mono font-medium rounded-[6px] transition-all cursor-pointer ${
                             selectedJuri === num
                               ? 'bg-[#E3EF26] text-[#0C342C] font-bold'
                               : 'text-[#B8D8D0] hover:text-[#ffffff]'
@@ -744,8 +744,8 @@ export default function RapidScoreEntryPage() {
                     onClick={() => setIsOcrModalOpen(true)}
                     className="font-mono text-xs border-[#E3EF26]/40 text-[#ffffff] gap-1.5"
                   >
-                    <Sparkles className="w-3.5 h-3.5 text-[#E3EF26]" />
-                    Scan Lembar Juri (AI OCR)
+                    <ScanLine className="w-3.5 h-3.5 text-[#E3EF26]" />
+                    Scan Lembar Juri (OCR)
                   </Button>
                 </div>
               </div>
@@ -776,7 +776,7 @@ export default function RapidScoreEntryPage() {
               {/* Progress Bar */}
               {materi === 'LKBB' && (
                 <div className="space-y-1.5 pt-2">
-                  <div className="flex justify-between text-[11px] font-mono text-[#B8D8D0] uppercase">
+                  <div className="flex justify-between text-xs font-mono text-[#B8D8D0] uppercase">
                     <span>Progres Pengisian Kriteria</span>
                     <span className="text-[#ffffff]">
                       {filledCriteriaCount} / {totalCriteriaCount} ITEM ({progressPercent}%)
@@ -828,7 +828,7 @@ export default function RapidScoreEntryPage() {
 
                   {materi === 'ADMINISTRASI' && (
                     <div className="max-w-xl mx-auto text-left bg-[#061C18] border border-[#076653] rounded-[12px] p-4 space-y-2.5">
-                      <div className="flex items-center justify-between text-[11px] font-mono text-[#E3EF26] uppercase pb-2 border-b border-[#076653]">
+                      <div className="flex items-center justify-between text-xs font-mono text-[#E3EF26] uppercase pb-2 border-b border-[#076653]">
                         <span className="flex items-center gap-1.5">
                           <FileCheck2 className="w-3.5 h-3.5" />
                           Rubrik Kelengkapan Administrasi Regu
@@ -866,15 +866,15 @@ export default function RapidScoreEntryPage() {
                     <div className="max-w-xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-left">
                       <div className="p-3 rounded-[10px] bg-emerald-950/50 border border-emerald-500/40 text-xs">
                         <div className="font-mono font-bold text-emerald-300">STIKER HIJAU</div>
-                        <div className="text-[11px] text-[#B8D8D0] mt-0.5">Selesai menit ke 3 – 4</div>
+                        <div className="text-xs text-[#B8D8D0] mt-0.5">Selesai menit ke 3 – 4</div>
                       </div>
                       <div className="p-3 rounded-[10px] bg-amber-950/50 border border-amber-400/40 text-xs">
                         <div className="font-mono font-bold text-amber-300">STIKER KUNING</div>
-                        <div className="text-[11px] text-[#B8D8D0] mt-0.5">Selesai menit ke 5 – 6</div>
+                        <div className="text-xs text-[#B8D8D0] mt-0.5">Selesai menit ke 5 – 6</div>
                       </div>
                       <div className="p-3 rounded-[10px] bg-rose-950/50 border border-rose-500/40 text-xs">
                         <div className="font-mono font-bold text-rose-300">STIKER MERAH</div>
-                        <div className="text-[11px] text-[#B8D8D0] mt-0.5">Selesai menit ke 7 – 8</div>
+                        <div className="text-xs text-[#B8D8D0] mt-0.5">Selesai menit ke 7 – 8</div>
                       </div>
                     </div>
                   )}
@@ -928,7 +928,7 @@ export default function RapidScoreEntryPage() {
                               </span>
                               <div className="min-w-0">
                                 {item.subGroup && (
-                                  <span className="text-[10px] font-mono text-[#7AA89C] uppercase block">
+                                  <span className="text-xs font-mono text-[#7AA89C] uppercase block">
                                     {item.subGroup}
                                   </span>
                                 )}
@@ -939,7 +939,7 @@ export default function RapidScoreEntryPage() {
                             </div>
 
                             <div className="flex items-center gap-3 self-end sm:self-center">
-                              <span className="text-[11px] font-mono text-[#7AA89C]">
+                              <span className="text-xs font-mono text-[#7AA89C]">
                                 [{item.minScore}–{item.maxScore}]
                               </span>
                               <ScoreStepper
@@ -994,7 +994,7 @@ export default function RapidScoreEntryPage() {
                               </div>
 
                               <div className="flex items-center gap-3 self-end sm:self-center">
-                                <span className="text-[11px] font-mono text-[#7AA89C]">
+                                <span className="text-xs font-mono text-[#7AA89C]">
                                   [{item.minScore}–{item.maxScore}]
                                 </span>
                                 <ScoreStepper
@@ -1050,7 +1050,7 @@ export default function RapidScoreEntryPage() {
                               </div>
 
                               <div className="flex items-center gap-3 self-end sm:self-center">
-                                <span className="text-[11px] font-mono text-[#7AA89C]">
+                                <span className="text-xs font-mono text-[#7AA89C]">
                                   [{item.minScore}–{item.maxScore}]
                                 </span>
                                 <ScoreStepper
@@ -1100,11 +1100,11 @@ export default function RapidScoreEntryPage() {
                           >
                             <div className="space-y-0.5 pr-2">
                               <h4 className="text-xs sm:text-sm font-medium text-[#ffffff]">{rule.label}</h4>
-                              <p className="text-[11px] text-[#7AA89C]">{rule.description}</p>
+                              <p className="text-xs text-[#7AA89C]">{rule.description}</p>
                             </div>
 
                             <div className="flex items-center gap-3 self-end sm:self-center shrink-0">
-                              <span className="text-[11px] font-mono text-rose-400 font-semibold">
+                              <span className="text-xs font-mono text-rose-400 font-semibold">
                                 {deduction > 0 ? `-${deduction} PTS` : '0 PTS'}
                               </span>
                               <ScoreStepper
@@ -1124,7 +1124,7 @@ export default function RapidScoreEntryPage() {
                 {/* Bottom Action Footer */}
                 <div className="bg-[#082620] rounded-[16px] p-6 key-card flex flex-col md:flex-row items-center justify-between gap-6">
                   <div className="space-y-1.5">
-                    <h3 className="text-[11px] font-mono text-[#B8D8D0] uppercase tracking-wider">
+                    <h3 className="text-xs font-mono text-[#B8D8D0] uppercase tracking-wider">
                       Ringkasan Akumulasi Juri {selectedJuri} ({genderRegu}) • Bobot 70% PBB / 20% Vafor / 10% Danton
                     </h3>
                     <div className="flex flex-wrap items-center gap-3.5 text-xs font-mono text-[#ffffff]">

@@ -321,25 +321,25 @@ export default function BarackManagePage() {
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="p-5">
-          <div className="text-[11px] font-mono text-[#7AA89C] uppercase tracking-wider mb-1">
+          <div className="text-xs font-mono text-[#7AA89C] uppercase tracking-wider mb-1">
             Total Ruang Transit
           </div>
           <div className="text-2xl font-semibold text-white font-mono">{totalUniqueRooms}</div>
-          <p className="text-[11px] text-[#B8D8D0] mt-1">Ruangan aktif digunakan</p>
+          <p className="text-xs text-[#B8D8D0] mt-1">Ruangan aktif digunakan</p>
         </Card>
 
         <Card className="p-5">
-          <div className="text-[11px] font-mono text-[#7AA89C] uppercase tracking-wider mb-1">
+          <div className="text-xs font-mono text-[#7AA89C] uppercase tracking-wider mb-1">
             Tim Teralokasi
           </div>
           <div className="text-2xl font-semibold text-[#56c2ff] font-mono">
             {totalAllocatedTeams} tim
           </div>
-          <p className="text-[11px] text-[#B8D8D0] mt-1">Regu peserta yang terdaftar</p>
+          <p className="text-xs text-[#B8D8D0] mt-1">Regu peserta yang terdaftar</p>
         </Card>
 
         <Card className="p-5">
-          <div className="text-[11px] font-mono text-[#7AA89C] uppercase tracking-wider mb-1">
+          <div className="text-xs font-mono text-[#7AA89C] uppercase tracking-wider mb-1">
             Okupansi Barak
           </div>
           <div className="text-2xl font-semibold text-[#E3EF26] font-mono">
@@ -348,11 +348,11 @@ export default function BarackManagePage() {
               : 0}
             %
           </div>
-          <p className="text-[11px] text-[#B8D8D0] mt-1">Kapasitas maks. 4 tim / ruang</p>
+          <p className="text-xs text-[#B8D8D0] mt-1">Kapasitas maks. 4 tim / ruang</p>
         </Card>
 
         <Card className="p-5">
-          <div className="text-[11px] font-mono text-[#7AA89C] uppercase tracking-wider mb-2">
+          <div className="text-xs font-mono text-[#7AA89C] uppercase tracking-wider mb-2">
             Rincian Jenjang
           </div>
           <div className="flex gap-2 flex-wrap">
@@ -441,7 +441,7 @@ export default function BarackManagePage() {
                       {currentOccupancy} / {maxCapacityPerRoom} Tim
                     </Badge>
                   </div>
-                  <p className="text-[11px] text-[#7AA89C] font-mono uppercase tracking-wider flex items-center gap-1">
+                  <p className="text-xs text-[#7AA89C] font-mono uppercase tracking-wider flex items-center gap-1">
                     <MapPin className="w-3 h-3 text-[#E3EF26]" />
                     Kampus SMKN 1 Soreang &bull; Periode IV Kebersihan Barak
                   </p>
@@ -456,7 +456,7 @@ export default function BarackManagePage() {
                         key={stg}
                         type="button"
                         onClick={() => toggleInspectionStage(room.roomName, stg)}
-                        className={`flex items-center justify-between px-3 py-2 rounded-lg border text-[11px] font-mono transition-all cursor-pointer ${
+                        className={`flex items-center justify-between px-3 py-2 rounded-lg border text-xs font-mono transition-all cursor-pointer ${
                           isChecked
                             ? 'bg-[#076653]/40 border-[#E3EF26]/50 text-[#E3EF26]'
                             : 'bg-[#061C18] border-white/[0.08] text-[#7AA89C] hover:text-white'
@@ -471,7 +471,7 @@ export default function BarackManagePage() {
 
                 {/* Occupancy Progress Bar */}
                 <div className="space-y-1.5">
-                  <div className="flex justify-between text-[11px] font-mono text-[#B8D8D0]">
+                  <div className="flex justify-between text-xs font-mono text-[#B8D8D0]">
                     <span>Tingkat Kepadatan</span>
                     <span>{Math.round(occupancyPercentage)}%</span>
                   </div>
@@ -493,7 +493,7 @@ export default function BarackManagePage() {
 
                 {/* Member List (Detail Barack / Assigned Teams) */}
                 <div className="space-y-2.5 flex-1">
-                  <div className="text-[11px] font-mono text-[#7AA89C] uppercase tracking-wider">
+                  <div className="text-xs font-mono text-[#7AA89C] uppercase tracking-wider">
                     Daftar Regu Terpeta ({currentOccupancy})
                   </div>
                   <div className="space-y-2">
@@ -512,7 +512,7 @@ export default function BarackManagePage() {
                                   ? 'info'
                                   : 'primary'
                               }
-                              className="text-[10px] px-1.5 py-0"
+                              className="text-xs px-1.5 py-0"
                             >
                               {team.jenjang}
                             </Badge>
@@ -520,7 +520,7 @@ export default function BarackManagePage() {
                               {team.teamName}
                             </span>
                           </div>
-                          <p className="text-[11px] text-[#B8D8D0] truncate">{team.schoolName}</p>
+                          <p className="text-xs text-[#B8D8D0] truncate">{team.schoolName}</p>
                         </div>
 
                         {/* Assign actions */}

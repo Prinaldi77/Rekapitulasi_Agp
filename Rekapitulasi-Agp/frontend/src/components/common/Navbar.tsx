@@ -140,7 +140,7 @@ export default function Navbar() {
               <h1 className="text-sm font-medium text-white tracking-wide flex items-center gap-2">
                 AGP COMPETITION SYSTEM
                 {isAdminRoute && (
-                  <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider rounded bg-[#076653] text-[#E3EF26] border border-[#E3EF26]/30">
+                  <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 text-xs font-mono uppercase tracking-wider rounded bg-[#076653] text-[#E3EF26] border border-[#E3EF26]/30">
                     {isGrandMaster ? (
                       <>
                         <Crown className="w-3 h-3" /> GRAND MASTER
@@ -153,7 +153,7 @@ export default function Navbar() {
                   </span>
                 )}
               </h1>
-              <p className="text-[11px] text-[#B8D8D0] font-mono">
+              <p className="text-xs text-[#B8D8D0] font-mono">
                 {isAdminRoute
                   ? isGrandMaster
                     ? 'Sekretaris Utama & Master Control'
@@ -268,7 +268,7 @@ export default function Navbar() {
 
         {/* User Badges & Action Buttons */}
         <div className="flex items-center space-x-3">
-          <span className="hidden lg:inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-mono bg-[#061C18] text-[#E3EF26] border border-white/[0.08]">
+          <span className="hidden lg:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-mono bg-[#061C18] text-[#E3EF26] border border-white/[0.08]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#E3EF26] animate-ping mr-1.5" />
             SERVER ONLINE
           </span>
@@ -279,7 +279,7 @@ export default function Navbar() {
                 <span className="text-xs font-medium text-white">
                   {profile?.full_name || profile?.username || user.email?.split('@')[0]}
                 </span>
-                <span className="text-[10px] font-mono tracking-wider uppercase text-[#E3EF26]">
+                <span className="text-xs font-mono tracking-wider uppercase text-[#E3EF26]">
                   {profile?.role || 'OPERATOR'}
                 </span>
               </div>

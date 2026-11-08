@@ -8,8 +8,8 @@ const QuickNav: React.FC = () => {
     <section className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
       {/* Card 1: Live Scoreboard */}
       <Link href="/live-score" className="group block h-full">
-        <Card className="h-full bg-white border-gray-200 hover:border-green-400 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 p-6 rounded-2xl flex flex-col">
-          <div className="w-12 h-12 rounded-2xl bg-green-50 border border-green-100 text-green-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+        <Card className="h-full bg-white border-gray-200 hover:border-green-500 hover:shadow-md transition-colors p-6 rounded-2xl flex flex-col">
+          <div className="w-12 h-12 rounded-xl bg-green-50 border border-green-100 text-green-600 flex items-center justify-center mb-5 shadow-sm">
             <Trophy className="w-6 h-6" />
           </div>
           <h2 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">
@@ -26,8 +26,8 @@ const QuickNav: React.FC = () => {
 
       {/* Card 2: Urutan Tampil */}
       <Link href="/schedule" className="group block h-full">
-        <Card className="h-full bg-white border-gray-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 p-6 rounded-2xl flex flex-col">
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+        <Card className="h-full bg-white border-gray-200 hover:border-blue-500 hover:shadow-md transition-colors p-6 rounded-2xl flex flex-col">
+          <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center mb-5 shadow-sm">
             <Clock className="w-6 h-6" />
           </div>
           <h2 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
@@ -44,8 +44,8 @@ const QuickNav: React.FC = () => {
 
       {/* Card 3: Transit Barak */}
       <Link href="/barack" className="group block h-full">
-        <Card className="h-full bg-white border-gray-200 hover:border-amber-400 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 p-6 rounded-2xl flex flex-col">
-          <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+        <Card className="h-full bg-white border-gray-200 hover:border-amber-500 hover:shadow-md transition-colors p-6 rounded-2xl flex flex-col">
+          <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center mb-5 shadow-sm">
             <Tent className="w-6 h-6" />
           </div>
           <h2 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-amber-600 transition-colors">

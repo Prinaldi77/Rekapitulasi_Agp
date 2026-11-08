@@ -324,7 +324,7 @@ export default function GrandMasterLeaderboardPage() {
       {/* Quick Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="p-5">
-          <span className="text-[11px] font-mono uppercase tracking-wider text-[#7AA89C] block mb-1.5">
+          <span className="text-xs font-mono uppercase tracking-wider text-[#7AA89C] block mb-1.5">
             TOTAL REGU / TIM ({selectedJenjang})
           </span>
           <span className="text-2xl font-semibold text-white font-mono">
@@ -332,7 +332,7 @@ export default function GrandMasterLeaderboardPage() {
           </span>
         </Card>
         <Card className="p-5">
-          <span className="text-[11px] font-mono uppercase tracking-wider text-[#7AA89C] block mb-1.5">
+          <span className="text-xs font-mono uppercase tracking-wider text-[#7AA89C] block mb-1.5">
             SKOR TERTINGGI (TOP 1)
           </span>
           <span className="text-2xl font-semibold text-[#E3EF26] font-mono">
@@ -340,7 +340,7 @@ export default function GrandMasterLeaderboardPage() {
           </span>
         </Card>
         <Card className="p-5">
-          <span className="text-[11px] font-mono uppercase tracking-wider text-[#7AA89C] block mb-1.5">
+          <span className="text-xs font-mono uppercase tracking-wider text-[#7AA89C] block mb-1.5">
             RATA-RATA SKOR JENJANG
           </span>
           <span className="text-2xl font-semibold text-[#56c2ff] font-mono">
@@ -378,7 +378,7 @@ export default function GrandMasterLeaderboardPage() {
                   <div className="text-xs text-[#B8D8D0] truncate">{secondPlace.schoolName}</div>
                 </div>
                 <div className="pt-3 border-t border-white/[0.06] flex items-baseline justify-between">
-                  <span className="text-[11px] font-mono uppercase text-[#7AA89C]">TOTAL SKOR</span>
+                  <span className="text-xs font-mono uppercase text-[#7AA89C]">TOTAL SKOR</span>
                   <span className="text-lg font-mono font-semibold text-[#56c2ff]">
                     {getActiveScore(secondPlace)} pts
                   </span>
@@ -401,7 +401,7 @@ export default function GrandMasterLeaderboardPage() {
                   <div className="text-xs text-[#ffffff] truncate">{firstPlace.schoolName}</div>
                 </div>
                 <div className="pt-3 border-t border-white/[0.08] flex items-baseline justify-between">
-                  <span className="text-[11px] font-mono uppercase text-[#B8D8D0]">TOTAL SKOR</span>
+                  <span className="text-xs font-mono uppercase text-[#B8D8D0]">TOTAL SKOR</span>
                   <span className="text-xl font-mono font-semibold text-[#E3EF26]">
                     {getActiveScore(firstPlace)} pts
                   </span>
@@ -424,7 +424,7 @@ export default function GrandMasterLeaderboardPage() {
                   <div className="text-xs text-[#B8D8D0] truncate">{thirdPlace.schoolName}</div>
                 </div>
                 <div className="pt-3 border-t border-white/[0.06] flex items-baseline justify-between">
-                  <span className="text-[11px] font-mono uppercase text-[#7AA89C]">TOTAL SKOR</span>
+                  <span className="text-xs font-mono uppercase text-[#7AA89C]">TOTAL SKOR</span>
                   <span className="text-lg font-mono font-semibold text-[#E3EF26]">
                     {getActiveScore(thirdPlace)} pts
                   </span>
@@ -440,7 +440,7 @@ export default function GrandMasterLeaderboardPage() {
                 /* LKBB Table List */
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-white/[0.06] text-[11px] font-mono uppercase text-[#7AA89C] tracking-wider bg-[#061C18]">
+                    <tr className="border-b border-white/[0.06] text-xs font-mono uppercase text-[#7AA89C] tracking-wider bg-[#061C18]">
                       <th className="py-3.5 px-4">Rank</th>
                       <th className="py-3.5 px-4">Dada</th>
                       <th className="py-3.5 px-4">Basis Sekolah</th>
@@ -486,7 +486,7 @@ export default function GrandMasterLeaderboardPage() {
                             {item.lkbbDanton} pts
                           </td>
                           <td className="py-3.5 px-4 text-center">
-                            <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-mono ${tier.className}`}>
+                            <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-mono ${tier.className}`}>
                               {tier.label}
                             </span>
                           </td>
@@ -502,7 +502,7 @@ export default function GrandMasterLeaderboardPage() {
                 /* Akumulasi Piala Bergilir Juara Umum (106 Trophy) */
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-white/[0.06] text-[11px] font-mono uppercase text-[#7AA89C] tracking-wider bg-[#061C18]">
+                    <tr className="border-b border-white/[0.06] text-xs font-mono uppercase text-[#7AA89C] tracking-wider bg-[#061C18]">
                       <th className="py-3.5 px-4">Rank</th>
                       <th className="py-3.5 px-4">Dada</th>
                       <th className="py-3.5 px-4">Basis / Pangkalan Sekolah</th>
@@ -528,7 +528,7 @@ export default function GrandMasterLeaderboardPage() {
                           <td className="py-3.5 px-4 font-mono text-[#E3EF26]">{item.noTampil}</td>
                           <td className="py-3.5 px-4">
                             <div className="font-medium text-white text-sm">{item.schoolName}</div>
-                            <div className="text-[11px] text-[#7AA89C]">{item.teamName} ({item.gender})</div>
+                            <div className="text-xs text-[#7AA89C]">{item.teamName} ({item.gender})</div>
                           </td>
                           <td className="py-3.5 px-4 text-center font-mono text-white">{item.lkbbTotal} pts</td>
                           <td className="py-3.5 px-4 text-center font-mono text-white">{item.materiTotal} pts</td>
@@ -545,7 +545,7 @@ export default function GrandMasterLeaderboardPage() {
                 /* Materi Lomba Table list */
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-white/[0.06] text-[11px] font-mono uppercase text-[#7AA89C] tracking-wider bg-[#061C18]">
+                    <tr className="border-b border-white/[0.06] text-xs font-mono uppercase text-[#7AA89C] tracking-wider bg-[#061C18]">
                       <th className="py-3.5 px-4">Rank</th>
                       <th className="py-3.5 px-4">Dada</th>
                       <th className="py-3.5 px-4">Nama Regu</th>
@@ -582,7 +582,7 @@ export default function GrandMasterLeaderboardPage() {
                           {item.teamName}
                         </td>
                         <td className="py-3.5 px-4 text-center">
-                          <Badge variant="secondary" className="text-[10px]">
+                          <Badge variant="secondary" className="text-xs">
                             {item.gender}
                           </Badge>
                         </td>
@@ -591,7 +591,7 @@ export default function GrandMasterLeaderboardPage() {
                           {item.bankSoal !== null ? (
                             item.bankSoal
                           ) : (
-                            <Badge variant="warning" className="text-[10px]">
+                            <Badge variant="warning" className="text-xs">
                               Belum Dinilai
                             </Badge>
                           )}
@@ -600,7 +600,7 @@ export default function GrandMasterLeaderboardPage() {
                           {item.semaphore !== null ? (
                             item.semaphore
                           ) : (
-                            <Badge variant="warning" className="text-[10px]">
+                            <Badge variant="warning" className="text-xs">
                               Belum Dinilai
                             </Badge>
                           )}
@@ -609,7 +609,7 @@ export default function GrandMasterLeaderboardPage() {
                           {item.morse !== null ? (
                             item.morse
                           ) : (
-                            <Badge variant="warning" className="text-[10px]">
+                            <Badge variant="warning" className="text-xs">
                               Belum Dinilai
                             </Badge>
                           )}
@@ -618,7 +618,7 @@ export default function GrandMasterLeaderboardPage() {
                           {item.miniPionering !== null ? (
                             item.miniPionering
                           ) : (
-                            <Badge variant="warning" className="text-[10px]">
+                            <Badge variant="warning" className="text-xs">
                               Belum Dinilai
                             </Badge>
                           )}
@@ -627,7 +627,7 @@ export default function GrandMasterLeaderboardPage() {
                           {item.kebersihan !== null ? (
                             item.kebersihan
                           ) : (
-                            <Badge variant="warning" className="text-[10px]">
+                            <Badge variant="warning" className="text-xs">
                               Belum Dinilai
                             </Badge>
                           )}
@@ -643,7 +643,7 @@ export default function GrandMasterLeaderboardPage() {
                 /* Khusus Table list */
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-white/[0.06] text-[11px] font-mono uppercase text-[#7AA89C] tracking-wider bg-[#061C18]">
+                    <tr className="border-b border-white/[0.06] text-xs font-mono uppercase text-[#7AA89C] tracking-wider bg-[#061C18]">
                       <th className="py-3.5 px-4">Rank</th>
                       <th className="py-3.5 px-4">Dada</th>
                       <th className="py-3.5 px-4">Nama Regu / Pangkalan</th>
@@ -673,7 +673,7 @@ export default function GrandMasterLeaderboardPage() {
                         <td className="py-3.5 px-4 font-mono text-[#E3EF26]">{item.noTampil}</td>
                         <td className="py-3.5 px-4">
                           <h3 className="font-medium text-white text-sm">{item.teamName}</h3>
-                          <p className="text-[#B8D8D0] text-[11px]">
+                          <p className="text-[#B8D8D0] text-xs">
                             {item.schoolName} ({item.gender})
                           </p>
                         </td>
@@ -681,7 +681,7 @@ export default function GrandMasterLeaderboardPage() {
                           {item.fashionShow !== null ? (
                             `${item.fashionShow} pts`
                           ) : (
-                            <Badge variant="warning" className="text-[10px]">
+                            <Badge variant="warning" className="text-xs">
                               Belum Dinilai
                             </Badge>
                           )}
@@ -690,7 +690,7 @@ export default function GrandMasterLeaderboardPage() {
                           {item.administrasi !== null ? (
                             `${item.administrasi} pts`
                           ) : (
-                            <Badge variant="warning" className="text-[10px]">
+                            <Badge variant="warning" className="text-xs">
                               Belum Dinilai
                             </Badge>
                           )}
