@@ -1,15 +1,31 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Bebas_Neue } from 'next/font/google';
+import { Plus_Jakarta_Sans, Bebas_Neue, JetBrains_Mono } from 'next/font/google';
 import AppLayout from '@/components/common/AppLayout';
 import '../globals.css';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
-const bebas = Bebas_Neue({ weight: '400', subsets: ['latin'], variable: '--font-bebas', display: 'swap' });
+const sans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+const bebas = Bebas_Neue({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-bebas',
+  display: 'swap',
+});
+
+const mono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  title: 'Kirani AGP Competition 2026 - Sistem Rekapitulasi Nilai',
+  title: 'Kirani AGP Competition - Sistem Rekapitulasi Nilai & Live Arena',
   description:
-    'Sistem Manajemen Rekapitulasi Nilai Lomba, Urutan Tampil Realtime, Pembagian Barak, dan Auto-Generate SK Juara untuk Kirani AGP 2026.',
+    'Sistem Manajemen Rekapitulasi Nilai Lomba, Urutan Tampil Realtime, Pembagian Barak, dan Auto-Generate SK Juara untuk Kirani AGP SMKN 1 Soreang.',
 };
 
 export const viewport: Viewport = {
@@ -17,7 +33,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#0C342C',
+  themeColor: '#07201B',
 };
 
 export default function RootLayout({
@@ -29,7 +45,7 @@ export default function RootLayout({
     <html lang="id" suppressHydrationWarning className="scroll-smooth dark">
       <body
         suppressHydrationWarning
-        className={`${inter.variable} ${bebas.variable} font-inter antialiased min-h-screen bg-[#0C342C] text-[#ffffff] selection:bg-[#E3EF26] selection:text-[#0C342C]`}
+        className={`${sans.variable} ${bebas.variable} ${mono.variable} font-sans antialiased min-h-screen bg-[#07201B] text-[#FFFFFF] selection:bg-[#E3EF26] selection:text-[#0C342C]`}
       >
         <AppLayout>{children}</AppLayout>
       </body>

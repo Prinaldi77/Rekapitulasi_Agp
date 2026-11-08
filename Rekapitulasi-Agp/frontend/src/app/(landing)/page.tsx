@@ -32,6 +32,33 @@ import {
   type ShowcaseCardItem,
 } from '@/data/landingData';
 
+const EASE_AWWWARDS: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+function MaskRevealLine({
+  children,
+  delay = 0,
+  duration = 0.8,
+  className = '',
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  duration?: number;
+  className?: string;
+}) {
+  return (
+    <span className={`block overflow-hidden pb-[0.06em] -mb-[0.06em] ${className}`}>
+      <motion.span
+        className="block will-change-transform"
+        initial={{ y: '105%', opacity: 0 }}
+        animate={{ y: '0%', opacity: 1 }}
+        transition={{ duration, delay, ease: EASE_AWWWARDS }}
+      >
+        {children}
+      </motion.span>
+    </span>
+  );
+}
+
 export default function LandingPage() {
   const [activeNav, setActiveNav] = useState<
     'HOME' | 'PORTAL' | 'EXPLORE' | 'ABA_ABA' | 'TIMELINE' | 'FAQ'
@@ -95,7 +122,7 @@ export default function LandingPage() {
     activeAbaJenjang === 'SD' ? ABA_ABA_SD_GROUPS : ABA_ABA_SMP_SMA_GROUPS;
 
   return (
-    <div className="min-h-screen bg-[#07201B] text-[#F4F9F7] selection:bg-[#E3EF26] selection:text-[#0C342C]">
+    <div className="min-h-screen bg-[#07201B] text-[#FFFFFF] selection:bg-[#E3EF26] selection:text-[#0C342C]">
       {/* =====================================================================
           1. NAVIGATION BAR
          ===================================================================== */}
@@ -106,20 +133,20 @@ export default function LandingPage() {
             <img
               src="/kirani.svg"
               alt="Logo Kirani AGP"
-              className="w-10 h-10 object-contain shrink-0 group-hover:scale-105 transition-transform"
+              className="w-10 h-10 object-contain shrink-0 group-hover:opacity-90 transition-opacity"
             />
             <div className="flex flex-col">
               <span className="text-sm font-bold tracking-wider text-white uppercase">
                 KIRANI<span className="text-[#E3EF26]">.AGP</span>
               </span>
-              <span className="text-[10px] font-mono tracking-wider text-[#729B90]">
+              <span className="text-xs font-mono tracking-wider text-[#A7C7BE]">
                 SMKN 1 SOREANG
               </span>
             </div>
           </Link>
 
           {/* Section Navigation Links */}
-          <nav aria-label="Navigasi Utama" className="hidden lg:flex items-center gap-1">
+          <nav aria-label="Navigasi Utama" className="hidden lg:flex items-center gap-1.5 p-1 rounded-xl bg-[#0A2620] border border-[#1E564A]">
             {[
               { id: 'HOME', label: 'Beranda', target: 'home' },
               { id: 'PORTAL', label: 'Akses Portal', target: 'portal' },
@@ -134,13 +161,18 @@ export default function LandingPage() {
                   key={item.id}
                   type="button"
                   onClick={() => scrollToSection(item.target)}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                    active
-                      ? 'bg-[#0E332B] text-[#E3EF26] border border-[#1E564A]'
-                      : 'text-[#A7C7BE] hover:text-white hover:bg-[#0A2620]'
+                  className={`relative px-4 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-colors cursor-pointer ${
+                    active ? 'text-[#0C342C]' : 'text-[#C5E0D8] hover:text-white'
                   }`}
                 >
-                  {item.label}
+                  {active && (
+                    <motion.span
+                      layoutId="landing-active-tab"
+                      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                      className="absolute inset-0 rounded-lg bg-[#E3EF26]"
+                    />
+                  )}
+                  <span className="relative z-10">{item.label}</span>
                 </button>
               );
             })}
@@ -151,17 +183,17 @@ export default function LandingPage() {
             <a
               href={JUKLAK_PDF_URL}
               download={JUKLAK_DOWNLOAD_NAME}
-              className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#0A2620] border border-[#1E564A] text-xs font-semibold text-[#E3EF26] hover:bg-[#0E332B] hover:border-[#E3EF26] transition-all"
+              className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0A2620] border border-[#1E564A] text-xs font-bold text-[#E3EF26] hover:bg-[#0E332B] hover:border-[#E3EF26] transition-colors"
             >
-              <Download className="w-3.5 h-3.5" />
+              <Download className="w-4 h-4" />
               <span>Juklak PDF</span>
             </a>
 
             <Link
               href="/schedule"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E3EF26] text-[#0C342C] text-xs font-bold hover:bg-[#d8e420] transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E3EF26] text-[#0C342C] text-xs font-extrabold hover:bg-[#d8e420] transition-colors shadow-sm"
             >
-              <Radio className="w-3.5 h-3.5" />
+              <Radio className="w-4 h-4" />
               <span>Portal Live Arena</span>
             </Link>
           </div>
@@ -172,34 +204,58 @@ export default function LandingPage() {
         {/* =====================================================================
             2. HERO SECTION
            ===================================================================== */}
-        <section id="home" className="pt-12 sm:pt-16 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <section id="home" className="pt-14 sm:pt-20 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           {/* Institutional Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#0A2620] border border-[#1E564A] text-[11px] font-mono tracking-wider text-[#A7C7BE] mb-6">
-            <span className="w-2 h-2 rounded-full bg-[#E3EF26]" />
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: EASE_AWWWARDS }}
+            className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-lg bg-[#0A2620] border border-[#1E564A] text-xs font-mono font-semibold tracking-wider text-[#C5E0D8] mb-6"
+          >
+            <span className="w-2 h-2 rounded-full bg-[#E3EF26] animate-pulse" />
             <span>PRAMUKA SMKN 1 SOREANG • TINGKAT JAWA BARAT</span>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             {/* Left Content */}
             <div className="lg:col-span-8 space-y-6">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
-                Lomba Aktivitas Gerakan Pramuka{' '}
-                <span className="text-[#E3EF26] block sm:inline">(AGP)</span>
-              </h1>
+              <div className="space-y-1">
+                <MaskRevealLine delay={0.05} duration={0.85}>
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
+                    Lomba Aktivitas Gerakan Pramuka
+                  </h1>
+                </MaskRevealLine>
+                <MaskRevealLine delay={0.12} duration={0.85}>
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-[#E3EF26] leading-tight">
+                    (AGP) SMKN 1 Soreang.
+                  </h2>
+                </MaskRevealLine>
+              </div>
 
-              <p className="text-base sm:text-lg text-[#A7C7BE] leading-relaxed max-w-3xl">
+              {/* Bounded Line-Length Description (~65ch) */}
+              <motion.p
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.2, ease: EASE_AWWWARDS }}
+                className="text-base sm:text-lg text-[#C5E0D8] leading-relaxed max-w-xl"
+              >
                 Diselenggarakan oleh Sangga Kerja Ambalan{' '}
                 <strong className="text-white font-semibold">
                   Ki Hajar Dewantara &amp; R.A. Kartini 04.105–04.106
-                </strong>{' '}
-                Basis SMK Negeri 1 Soreang. Memperebutkan{' '}
+                </strong>.
+                Memperebutkan{' '}
                 <strong className="text-[#E3EF26] font-semibold">106 Kategori Piala</strong>{' '}
-                tingkat Penggalang SD/SMP dan Penegak SMA/SMK se-Jawa Barat dengan
-                transparansi jadwal tampil, direktori barak, dan rekapitulasi nilai terpadu.
-              </p>
+                tingkat Penggalang SD/SMP dan Penegak SMA/SMK se-Jawa Barat dengan transparansi
+                rekapitulasi nilai terpadu.
+              </motion.p>
 
               {/* Direct Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3 pt-2">
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.28, ease: EASE_AWWWARDS }}
+                className="flex flex-wrap items-center gap-3 pt-2"
+              >
                 <a
                   href={JUKLAK_PDF_URL}
                   download={JUKLAK_DOWNLOAD_NAME}
@@ -219,48 +275,53 @@ export default function LandingPage() {
 
                 <Link
                   href="/barack"
-                  className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-[#0A2620] border border-[#1E564A] text-sm font-semibold text-[#A7C7BE] hover:text-white hover:border-[#729B90] transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-[#0A2620] border border-[#1E564A] text-sm font-semibold text-[#A7C7BE] hover:text-white hover:border-[#E3EF26] transition-colors"
                 >
-                  <MapPin className="w-4 h-4 text-[#729B90]" />
+                  <MapPin className="w-4 h-4 text-[#A7C7BE]" />
                   <span>Direktori Barak</span>
                 </Link>
-              </div>
+              </motion.div>
             </div>
 
             {/* Right Card: Quick Reference */}
-            <div className="lg:col-span-4 rounded-2xl bg-[#0A2620] border border-[#1E564A] p-6 space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.75, delay: 0.18, ease: EASE_AWWWARDS }}
+              className="lg:col-span-4 rounded-2xl bg-[#0A2620] border border-[#1E564A] p-6 space-y-4 shadow-sm"
+            >
               <div className="flex items-center justify-between border-b border-[#123E34] pb-3">
                 <span className="text-xs font-mono font-bold tracking-wider text-[#E3EF26]">
                   RINGKASAN EVENT
                 </span>
-                <span className="text-[11px] font-mono text-[#729B90]">AGP-III / 2025</span>
+                <span className="text-xs font-mono text-[#A7C7BE]">AGP-III / 2025</span>
               </div>
 
-              <div className="space-y-3 text-xs">
+              <div className="space-y-3.5 text-xs">
                 <div>
-                  <div className="text-[#729B90]">Lokasi Pelaksanaan</div>
-                  <div className="font-semibold text-white mt-0.5">
+                  <div className="text-[#A7C7BE]">Lokasi Pelaksanaan</div>
+                  <div className="font-semibold text-white text-sm mt-0.5">
                     Kampus SMK Negeri 1 Soreang, Kab. Bandung
                   </div>
                 </div>
 
                 <div>
-                  <div className="text-[#729B90]">Hari &amp; Tanggal Utama</div>
-                  <div className="font-semibold text-white mt-0.5">
+                  <div className="text-[#A7C7BE]">Hari &amp; Tanggal Utama</div>
+                  <div className="font-semibold text-white text-sm mt-0.5">
                     Sabtu, 22 Februari 2025 (06.00 WIB – Selesai)
                   </div>
                 </div>
 
                 <div>
-                  <div className="text-[#729B90]">Standar Acuan LKBB</div>
-                  <div className="font-semibold text-white mt-0.5">
+                  <div className="text-[#A7C7BE]">Standar Acuan LKBB</div>
+                  <div className="font-semibold text-white text-sm mt-0.5">
                     PERPANG TNI Nomor 58 Tahun 2018
                   </div>
                 </div>
 
                 <div>
-                  <div className="text-[#729B90]">Total Kejuaraan</div>
-                  <div className="font-semibold text-[#E3EF26] mt-0.5">
+                  <div className="text-[#A7C7BE]">Total Kejuaraan</div>
+                  <div className="font-bold text-[#E3EF26] text-sm mt-0.5">
                     106 Piala (Piala Bergilir &amp; Tetap)
                   </div>
                 </div>
@@ -269,36 +330,40 @@ export default function LandingPage() {
               <div className="pt-3 border-t border-[#123E34]">
                 <Link
                   href="/live-score"
-                  className="w-full inline-flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-[#0E332B] border border-[#1E564A] text-xs font-semibold text-white hover:border-[#E3EF26] hover:text-[#E3EF26] transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg bg-[#0E332B] border border-[#1E564A] text-xs font-bold text-white hover:border-[#E3EF26] hover:text-[#E3EF26] transition-colors"
                 >
-                  <Trophy className="w-3.5 h-3.5 text-[#E3EF26]" />
+                  <Trophy className="w-4 h-4 text-[#E3EF26]" />
                   <span>Lihat Klasemen &amp; Rekapitulasi</span>
                 </Link>
               </div>
-            </div>
+            </motion.div>
           </div>
 
           {/* Metrics Ribbon */}
-          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
-            {HERO_STATS.map((stat) => (
-              <div
+          <div className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-4">
+            {HERO_STATS.map((stat, idx) => (
+              <motion.div
                 key={stat.label}
-                className="rounded-xl bg-[#0A2620] border border-[#123E34] p-4 text-center"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: idx * 0.08, ease: EASE_AWWWARDS }}
+                className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-4 text-center"
               >
                 <div className="text-2xl sm:text-3xl font-black font-mono text-white tracking-tight">
                   {stat.value}
                 </div>
-                <div className="text-xs font-semibold text-[#E3EF26] mt-1">{stat.label}</div>
+                <div className="text-xs font-bold text-[#E3EF26] mt-1">{stat.label}</div>
                 {stat.desc && (
-                  <div className="text-[11px] text-[#729B90] mt-0.5">{stat.desc}</div>
+                  <div className="text-xs text-[#A7C7BE] mt-0.5">{stat.desc}</div>
                 )}
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
 
         {/* =====================================================================
-            3. PORTAL ACCESS CARDS (Clean Grid replacing 3D Fan Deck)
+            3. PORTAL ACCESS CARDS
            ===================================================================== */}
         <section id="portal" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#123E34]">
           <div className="mb-8">
@@ -308,28 +373,35 @@ export default function LandingPage() {
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1">
               Portal Layanan &amp; Informasi Kegiatan
             </h2>
-            <p className="text-sm text-[#A7C7BE] mt-1 max-w-2xl">
+            <p className="text-sm text-[#C5E0D8] mt-1 max-w-xl">
               Akses instan ke fasilitas live monitoring jadwal, pemetaan barak peserta,
               rekapitulasi nilai juri, serta berkas regulasi resmi.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {PORTAL_CARDS.map((card) => {
+            {PORTAL_CARDS.map((card, idx) => {
               const content = (
-                <div className="h-full flex flex-col justify-between rounded-xl bg-[#0A2620] border border-[#1E564A] hover:border-[#E3EF26] transition-colors p-5 group">
+                <motion.div
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: idx * 0.08, ease: EASE_AWWWARDS }}
+                  whileHover={{ y: -3 }}
+                  className="h-full flex flex-col justify-between rounded-xl bg-[#0A2620] border border-[#1E564A] hover:border-[#E3EF26] transition-colors p-5 group"
+                >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-4">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold text-[#0C342C] bg-[#E3EF26]">
+                      <span className="px-2.5 py-1 rounded text-xs font-mono font-bold text-[#0C342C] bg-[#E3EF26]">
                         {card.badge}
                       </span>
-                      <span className="text-[10px] font-mono text-[#729B90]">{card.code}</span>
+                      <span className="text-xs font-mono text-[#A7C7BE]">{card.code}</span>
                     </div>
 
                     <h3 className="text-base font-bold text-white group-hover:text-[#E3EF26] transition-colors">
                       {card.title}
                     </h3>
-                    <p className="text-xs text-[#A7C7BE] mt-2 leading-relaxed">
+                    <p className="text-xs text-[#C5E0D8] mt-2 leading-relaxed">
                       {card.subtitle}
                     </p>
                   </div>
@@ -342,7 +414,7 @@ export default function LandingPage() {
                       <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     )}
                   </div>
-                </div>
+                </motion.div>
               );
 
               return card.isDownload ? (
@@ -375,14 +447,14 @@ export default function LandingPage() {
               <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1">
                 Cabang Perlombaan &amp; Bobot Penilaian
               </h2>
-              <p className="text-sm text-[#A7C7BE] mt-1 max-w-2xl">
+              <p className="text-sm text-[#C5E0D8] mt-1 max-w-xl">
                 Seluruh perlombaan dibagi ke dalam 4 Periode penilaian untuk jenjang SD/MI,
                 SMP/MTs, dan SMA/SMK/MA.
               </p>
             </div>
 
             {/* Category Filter Pills */}
-            <div className="inline-flex flex-wrap items-center gap-1.5 p-1 rounded-lg bg-[#0A2620] border border-[#1E564A]">
+            <div className="inline-flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-[#0A2620] border border-[#1E564A]">
               {[
                 { id: 'ALL', label: 'Semua Periode' },
                 { id: 'PERIODE_4', label: 'Periode IV (LKBB)' },
@@ -396,13 +468,18 @@ export default function LandingPage() {
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveCategory(tab.id as ShowcaseCategory)}
-                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
-                      active
-                        ? 'bg-[#E3EF26] text-[#0C342C] font-bold'
-                        : 'text-[#A7C7BE] hover:text-white hover:bg-[#0E332B]'
+                    className={`relative px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                      active ? 'text-[#0C342C]' : 'text-[#C5E0D8] hover:text-white'
                     }`}
                   >
-                    {tab.label}
+                    {active && (
+                      <motion.span
+                        layoutId="landing-category-pill"
+                        transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                        className="absolute inset-0 rounded-lg bg-[#E3EF26]"
+                      />
+                    )}
+                    <span className="relative z-10">{tab.label}</span>
                   </button>
                 );
               })}
@@ -411,69 +488,84 @@ export default function LandingPage() {
 
           {/* Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredShowcase.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => setSelectedShowcase(item)}
-                className="h-full flex flex-col justify-between rounded-xl bg-[#0A2620] border border-[#1E564A] hover:border-[#E3EF26] transition-colors p-5 cursor-pointer group"
-              >
-                <div>
-                  <div className="flex items-center justify-between text-xs font-mono mb-3">
-                    <span className="font-bold text-[#E3EF26]">{item.code}</span>
-                    <span className="text-[#729B90]">{item.categoryLabel}</span>
-                  </div>
-
-                  <h3 className="text-base font-bold text-white group-hover:text-[#E3EF26] transition-colors">
-                    {item.title}
-                  </h3>
-
-                  <p className="text-xs text-[#A7C7BE] mt-2 leading-relaxed line-clamp-3">
-                    {item.description}
-                  </p>
-
-                  <div className="mt-4 pt-3 border-t border-[#123E34] text-xs space-y-1">
-                    <div className="text-[#729B90]">
-                      Bobot:{' '}
-                      <span className="text-white font-medium">{item.weightLabel}</span>
+            <AnimatePresence mode="popLayout">
+              {filteredShowcase.map((item, idx) => (
+                <motion.div
+                  layout
+                  key={item.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{ duration: 0.5, delay: idx * 0.05, ease: EASE_AWWWARDS }}
+                  whileHover={{ y: -3 }}
+                  onClick={() => setSelectedShowcase(item)}
+                  className="h-full flex flex-col justify-between rounded-xl bg-[#0A2620] border border-[#1E564A] hover:border-[#E3EF26] transition-colors p-5 cursor-pointer group shadow-sm"
+                >
+                  <div>
+                    <div className="flex items-center justify-between text-xs font-mono mb-3">
+                      <span className="font-bold text-[#E3EF26]">{item.code}</span>
+                      <span className="text-[#A7C7BE]">{item.categoryLabel}</span>
                     </div>
-                    <div className="text-[#729B90]">
-                      Arena:{' '}
-                      <span className="text-white font-medium">{item.arenaLabel}</span>
+
+                    <h3 className="text-base font-bold text-white group-hover:text-[#E3EF26] transition-colors">
+                      {item.title}
+                    </h3>
+
+                    <p className="text-xs text-[#C5E0D8] mt-2 leading-relaxed line-clamp-3">
+                      {item.description}
+                    </p>
+
+                    <div className="mt-4 pt-3 border-t border-[#123E34] text-xs space-y-1">
+                      <div className="text-[#A7C7BE]">
+                        Bobot:{' '}
+                        <span className="text-white font-medium">{item.weightLabel}</span>
+                      </div>
+                      <div className="text-[#A7C7BE]">
+                        Arena:{' '}
+                        <span className="text-white font-medium">{item.arenaLabel}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="mt-5 pt-3 border-t border-[#123E34] flex items-center justify-between">
-                  <div className="flex flex-wrap gap-1.5">
-                    {item.tags.slice(0, 2).map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-0.5 rounded text-[10px] bg-[#0E332B] text-[#A7C7BE] border border-[#123E34]"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+                  <div className="mt-5 pt-3 border-t border-[#123E34] flex items-center justify-between">
+                    <div className="flex flex-wrap gap-1.5">
+                      {item.tags.slice(0, 2).map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2 py-0.5 rounded text-xs bg-[#0E332B] text-[#C5E0D8] border border-[#123E34]"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    <span className="text-xs font-semibold text-[#E3EF26] inline-flex items-center gap-1 shrink-0">
+                      Detail
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </span>
                   </div>
-
-                  <span className="text-xs font-semibold text-[#E3EF26] inline-flex items-center gap-1 shrink-0">
-                    Detail
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-              </div>
-            ))}
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
 
           {/* Modal Detail Mata Lomba */}
           <AnimatePresence>
             {selectedShowcase && (
-              <div
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 role="dialog"
                 aria-modal="true"
                 onClick={() => setSelectedShowcase(null)}
-                className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+                className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm"
               >
-                <div
+                <motion.div
+                  initial={{ opacity: 0, y: 24, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 16, scale: 0.96 }}
+                  transition={{ duration: 0.35, ease: EASE_AWWWARDS }}
                   onClick={(e) => e.stopPropagation()}
                   className="w-full max-w-xl rounded-2xl bg-[#0A2620] border border-[#E3EF26]/60 p-6 sm:p-8 space-y-5 shadow-2xl relative"
                 >
@@ -496,8 +588,8 @@ export default function LandingPage() {
                     {selectedShowcase.title}
                   </h3>
 
-                  <div className="space-y-2 text-xs sm:text-sm text-[#A7C7BE]">
-                    <div className="p-3 rounded-lg bg-[#0E332B] border border-[#123E34] space-y-1">
+                  <div className="space-y-2 text-xs sm:text-sm text-[#C5E0D8]">
+                    <div className="p-3.5 rounded-lg bg-[#0E332B] border border-[#123E34] space-y-1.5">
                       <div>
                         <strong className="text-white">Bobot Penilaian:</strong>{' '}
                         {selectedShowcase.weightLabel}
@@ -512,7 +604,7 @@ export default function LandingPage() {
                       </div>
                     </div>
 
-                    <p className="leading-relaxed pt-2 text-[#F4F9F7]">
+                    <p className="leading-relaxed pt-2 text-[#FFFFFF]">
                       {selectedShowcase.description}
                     </p>
                   </div>
@@ -534,7 +626,7 @@ export default function LandingPage() {
                       className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E3EF26] text-[#0C342C] text-xs font-bold hover:bg-[#d8e420]"
                     >
                       <span>Urutan Tampil Lomba Ini</span>
-                      <ArrowUpRight className="w-3.5 h-3.5" />
+                      <ArrowUpRight className="w-4 h-4" />
                     </Link>
 
                     <a
@@ -542,12 +634,12 @@ export default function LandingPage() {
                       download={JUKLAK_DOWNLOAD_NAME}
                       className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0E332B] border border-[#1E564A] text-xs font-semibold text-white hover:border-[#E3EF26]"
                     >
-                      <Download className="w-3.5 h-3.5 text-[#E3EF26]" />
+                      <Download className="w-4 h-4 text-[#E3EF26]" />
                       <span>Juklak Lengkap (PDF)</span>
                     </a>
                   </div>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             )}
           </AnimatePresence>
         </section>
@@ -564,7 +656,7 @@ export default function LandingPage() {
               <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1">
                 Daftar Resmi Aba-Aba PBB LKBB
               </h2>
-              <p className="text-sm text-[#A7C7BE] mt-1 max-w-2xl">
+              <p className="text-sm text-[#C5E0D8] mt-1 max-w-xl">
                 Seluruh aba-aba wajib dihafal secara berurutan pada kavling lapangan{' '}
                 <strong className="text-white">20 x 12 meter</strong> dengan batas waktu tampil{' '}
                 <strong className="text-white">8 menit</strong>.
@@ -572,76 +664,99 @@ export default function LandingPage() {
             </div>
 
             {/* Jenjang Switcher Tabs */}
-            <div className="inline-flex items-center gap-1.5 p-1 rounded-lg bg-[#0A2620] border border-[#1E564A] self-start lg:self-end">
+            <div className="inline-flex items-center gap-1.5 p-1 rounded-xl bg-[#0A2620] border border-[#1E564A] self-start lg:self-end">
               <button
                 type="button"
                 onClick={() => setActiveAbaJenjang('SD')}
-                className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
-                  activeAbaJenjang === 'SD'
-                    ? 'bg-[#E3EF26] text-[#0C342C] font-bold'
-                    : 'text-[#A7C7BE] hover:text-white hover:bg-[#0E332B]'
+                className={`relative px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                  activeAbaJenjang === 'SD' ? 'text-[#0C342C]' : 'text-[#C5E0D8] hover:text-white'
                 }`}
               >
-                Penggalang SD/MI (27 Aba-aba)
+                {activeAbaJenjang === 'SD' && (
+                  <motion.span
+                    layoutId="landing-aba-pill"
+                    transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                    className="absolute inset-0 rounded-lg bg-[#E3EF26]"
+                  />
+                )}
+                <span className="relative z-10">Penggalang SD/MI (27 Aba-aba)</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveAbaJenjang('SMP_SMA')}
-                className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
-                  activeAbaJenjang === 'SMP_SMA'
-                    ? 'bg-[#E3EF26] text-[#0C342C] font-bold'
-                    : 'text-[#A7C7BE] hover:text-white hover:bg-[#0E332B]'
+                className={`relative px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                  activeAbaJenjang === 'SMP_SMA' ? 'text-[#0C342C]' : 'text-[#C5E0D8] hover:text-white'
                 }`}
               >
-                SMP/MTs &amp; SMA/SMK (28 Aba-aba)
+                {activeAbaJenjang === 'SMP_SMA' && (
+                  <motion.span
+                    layoutId="landing-aba-pill"
+                    transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                    className="absolute inset-0 rounded-lg bg-[#E3EF26]"
+                  />
+                )}
+                <span className="relative z-10">SMP/MTs &amp; SMA/SMK (28 Aba-aba)</span>
               </button>
             </div>
           </div>
 
           {/* Aba-Aba Groups Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
-            {activeAbaGroups.map((grp) => (
-              <div
-                key={`${activeAbaJenjang}-${grp.groupCode}`}
-                className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-5 space-y-3"
-              >
-                <div className="flex items-center justify-between border-b border-[#123E34] pb-2">
-                  <span className="text-[11px] font-mono font-bold text-[#E3EF26]">
-                    BAGIAN {grp.groupCode}
-                  </span>
-                  <span className="text-[11px] font-mono text-[#729B90]">
-                    {grp.items.length} Gerakan
-                  </span>
-                </div>
+            <AnimatePresence mode="popLayout">
+              {activeAbaGroups.map((grp, idx) => (
+                <motion.div
+                  layout
+                  key={`${activeAbaJenjang}-${grp.groupCode}`}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{ duration: 0.45, delay: idx * 0.04, ease: EASE_AWWWARDS }}
+                  className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-5 space-y-3 shadow-sm"
+                >
+                  <div className="flex items-center justify-between border-b border-[#123E34] pb-2">
+                    <span className="text-xs font-mono font-bold text-[#E3EF26]">
+                      BAGIAN {grp.groupCode}
+                    </span>
+                    <span className="text-xs font-mono text-[#A7C7BE]">
+                      {grp.items.length} Gerakan
+                    </span>
+                  </div>
 
-                <h3 className="text-sm font-bold text-white uppercase tracking-wide">
-                  {grp.groupTitle}
-                </h3>
+                  <h3 className="text-sm font-bold text-white uppercase tracking-wide">
+                    {grp.groupTitle}
+                  </h3>
 
-                <ul className="space-y-1.5 text-xs text-[#A7C7BE]">
-                  {grp.items.map((item) => (
-                    <li
-                      key={item}
-                      className="py-1 px-2.5 rounded bg-[#07201B] border border-[#123E34]/80 flex items-center justify-between"
-                    >
-                      <span>{item}</span>
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#E3EF26]/70 shrink-0 ml-2" />
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+                  <ul className="space-y-1.5 text-xs text-[#C5E0D8]">
+                    {grp.items.map((item) => (
+                      <li
+                        key={item}
+                        className="py-1 px-2.5 rounded bg-[#07201B] border border-[#123E34]/80 flex items-center justify-between"
+                      >
+                        <span>{item}</span>
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#E3EF26]/80 shrink-0 ml-2" />
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
 
           {/* LKBB Penalty Rules Callout */}
-          <div className="rounded-2xl bg-[#0A2620] border border-amber-600/40 p-6 space-y-4">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.65, ease: EASE_AWWWARDS }}
+            className="rounded-2xl bg-[#0A2620] border border-amber-600/40 p-6 space-y-4 shadow-sm"
+          >
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400">
               <AlertTriangle className="w-4 h-4 shrink-0" />
               <span>REGULASI RESMI PENGURANGAN NILAI (PENALTI) LKBB</span>
             </div>
 
-            <p className="text-xs text-[#A7C7BE]">
+            <p className="text-xs text-[#C5E0D8]">
               Ketentuan penalti diberlakukan langsung oleh dewan juri dan panitia penilai kavling
               selama penampilan berlangsung:
             </p>
@@ -653,10 +768,10 @@ export default function LandingPage() {
                   className="rounded-lg bg-[#07201B] border border-[#123E34] p-3.5 flex flex-col justify-between"
                 >
                   <div className="space-y-1">
-                    <span className="text-[10px] font-mono font-bold text-[#729B90]">
+                    <span className="text-xs font-mono font-bold text-[#A7C7BE]">
                       {p.code}
                     </span>
-                    <p className="text-xs text-[#F4F9F7] leading-snug">{p.rule}</p>
+                    <p className="text-xs text-[#FFFFFF] leading-snug">{p.rule}</p>
                   </div>
                   <div className="mt-3 pt-2 border-t border-[#123E34] text-xs font-mono font-bold text-rose-400">
                     {p.deduction}
@@ -664,7 +779,7 @@ export default function LandingPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </section>
 
         {/* =====================================================================
@@ -678,18 +793,22 @@ export default function LandingPage() {
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1">
               Jadwal &amp; Agenda Penting
             </h2>
-            <p className="text-sm text-[#A7C7BE] mt-1 max-w-2xl">
+            <p className="text-sm text-[#C5E0D8] mt-1 max-w-xl">
               Catat tanggal pelaksanaan pendaftaran, technical meeting, daftar ulang, serta hari
               perlombaan utama di Kampus SMK Negeri 1 Soreang.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {TIMELINE_DATA.map((item) => {
+            {TIMELINE_DATA.map((item, idx) => {
               const isMain = item.step === '04';
               return (
-                <div
+                <motion.div
                   key={item.step}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: idx * 0.08, ease: EASE_AWWWARDS }}
                   className={`rounded-xl p-5 border flex flex-col justify-between ${
                     isMain
                       ? 'bg-[#0E332B] border-[#E3EF26]'
@@ -702,32 +821,32 @@ export default function LandingPage() {
                         TAHAP {item.step}
                       </span>
                       <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
+                        className={`px-2 py-0.5 rounded text-xs font-mono font-bold ${
                           isMain
                             ? 'bg-[#E3EF26] text-[#0C342C]'
-                            : 'bg-[#07201B] text-[#A7C7BE] border border-[#123E34]'
+                            : 'bg-[#07201B] text-[#C5E0D8] border border-[#123E34]'
                         }`}
                       >
                         {item.status}
                       </span>
                     </div>
 
-                    <div className="text-[11px] font-mono text-[#729B90]">{item.date}</div>
+                    <div className="text-xs font-mono text-[#A7C7BE]">{item.date}</div>
 
                     <h3 className="text-base font-bold text-white leading-snug">
                       {item.title}
                     </h3>
 
-                    <p className="text-xs text-[#A7C7BE] leading-relaxed">
+                    <p className="text-xs text-[#C5E0D8] leading-relaxed">
                       {item.description}
                     </p>
                   </div>
 
-                  <div className="mt-5 pt-3 border-t border-[#123E34] flex items-center justify-between text-xs text-[#729B90]">
+                  <div className="mt-5 pt-3 border-t border-[#123E34] flex items-center justify-between text-xs text-[#A7C7BE]">
                     <span>SMKN 1 Soreang</span>
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#E3EF26]" />
+                    <CheckCircle2 className="w-4 h-4 text-[#E3EF26]" />
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
@@ -747,7 +866,7 @@ export default function LandingPage() {
                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1">
                   Kontak Resmi Sangga Kerja
                 </h2>
-                <p className="text-sm text-[#A7C7BE] mt-2 leading-relaxed">
+                <p className="text-sm text-[#C5E0D8] mt-2 leading-relaxed max-w-md">
                   Pertanyaan terkait teknis perlombaan, pendaftaran, dan administrasi dapat
                   disampaikan langsung kepada narahubung resmi AGP.
                 </p>
@@ -756,7 +875,7 @@ export default function LandingPage() {
               {/* Official Contacts List */}
               <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-5 space-y-3">
                 <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#E3EF26]">
-                  <Phone className="w-3.5 h-3.5" />
+                  <Phone className="w-4 h-4" />
                   <span>WHATSAPP RESMI SANGGA KERJA</span>
                 </div>
 
@@ -769,21 +888,21 @@ export default function LandingPage() {
                     return (
                       <div
                         key={person.name}
-                        className="py-2.5 flex items-center justify-between gap-2"
+                        className="py-3 flex items-center justify-between gap-2"
                       >
                         <div>
-                          <div className="font-semibold text-white">{person.name}</div>
-                          <div className="text-[11px] text-[#729B90]">{person.role}</div>
+                          <div className="font-semibold text-white text-sm">{person.name}</div>
+                          <div className="text-xs text-[#A7C7BE]">{person.role}</div>
                         </div>
 
                         <a
                           href={`https://wa.me/${waNumber}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 font-mono text-[#E3EF26] hover:underline"
+                          className="inline-flex items-center gap-1.5 font-mono text-xs font-bold text-[#E3EF26] hover:underline"
                         >
                           <span>{person.phone}</span>
-                          <ExternalLink className="w-3 h-3" />
+                          <ExternalLink className="w-3.5 h-3.5" />
                         </a>
                       </div>
                     );
@@ -794,11 +913,11 @@ export default function LandingPage() {
               {/* Official Location */}
               <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-5 text-xs space-y-1.5">
                 <div className="flex items-center gap-2 font-mono font-bold text-[#E3EF26]">
-                  <MapPin className="w-3.5 h-3.5" />
+                  <MapPin className="w-4 h-4" />
                   <span>SEKRETARIAT PANITIA</span>
                 </div>
-                <div className="text-white font-medium">Kampus SMK Negeri 1 Soreang</div>
-                <div className="text-[#A7C7BE]">
+                <div className="text-white font-medium text-sm">Kampus SMK Negeri 1 Soreang</div>
+                <div className="text-[#C5E0D8]">
                   Jl. Nyalindung No. 1, Kec. Soreang, Kabupaten Bandung, Jawa Barat.
                 </div>
               </div>
@@ -840,11 +959,21 @@ export default function LandingPage() {
                       />
                     </button>
 
-                    {isOpen && (
-                      <div className="px-5 pb-4 pt-1 text-xs sm:text-sm text-[#A7C7BE] leading-relaxed border-t border-[#123E34]">
-                        {item.a}
-                      </div>
-                    )}
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: EASE_AWWWARDS }}
+                          className="overflow-hidden"
+                        >
+                          <p className="px-5 pb-4 pt-1 text-xs sm:text-sm text-[#C5E0D8] leading-relaxed border-t border-[#123E34]">
+                            {item.a}
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 );
               })}
@@ -870,13 +999,13 @@ export default function LandingPage() {
                 <span className="font-bold text-white tracking-wider uppercase">
                   KIRANI AGP
                 </span>
-                <span className="text-[#729B90] ml-2">
+                <span className="text-[#A7C7BE] ml-2">
                   Basis SMK Negeri 1 Soreang, Kab. Bandung
                 </span>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-4 text-[#A7C7BE]">
+            <div className="flex flex-wrap items-center gap-4 text-[#C5E0D8]">
               <button
                 type="button"
                 onClick={() => scrollToSection('home')}
@@ -923,7 +1052,7 @@ export default function LandingPage() {
           </div>
 
           {/* Copyright & Disclaimer */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#729B90]">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#A7C7BE]">
             <div>
               © Sangga Kerja Lomba Aktivitas Gerakan Pramuka (AGP) Ambalan Ki Hajar Dewantara
               &amp; R.A. Kartini SMKN 1 Soreang.

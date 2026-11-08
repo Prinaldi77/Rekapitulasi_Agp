@@ -69,10 +69,11 @@ const config: Config = {
         },
       },
       fontFamily: {
-        inter: ['var(--font-inter)', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['var(--font-geistmono)', 'JetBrains Mono', 'Menlo', 'monospace'],
+        sans: ['var(--font-sans)', 'system-ui', '-apple-system', 'sans-serif'],
+        inter: ['var(--font-sans)', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['var(--font-mono)', 'monospace'],
         bebas: ['var(--font-bebas)', 'sans-serif'],
-        display: ['var(--font-bebas)', 'var(--font-inter)', 'sans-serif'],
+        display: ['var(--font-bebas)', 'var(--font-sans)', 'sans-serif'],
       },
       borderRadius: {
         btn: '8px',

@@ -1,17 +1,33 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Bebas_Neue } from 'next/font/google';
+import { Plus_Jakarta_Sans, Bebas_Neue, JetBrains_Mono } from 'next/font/google';
 import '../globals.css';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
-const bebas = Bebas_Neue({ weight: '400', subsets: ['latin'], variable: '--font-bebas', display: 'swap' });
+const sans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+const bebas = Bebas_Neue({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-bebas',
+  display: 'swap',
+});
+
+const mono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  title: 'AGP 2027 - Aktivitas Gerakan Pramuka',
-  description: 'Landing Page Resmi Kompetisi AGP — Pantau Jadwal Tampil, Lokasi Barak, dan Pengumuman Juara.',
+  title: 'AGP-IV - Aktivitas Gerakan Pramuka SMKN 1 Soreang',
+  description: 'Landing Page Resmi Kompetisi AGP • Pantau Jadwal Tampil, Lokasi Barak, dan Pengumuman Juara.',
 };
 
 export const viewport: Viewport = {
-  themeColor: '#0C342C',
+  themeColor: '#07201B',
 };
 
 export default function LandingLayout({ children }: { children: React.ReactNode }) {
@@ -19,7 +35,7 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
     <html lang="id" suppressHydrationWarning className="scroll-smooth dark">
       <body
         suppressHydrationWarning
-        className={`${inter.variable} ${bebas.variable} font-inter antialiased min-h-screen bg-[#0C342C] text-[#ffffff] selection:bg-[#E3EF26] selection:text-[#0C342C]`}
+        className={`${sans.variable} ${bebas.variable} ${mono.variable} font-sans antialiased min-h-screen bg-[#07201B] text-[#FFFFFF] selection:bg-[#E3EF26] selection:text-[#0C342C]`}
       >
         {children}
       </body>
