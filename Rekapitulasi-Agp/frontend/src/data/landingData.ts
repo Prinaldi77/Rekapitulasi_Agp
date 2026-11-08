@@ -89,52 +89,49 @@ export const HERO_STATS: HeroStat[] = [
   { label: 'ANGGOTA REGU', value: '8 Orang', desc: 'Putra / Putri / Campuran' },
 ];
 
-export const HERO_HIGHLIGHTS: HeroHighlightCard[] = [
+export interface CompetitionPeriodItem {
+  period: string;
+  code: string;
+  title: string;
+  scope: string;
+  weight: string;
+  arena: string;
+  highlight?: boolean;
+}
+
+export const COMPETITION_PERIODS: CompetitionPeriodItem[] = [
   {
-    id: 'highlight-01',
-    code: 'P-IV',
-    category: 'LKBB PERBASIS',
-    title: 'PBB Dasar, Variasi & Danton',
-    subtitle: '16 Orang/Basis • Lapangan 20x12m',
-    metric: '70% PBB • 20% Vafor • 10% Danton',
-    imageUrl: '/images/landing/card-lkbb.jpg',
+    period: 'PERIODE I',
+    code: 'ADMINISTRASI',
+    title: 'Keabsahan Kontingen & Bumbung Kemanusiaan',
+    scope: 'Tujuh berkas administrasi lengkap (Formulir, Kwitansi, KTA Pramuka, BPJS/Asuransi, Surat Mandat Sekolah, Surat Izin Orang Tua, dan Bumbung Kemanusiaan) dalam amplop kabinet Airmail No. 310.',
+    weight: 'Bobot Maksimal 100 Poin',
+    arena: 'Sekretariat Pendaftaran SMKN 1 Soreang',
   },
   {
-    id: 'highlight-02',
-    code: 'P-II',
-    category: 'KONSTRUKSI',
-    title: 'Mini Pionering Bendera',
-    subtitle: '8 Sumpit • Durasi 10 Menit',
-    metric: 'Stiker Hijau / Kuning / Merah',
-    imageUrl: '/images/landing/card-pionering.jpg',
+    period: 'PERIODE II',
+    code: 'MATERI PRAMUKA',
+    title: 'Wawasan & Keterampilan Taktis Regu',
+    scope: 'Bank Soal 100 PG (PK, PU, PA, BIK dan Sandi estafet 5 orang), Semaphore & Morse audio visual (10 kata acak), serta Mini Pionering bendera 8 sumpit.',
+    weight: 'Akumulasi Skor Nilai Materi Regu',
+    arena: 'Ruang Kelas & Lapangan Terbuka',
   },
   {
-    id: 'highlight-03',
-    code: '106 PIALA',
-    category: 'PIALA UTAMA',
-    title: 'Piala Bergilir & Tetap AGP',
-    subtitle: 'SD (A), SMP (B), SMA (C)',
-    metric: 'Juara Umum & Kategori',
-    imageUrl: '/images/landing/card-trophy.jpg',
-    accent: true,
+    period: 'PERIODE III',
+    code: 'KREATIVITAS',
+    title: 'Fashion Show Daur Ulang Barang Bekas',
+    scope: 'Kreativitas busana daur ulang berbahan kain perca, karung goni, koran, dan plastik dengan aksi panggung dan blocking pose (2 perwakilan per basis).',
+    weight: 'Penilaian Estetika, Kostum & Blocking',
+    arena: 'Panggung Utama AGP',
   },
   {
-    id: 'highlight-04',
-    code: 'P-II',
-    category: 'ISYARAT TAKTIS',
-    title: 'Semaphore & Morse',
-    subtitle: '10 Kata Acak • Ruang Kelas',
-    metric: 'SD 8 • SMP 12 • SMA 15 WPM',
-    imageUrl: '/images/landing/card-sandi.jpg',
-  },
-  {
-    id: 'highlight-05',
-    code: 'P-II',
-    category: 'WAWASAN',
-    title: 'Bank Soal 100 PG',
-    subtitle: 'PK, PU, PA, BIK & Sandi',
-    metric: '5 Orang/Regu • 15 Menit',
-    imageUrl: '/images/landing/card-knowledge.jpg',
+    period: 'PERIODE IV',
+    code: 'LKBB UTAMA',
+    title: 'PBB Dasar, Variasi Formasi & Danton',
+    scope: 'Standar resmi PERPANG TNI Nomor 58 Tahun 2018 per basis (16 orang termasuk Danton) pada kavling lapangan 20 x 12 meter dengan batas waktu tampil 8 menit.',
+    weight: '70% PBB Dasar • 20% Variasi • 10% Danton',
+    arena: 'Lapangan Utama Arena AGP (Kavling 20 x 12 m)',
+    highlight: true,
   },
 ];
 

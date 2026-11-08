@@ -21,15 +21,10 @@ import {
   JUKLAK_DOWNLOAD_NAME,
   HERO_STATS,
   PORTAL_CARDS,
-  SHOWCASE_ITEMS,
-  ABA_ABA_SD_GROUPS,
-  ABA_ABA_SMP_SMA_GROUPS,
-  LKBB_PENALTIES,
+  COMPETITION_PERIODS,
   TIMELINE_DATA,
   FAQ_DATA,
   CONTACT_PERSONS,
-  type ShowcaseCategory,
-  type ShowcaseCardItem,
 } from '@/data/landingData';
 
 const EASE_AWWWARDS: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -61,11 +56,8 @@ function MaskRevealLine({
 
 export default function LandingPage() {
   const [activeNav, setActiveNav] = useState<
-    'HOME' | 'PORTAL' | 'EXPLORE' | 'ABA_ABA' | 'TIMELINE' | 'FAQ'
+    'HOME' | 'PORTAL' | 'KATEGORI' | 'TIMELINE' | 'FAQ'
   >('HOME');
-  const [activeCategory, setActiveCategory] = useState<ShowcaseCategory>('ALL');
-  const [activeAbaJenjang, setActiveAbaJenjang] = useState<'SD' | 'SMP_SMA'>('SMP_SMA');
-  const [selectedShowcase, setSelectedShowcase] = useState<ShowcaseCardItem | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   // Sync active section based on scroll position
@@ -73,8 +65,7 @@ export default function LandingPage() {
     const handleScroll = () => {
       const y = window.scrollY;
       const portalEl = document.getElementById('portal');
-      const exploreEl = document.getElementById('explore');
-      const abaEl = document.getElementById('aba-aba');
+      const kategoriEl = document.getElementById('kategori');
       const timelineEl = document.getElementById('timeline');
       const faqEl = document.getElementById('faq');
 
@@ -82,10 +73,8 @@ export default function LandingPage() {
         setActiveNav('FAQ');
       } else if (timelineEl && y >= timelineEl.offsetTop - 240) {
         setActiveNav('TIMELINE');
-      } else if (abaEl && y >= abaEl.offsetTop - 240) {
-        setActiveNav('ABA_ABA');
-      } else if (exploreEl && y >= exploreEl.offsetTop - 240) {
-        setActiveNav('EXPLORE');
+      } else if (kategoriEl && y >= kategoriEl.offsetTop - 240) {
+        setActiveNav('KATEGORI');
       } else if (portalEl && y >= portalEl.offsetTop - 240) {
         setActiveNav('PORTAL');
       } else {
@@ -97,29 +86,12 @@ export default function LandingPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close modal on Escape key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setSelectedShowcase(null);
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  const filteredShowcase =
-    activeCategory === 'ALL'
-      ? SHOWCASE_ITEMS
-      : SHOWCASE_ITEMS.filter((item) => item.category === activeCategory);
-
-  const activeAbaGroups =
-    activeAbaJenjang === 'SD' ? ABA_ABA_SD_GROUPS : ABA_ABA_SMP_SMA_GROUPS;
 
   return (
     <div className="min-h-screen bg-[#07201B] text-[#FFFFFF] selection:bg-[#E3EF26] selection:text-[#0C342C]">
@@ -150,9 +122,8 @@ export default function LandingPage() {
             {[
               { id: 'HOME', label: 'Beranda', target: 'home' },
               { id: 'PORTAL', label: 'Akses Portal', target: 'portal' },
-              { id: 'EXPLORE', label: 'Mata Lomba', target: 'explore' },
-              { id: 'ABA_ABA', label: 'Aba-Aba LKBB', target: 'aba-aba' },
-              { id: 'TIMELINE', label: 'Jadwal', target: 'timeline' },
+              { id: 'KATEGORI', label: 'Periode Lomba', target: 'kategori' },
+              { id: 'TIMELINE', label: 'Jadwal Agenda', target: 'timeline' },
               { id: 'FAQ', label: 'FAQ & Kontak', target: 'faq' },
             ].map((item) => {
               const active = activeNav === item.id;
@@ -448,350 +419,99 @@ export default function LandingPage() {
         </section>
 
         {/* =====================================================================
-            4. MATA LOMBA (SHOWCASE GRID)
+            4. EMPAT PERIODE KEJUARAAN (EXECUTIVE BENTO GRID)
            ===================================================================== */}
-        <section id="explore" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#123E34]">
+        <section id="kategori" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#123E34]">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
             <div>
               <span className="text-xs font-mono font-bold tracking-wider text-[#E3EF26] uppercase">
-                SPESIFIKASI MATA LOMBA
+                STRUKTUR PENILAIAN LOMBA
               </span>
               <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1">
-                Cabang Perlombaan &amp; Bobot Penilaian
+                Empat Periode Kejuaraan AGP
               </h2>
               <p className="text-sm text-[#C5E0D8] mt-1 max-w-xl">
-                Seluruh perlombaan dibagi ke dalam 4 Periode penilaian untuk jenjang SD/MI,
-                SMP/MTs, dan SMA/SMK/MA.
+                Seluruh perlombaan terbagi ke dalam 4 periode penilaian terpadu untuk jenjang
+                Penggalang SD/SMP dan Penegak SMA/SMK.
               </p>
             </div>
 
-            {/* Category Filter Pills */}
-            <div className="inline-flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-[#0A2620] border border-[#1E564A]">
-              {[
-                { id: 'ALL', label: 'Semua Periode' },
-                { id: 'PERIODE_4', label: 'Periode IV (LKBB)' },
-                { id: 'PERIODE_2', label: 'Periode II (Materi)' },
-                { id: 'PERIODE_3', label: 'Periode III (Kreativitas)' },
-                { id: 'PERIODE_1', label: 'Periode I (Admin)' },
-              ].map((tab) => {
-                const active = activeCategory === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setActiveCategory(tab.id as ShowcaseCategory)}
-                    className={`relative px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                      active ? 'text-[#0C342C]' : 'text-[#C5E0D8] hover:text-white'
-                    }`}
-                  >
-                    {active && (
-                      <motion.span
-                        layoutId="landing-category-pill"
-                        transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                        className="absolute inset-0 rounded-lg bg-[#E3EF26]"
-                      />
-                    )}
-                    <span className="relative z-10">{tab.label}</span>
-                  </button>
-                );
-              })}
-            </div>
+            <a
+              href={JUKLAK_PDF_URL}
+              download={JUKLAK_DOWNLOAD_NAME}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0E332B] border border-[#17483D] text-xs font-semibold text-white hover:border-[#E3EF26] transition-colors self-start md:self-end"
+            >
+              <Download className="w-4 h-4 text-[#E3EF26]" />
+              <span>Unduh Juklak Lengkap (PDF)</span>
+            </a>
           </div>
 
-          {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <AnimatePresence mode="popLayout">
-              {filteredShowcase.map((item, idx) => (
-                <motion.div
-                  layout
-                  key={item.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{ duration: 0.5, delay: idx * 0.05, ease: EASE_AWWWARDS }}
-                  whileHover={{ y: -3 }}
-                  onClick={() => setSelectedShowcase(item)}
-                  className="h-full flex flex-col justify-between rounded-2xl bg-[#08231D] border border-[#17483D] hover:border-[#E3EF26]/70 transition-colors p-6 cursor-pointer group shadow-sm"
-                >
-                  <div>
-                    <div className="flex items-center justify-between text-xs font-mono mb-3">
-                      <span className="font-bold text-[#E3EF26]">{item.code}</span>
-                      <span className="text-[#A7C7BE]">{item.categoryLabel}</span>
-                    </div>
-
-                    <h3 className="text-base font-bold text-white group-hover:text-[#E3EF26] transition-colors">
-                      {item.title}
-                    </h3>
-
-                    <p className="text-xs text-[#C5E0D8] mt-2 leading-relaxed line-clamp-3">
-                      {item.description}
-                    </p>
-
-                    <div className="mt-4 pt-3 border-t border-[#123E34] text-xs space-y-1">
-                      <div className="text-[#A7C7BE]">
-                        Bobot:{' '}
-                        <span className="text-white font-medium">{item.weightLabel}</span>
-                      </div>
-                      <div className="text-[#A7C7BE]">
-                        Arena:{' '}
-                        <span className="text-white font-medium">{item.arenaLabel}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-5 pt-3 border-t border-[#123E34] flex items-center justify-between">
-                    <div className="flex flex-wrap gap-1.5">
-                      {item.tags.slice(0, 2).map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-2 py-0.5 rounded text-xs bg-[#0E332B] text-[#C5E0D8] border border-[#123E34]"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-
-                    <span className="text-xs font-semibold text-[#E3EF26] inline-flex items-center gap-1 shrink-0">
-                      Detail
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                    </span>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-
-          {/* Modal Detail Mata Lomba */}
-          <AnimatePresence>
-            {selectedShowcase && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {COMPETITION_PERIODS.map((period, idx) => (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                role="dialog"
-                aria-modal="true"
-                onClick={() => setSelectedShowcase(null)}
-                className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm"
-              >
-                <motion.div
-                  initial={{ opacity: 0, y: 24, scale: 0.96 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 16, scale: 0.96 }}
-                  transition={{ duration: 0.35, ease: EASE_AWWWARDS }}
-                  onClick={(e) => e.stopPropagation()}
-                  className="w-full max-w-xl rounded-3xl bg-[#08231D] border border-[#E3EF26]/60 p-6 sm:p-8 space-y-5 shadow-2xl relative"
-                >
-                  <button
-                    type="button"
-                    onClick={() => setSelectedShowcase(null)}
-                    aria-label="Tutup Detail"
-                    className="absolute top-5 right-5 p-1.5 rounded-lg bg-[#0E332B] text-[#A7C7BE] hover:text-white hover:bg-[#123E34] cursor-pointer"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-
-                  <div className="flex items-center gap-2 text-xs font-mono text-[#E3EF26]">
-                    <span>{selectedShowcase.code}</span>
-                    <span>•</span>
-                    <span>{selectedShowcase.categoryLabel}</span>
-                  </div>
-
-                  <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight pr-8">
-                    {selectedShowcase.title}
-                  </h3>
-
-                  <div className="space-y-2 text-xs sm:text-sm text-[#C5E0D8]">
-                    <div className="p-3.5 rounded-lg bg-[#0E332B] border border-[#123E34] space-y-1.5">
-                      <div>
-                        <strong className="text-white">Bobot Penilaian:</strong>{' '}
-                        {selectedShowcase.weightLabel}
-                      </div>
-                      <div>
-                        <strong className="text-white">Arena:</strong>{' '}
-                        {selectedShowcase.arenaLabel}
-                      </div>
-                      <div>
-                        <strong className="text-white">Spesifikasi:</strong>{' '}
-                        {selectedShowcase.subtitle}
-                      </div>
-                    </div>
-
-                    <p className="leading-relaxed pt-2 text-[#FFFFFF]">
-                      {selectedShowcase.description}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-wrap gap-1.5 pt-2">
-                    {selectedShowcase.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2.5 py-1 rounded text-xs bg-[#0E332B] text-[#E3EF26] border border-[#1E564A]"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="pt-4 border-t border-[#123E34] flex flex-wrap items-center justify-between gap-3">
-                    <Link
-                      href="/schedule"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E3EF26] text-[#0C342C] text-xs font-bold hover:bg-[#d8e420]"
-                    >
-                      <span>Urutan Tampil Lomba Ini</span>
-                      <ArrowUpRight className="w-4 h-4" />
-                    </Link>
-
-                    <a
-                      href={JUKLAK_PDF_URL}
-                      download={JUKLAK_DOWNLOAD_NAME}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0E332B] border border-[#1E564A] text-xs font-semibold text-white hover:border-[#E3EF26]"
-                    >
-                      <Download className="w-4 h-4 text-[#E3EF26]" />
-                      <span>Unduh Juklak Lengkap (PDF)</span>
-                    </a>
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </section>
-
-        {/* =====================================================================
-            5. ABA-ABA PBB LKBB & REGULASI PENALTI
-           ===================================================================== */}
-        <section id="aba-aba" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#123E34]">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
-            <div>
-              <span className="text-xs font-mono font-bold tracking-wider text-[#E3EF26] uppercase">
-                STANDAR PERPANG TNI NO. 58 TAHUN 2018
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1">
-                Daftar Resmi Aba-Aba PBB LKBB
-              </h2>
-              <p className="text-sm text-[#C5E0D8] mt-1 max-w-xl">
-                Seluruh aba-aba wajib dihafal secara berurutan pada kavling lapangan{' '}
-                <strong className="text-white">20 x 12 meter</strong> dengan batas waktu tampil{' '}
-                <strong className="text-white">8 menit</strong>.
-              </p>
-            </div>
-
-            {/* Jenjang Switcher Tabs */}
-            <div className="inline-flex items-center gap-1.5 p-1 rounded-xl bg-[#0A2620] border border-[#1E564A] self-start lg:self-end">
-              <button
-                type="button"
-                onClick={() => setActiveAbaJenjang('SD')}
-                className={`relative px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                  activeAbaJenjang === 'SD' ? 'text-[#0C342C]' : 'text-[#C5E0D8] hover:text-white'
+                key={period.period}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: idx * 0.08, ease: EASE_AWWWARDS }}
+                className={`rounded-2xl p-6 sm:p-7 border flex flex-col justify-between shadow-sm transition-colors ${
+                  period.highlight
+                    ? 'bg-[#092720] border-[#E3EF26]/70'
+                    : 'bg-[#08231D] border-[#17483D] hover:border-[#1E564A]'
                 }`}
               >
-                {activeAbaJenjang === 'SD' && (
-                  <motion.span
-                    layoutId="landing-aba-pill"
-                    transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                    className="absolute inset-0 rounded-lg bg-[#E3EF26]"
-                  />
-                )}
-                <span className="relative z-10">Penggalang SD/MI (27 Aba-aba)</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveAbaJenjang('SMP_SMA')}
-                className={`relative px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                  activeAbaJenjang === 'SMP_SMA' ? 'text-[#0C342C]' : 'text-[#C5E0D8] hover:text-white'
-                }`}
-              >
-                {activeAbaJenjang === 'SMP_SMA' && (
-                  <motion.span
-                    layoutId="landing-aba-pill"
-                    transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                    className="absolute inset-0 rounded-lg bg-[#E3EF26]"
-                  />
-                )}
-                <span className="relative z-10">SMP/MTs &amp; SMA/SMK (28 Aba-aba)</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Aba-Aba Groups Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
-            <AnimatePresence mode="popLayout">
-              {activeAbaGroups.map((grp, idx) => (
-                <motion.div
-                  layout
-                  key={`${activeAbaJenjang}-${grp.groupCode}`}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{ duration: 0.45, delay: idx * 0.04, ease: EASE_AWWWARDS }}
-                  className="rounded-2xl bg-[#08231D] border border-[#17483D] p-6 space-y-3 shadow-sm"
-                >
-                  <div className="flex items-center justify-between border-b border-[#123E34] pb-2">
-                    <span className="text-xs font-mono font-bold text-[#E3EF26]">
-                      BAGIAN {grp.groupCode}
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className="text-xs font-mono font-bold text-[#E3EF26] tracking-wider">
+                      {period.period}
                     </span>
-                    <span className="text-xs font-mono text-[#A7C7BE]">
-                      {grp.items.length} Gerakan
+                    <span className="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-[#07201B] text-[#A7C7BE] border border-[#123E34]">
+                      {period.code}
                     </span>
                   </div>
 
-                  <h3 className="text-sm font-bold text-white uppercase tracking-wide">
-                    {grp.groupTitle}
+                  <h3 className="text-lg font-bold text-white tracking-tight leading-snug">
+                    {period.title}
                   </h3>
 
-                  <ul className="space-y-1.5 text-xs text-[#C5E0D8]">
-                    {grp.items.map((item) => (
-                      <li
-                        key={item}
-                        className="py-1 px-2.5 rounded bg-[#07201B] border border-[#123E34]/80 flex items-center justify-between"
-                      >
-                        <span>{item}</span>
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#E3EF26]/80 shrink-0 ml-2" />
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
+                  <p className="text-xs sm:text-sm text-[#C5E0D8] mt-2.5 leading-relaxed">
+                    {period.scope}
+                  </p>
+                </div>
 
-          {/* LKBB Penalty Rules Callout */}
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.65, ease: EASE_AWWWARDS }}
-            className="rounded-2xl bg-[#08231D] border border-amber-600/40 p-6 sm:p-7 space-y-4 shadow-sm"
-          >
-            <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400">
-              <AlertTriangle className="w-4 h-4 shrink-0" />
-              <span>REGULASI RESMI PENGURANGAN NILAI (PENALTI) LKBB</span>
-            </div>
-
-            <p className="text-xs text-[#C5E0D8]">
-              Ketentuan penalti diberlakukan langsung oleh dewan juri dan panitia penilai kavling
-              selama penampilan berlangsung:
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {LKBB_PENALTIES.map((p) => (
-                <div
-                  key={p.code}
-                  className="rounded-lg bg-[#07201B] border border-[#123E34] p-3.5 flex flex-col justify-between"
-                >
-                  <div className="space-y-1">
-                    <span className="text-xs font-mono font-bold text-[#A7C7BE]">
-                      {p.code}
-                    </span>
-                    <p className="text-xs text-[#FFFFFF] leading-snug">{p.rule}</p>
+                <div className="mt-6 pt-4 border-t border-[#123E34] text-xs space-y-1.5">
+                  <div className="flex items-center justify-between text-[#A7C7BE]">
+                    <span className="font-mono text-xs text-[#7AA89C] uppercase tracking-wider">Bobot:</span>
+                    <span className="text-white font-medium">{period.weight}</span>
                   </div>
-                  <div className="mt-3 pt-2 border-t border-[#123E34] text-xs font-mono font-bold text-rose-400">
-                    {p.deduction}
+                  <div className="flex items-center justify-between text-[#A7C7BE]">
+                    <span className="font-mono text-xs text-[#7AA89C] uppercase tracking-wider">Arena:</span>
+                    <span className="text-white font-medium">{period.arena}</span>
                   </div>
                 </div>
-              ))}
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Regulatory Callout Box */}
+          <div className="mt-8 p-6 rounded-2xl bg-[#08231D] border border-[#17483D] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 shadow-sm">
+            <div className="space-y-1">
+              <div className="text-xs font-mono font-bold text-[#E3EF26] uppercase tracking-wider">
+                REGULASI RESMI &amp; TEKNIS DETAIL
+              </div>
+              <p className="text-xs sm:text-sm text-[#C5E0D8] max-w-2xl leading-relaxed">
+                Rincian pasal perlombaan, seragam, daftar urutan aba-aba PBB LKBB lengkap, formulir pendaftaran, dan lampiran resmi tercantum di dalam berkas Petunjuk Pelaksanaan (Juklak) PDF.
+              </p>
             </div>
-          </motion.div>
+            <a
+              href={JUKLAK_PDF_URL}
+              download={JUKLAK_DOWNLOAD_NAME}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#E3EF26] text-[#0C342C] text-xs font-bold hover:bg-[#d8e420] transition-colors shrink-0 shadow-sm"
+            >
+              <Download className="w-4 h-4" />
+              <span>Unduh Juklak PDF Resmi</span>
+            </a>
+          </div>
         </section>
 
         {/* =====================================================================
@@ -1034,24 +754,24 @@ export default function LandingPage() {
               </button>
               <button
                 type="button"
-                onClick={() => scrollToSection('explore')}
+                onClick={() => scrollToSection('kategori')}
                 className="hover:text-white transition-colors cursor-pointer"
               >
-                Mata Lomba
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection('aba-aba')}
-                className="hover:text-white transition-colors cursor-pointer"
-              >
-                Aba-Aba LKBB
+                Periode Lomba
               </button>
               <button
                 type="button"
                 onClick={() => scrollToSection('timeline')}
                 className="hover:text-white transition-colors cursor-pointer"
               >
-                Jadwal
+                Jadwal Agenda
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollToSection('faq')}
+                className="hover:text-white transition-colors cursor-pointer"
+              >
+                FAQ &amp; Kontak
               </button>
               <a
                 href={JUKLAK_PDF_URL}
