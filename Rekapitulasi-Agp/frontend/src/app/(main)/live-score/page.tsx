@@ -375,7 +375,7 @@ export default function WinnerAnnouncementPage() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: EASE_AWWWARDS }}
-          className="rounded-2xl bg-[#0A2620] border border-[#1E564A] overflow-hidden shadow-sm grid grid-cols-1 lg:grid-cols-12"
+          className="rounded-3xl bg-[#08231D] border border-[#17483D] overflow-hidden shadow-sm grid grid-cols-1 lg:grid-cols-12"
         >
           {/* Trophy Render */}
           <div className="lg:col-span-5 relative min-h-[260px] sm:min-h-[320px] bg-[#061A15] overflow-hidden">
@@ -447,7 +447,7 @@ export default function WinnerAnnouncementPage() {
 
           {/* Left 8 Cols: Standings Leaderboard */}
           <div className="lg:col-span-8 space-y-6">
-            <div className="rounded-2xl bg-[#0A2620] border border-[#1E564A] p-6 sm:p-7 shadow-sm">
+            <div className="rounded-2xl bg-[#08231D] border border-[#17483D] p-6 sm:p-7 shadow-sm">
               <div className="border-b border-[#123E34] pb-4 mb-6 flex justify-between items-center gap-3 flex-wrap">
                 <div className="flex items-center gap-2.5">
                   <Trophy className="w-4 h-4 text-[#E3EF26]" />
@@ -603,7 +603,7 @@ export default function WinnerAnnouncementPage() {
 
           {/* Right 4 Cols: 106 Piala Breakdown & Live Activity Feed */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="rounded-2xl bg-[#0A2620] border border-[#1E564A] overflow-hidden shadow-sm">
+            <div className="rounded-2xl bg-[#08231D] border border-[#17483D] overflow-hidden shadow-sm">
               <div className="relative h-44 w-full bg-[#061A15]">
                 <img
                   src="/images/landing/card-trophy.jpg"

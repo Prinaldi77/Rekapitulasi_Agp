@@ -202,31 +202,31 @@ export default function LandingPage() {
 
       <main>
         {/* =====================================================================
-            2. HERO SECTION
+            2. HERO SECTION (EDITORIAL TECH / BENTO STAGE)
            ===================================================================== */}
         <section id="home" className="pt-14 sm:pt-20 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          {/* Institutional Badge */}
+          {/* Institutional Header Badge */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: EASE_AWWWARDS }}
-            className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-lg bg-[#0A2620] border border-[#1E564A] text-xs font-mono font-semibold tracking-wider text-[#C5E0D8] mb-6"
+            className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#08231D] border border-[#17483D] text-xs font-mono font-semibold tracking-widest text-[#C5E0D8] mb-6"
           >
-            <span className="w-2 h-2 rounded-full bg-[#E3EF26] animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-[#E3EF26]" />
             <span>PRAMUKA SMKN 1 SOREANG • TINGKAT JAWA BARAT</span>
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-            {/* Left Content */}
+            {/* Left Column: Editorial Headline & Actions */}
             <div className="lg:col-span-8 space-y-6">
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <MaskRevealLine delay={0.05} duration={0.85}>
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-[1.12]">
                     Lomba Aktivitas Gerakan Pramuka
                   </h1>
                 </MaskRevealLine>
                 <MaskRevealLine delay={0.12} duration={0.85}>
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-[#E3EF26] leading-tight">
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-[#E3EF26] leading-[1.12]">
                     (AGP) SMKN 1 Soreang.
                   </h2>
                 </MaskRevealLine>
@@ -249,7 +249,7 @@ export default function LandingPage() {
                 rekapitulasi nilai terpadu.
               </motion.p>
 
-              {/* Direct Action Buttons */}
+              {/* Action Buttons */}
               <motion.div
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -267,15 +267,15 @@ export default function LandingPage() {
 
                 <Link
                   href="/schedule"
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#0A2620] border border-[#1E564A] text-sm font-semibold text-white hover:border-[#E3EF26] hover:text-[#E3EF26] transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#08231D] border border-[#17483D] text-sm font-semibold text-white hover:border-[#E3EF26] hover:text-[#E3EF26] transition-colors"
                 >
                   <Radio className="w-4 h-4 text-[#E3EF26]" />
-                  <span>Jadwal Urutan Tampil</span>
+                  <span>Urutan Tampil Lapangan</span>
                 </Link>
 
                 <Link
                   href="/barack"
-                  className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-[#0A2620] border border-[#1E564A] text-sm font-semibold text-[#A7C7BE] hover:text-white hover:border-[#E3EF26] transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-[#08231D] border border-[#17483D] text-sm font-semibold text-[#A7C7BE] hover:text-white hover:border-[#E3EF26] transition-colors"
                 >
                   <MapPin className="w-4 h-4 text-[#A7C7BE]" />
                   <span>Direktori Barak</span>
@@ -283,46 +283,51 @@ export default function LandingPage() {
               </motion.div>
             </div>
 
-            {/* Right Card: Quick Reference */}
+            {/* Right Column: Championship Telemetry Bento Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.75, delay: 0.18, ease: EASE_AWWWARDS }}
-              className="lg:col-span-4 rounded-2xl bg-[#0A2620] border border-[#1E564A] p-6 space-y-4 shadow-sm"
+              className="lg:col-span-4 rounded-2xl bg-[#08231D] border border-[#17483D] p-6 sm:p-7 space-y-5 shadow-sm"
             >
-              <div className="flex items-center justify-between border-b border-[#123E34] pb-3">
-                <span className="text-xs font-mono font-bold tracking-wider text-[#E3EF26]">
-                  RINGKASAN EVENT
+              <div className="flex items-center justify-between border-b border-[#123E34] pb-3.5">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#E3EF26]" />
+                  <span className="text-xs font-mono font-bold tracking-wider text-[#E3EF26] uppercase">
+                    RINGKASAN EVENT
+                  </span>
+                </div>
+                <span className="px-2 py-0.5 rounded text-xs font-mono font-bold bg-[#0D362C] text-[#C5E0D8] border border-[#17483D]">
+                  AGP-IV / 2025
                 </span>
-                <span className="text-xs font-mono text-[#A7C7BE]">AGP-III / 2025</span>
               </div>
 
-              <div className="space-y-3.5 text-xs">
+              <div className="space-y-4 text-xs">
                 <div>
-                  <div className="text-[#A7C7BE]">Lokasi Pelaksanaan</div>
+                  <div className="text-xs font-mono text-[#7AA89C] uppercase tracking-wider">Lokasi Pelaksanaan</div>
                   <div className="font-semibold text-white text-sm mt-0.5">
                     Kampus SMK Negeri 1 Soreang, Kab. Bandung
                   </div>
                 </div>
 
                 <div>
-                  <div className="text-[#A7C7BE]">Hari &amp; Tanggal Utama</div>
+                  <div className="text-xs font-mono text-[#7AA89C] uppercase tracking-wider">Hari &amp; Tanggal Utama</div>
                   <div className="font-semibold text-white text-sm mt-0.5">
-                    Sabtu, 22 Februari 2025 (06.00 WIB – Selesai)
+                    Sabtu, 22 Februari 2025 (Pukul 06.00 WIB – Selesai)
                   </div>
                 </div>
 
                 <div>
-                  <div className="text-[#A7C7BE]">Standar Acuan LKBB</div>
+                  <div className="text-xs font-mono text-[#7AA89C] uppercase tracking-wider">Standar Acuan LKBB</div>
                   <div className="font-semibold text-white text-sm mt-0.5">
-                    PERPANG TNI Nomor 58 Tahun 2018
+                    PERPANG TNI Nomor 58 Tahun 2018 (Kavling 20 x 12 m)
                   </div>
                 </div>
 
                 <div>
-                  <div className="text-[#A7C7BE]">Total Kejuaraan</div>
+                  <div className="text-xs font-mono text-[#7AA89C] uppercase tracking-wider">Total Kejuaraan</div>
                   <div className="font-bold text-[#E3EF26] text-sm mt-0.5">
-                    106 Piala (Piala Bergilir &amp; Tetap)
+                    106 Kategori Piala (Piala Bergilir &amp; Tetap)
                   </div>
                 </div>
               </div>
@@ -330,7 +335,7 @@ export default function LandingPage() {
               <div className="pt-3 border-t border-[#123E34]">
                 <Link
                   href="/live-score"
-                  className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg bg-[#0E332B] border border-[#1E564A] text-xs font-bold text-white hover:border-[#E3EF26] hover:text-[#E3EF26] transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg bg-[#0E332B] border border-[#17483D] text-xs font-bold text-white hover:border-[#E3EF26] hover:text-[#E3EF26] transition-colors"
                 >
                   <Trophy className="w-4 h-4 text-[#E3EF26]" />
                   <span>Lihat Klasemen &amp; Rekapitulasi</span>
@@ -339,8 +344,8 @@ export default function LandingPage() {
             </motion.div>
           </div>
 
-          {/* Metrics Ribbon */}
-          <div className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* Metrics Bento Grid (Editorial Telemetry) */}
+          <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {HERO_STATS.map((stat, idx) => (
               <motion.div
                 key={stat.label}
@@ -348,22 +353,30 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: idx * 0.08, ease: EASE_AWWWARDS }}
-                className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-4 text-center"
+                className="rounded-2xl bg-[#08231D] border border-[#17483D] hover:border-[#E3EF26]/60 transition-colors p-5 flex flex-col justify-between shadow-sm"
               >
-                <div className="text-2xl sm:text-3xl font-black font-mono text-white tracking-tight">
-                  {stat.value}
+                <div className="flex items-center justify-between text-xs font-mono text-[#7AA89C] mb-3">
+                  <span>METRIK #{`0${idx + 1}`}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#E3EF26]/80" />
                 </div>
-                <div className="text-xs font-bold text-[#E3EF26] mt-1">{stat.label}</div>
-                {stat.desc && (
-                  <div className="text-xs text-[#A7C7BE] mt-0.5">{stat.desc}</div>
-                )}
+                <div>
+                  <div className="text-3xl sm:text-4xl font-black font-mono text-white tracking-tight">
+                    {stat.value}
+                  </div>
+                  <div className="text-xs font-bold font-mono tracking-wider text-[#E3EF26] mt-2 uppercase">
+                    {stat.label}
+                  </div>
+                  {stat.desc && (
+                    <div className="text-xs text-[#C5E0D8] mt-1 leading-relaxed">{stat.desc}</div>
+                  )}
+                </div>
               </motion.div>
             ))}
           </div>
         </section>
 
         {/* =====================================================================
-            3. PORTAL ACCESS CARDS
+            3. PORTAL ACCESS CARDS (BENTO MODULAR)
            ===================================================================== */}
         <section id="portal" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#123E34]">
           <div className="mb-8">
@@ -374,7 +387,7 @@ export default function LandingPage() {
               Portal Layanan &amp; Informasi Kegiatan
             </h2>
             <p className="text-sm text-[#C5E0D8] mt-1 max-w-xl">
-              Akses instan ke fasilitas live monitoring jadwal, pemetaan barak peserta,
+              Akses instan ke fasilitas pemantauan jadwal tampil langsung, pemetaan barak peserta,
               rekapitulasi nilai juri, serta berkas regulasi resmi.
             </p>
           </div>
@@ -387,18 +400,17 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: idx * 0.08, ease: EASE_AWWWARDS }}
-                  whileHover={{ y: -3 }}
-                  className="h-full flex flex-col justify-between rounded-xl bg-[#0A2620] border border-[#1E564A] hover:border-[#E3EF26] transition-colors p-5 group"
+                  className="h-full flex flex-col justify-between rounded-2xl bg-[#08231D] border border-[#17483D] hover:border-[#E3EF26]/70 transition-colors p-5 group shadow-sm"
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-4">
                       <span className="px-2.5 py-1 rounded text-xs font-mono font-bold text-[#0C342C] bg-[#E3EF26]">
                         {card.badge}
                       </span>
-                      <span className="text-xs font-mono text-[#A7C7BE]">{card.code}</span>
+                      <span className="text-xs font-mono text-[#7AA89C] font-semibold">{card.code}</span>
                     </div>
 
-                    <h3 className="text-base font-bold text-white group-hover:text-[#E3EF26] transition-colors">
+                    <h3 className="text-base font-bold text-white group-hover:text-[#E3EF26] transition-colors leading-snug">
                       {card.title}
                     </h3>
                     <p className="text-xs text-[#C5E0D8] mt-2 leading-relaxed">
@@ -406,7 +418,7 @@ export default function LandingPage() {
                     </p>
                   </div>
 
-                  <div className="mt-5 pt-3 border-t border-[#123E34] flex items-center justify-between text-xs font-semibold text-[#E3EF26]">
+                  <div className="mt-5 pt-3.5 border-t border-[#123E34] flex items-center justify-between text-xs font-semibold text-[#E3EF26]">
                     <span>{card.actionLabel || 'Buka Layanan'}</span>
                     {card.isDownload ? (
                       <Download className="w-4 h-4" />
@@ -499,7 +511,7 @@ export default function LandingPage() {
                   transition={{ duration: 0.5, delay: idx * 0.05, ease: EASE_AWWWARDS }}
                   whileHover={{ y: -3 }}
                   onClick={() => setSelectedShowcase(item)}
-                  className="h-full flex flex-col justify-between rounded-xl bg-[#0A2620] border border-[#1E564A] hover:border-[#E3EF26] transition-colors p-5 cursor-pointer group shadow-sm"
+                  className="h-full flex flex-col justify-between rounded-2xl bg-[#08231D] border border-[#17483D] hover:border-[#E3EF26]/70 transition-colors p-6 cursor-pointer group shadow-sm"
                 >
                   <div>
                     <div className="flex items-center justify-between text-xs font-mono mb-3">
@@ -567,7 +579,7 @@ export default function LandingPage() {
                   exit={{ opacity: 0, y: 16, scale: 0.96 }}
                   transition={{ duration: 0.35, ease: EASE_AWWWARDS }}
                   onClick={(e) => e.stopPropagation()}
-                  className="w-full max-w-xl rounded-2xl bg-[#0A2620] border border-[#E3EF26]/60 p-6 sm:p-8 space-y-5 shadow-2xl relative"
+                  className="w-full max-w-xl rounded-3xl bg-[#08231D] border border-[#E3EF26]/60 p-6 sm:p-8 space-y-5 shadow-2xl relative"
                 >
                   <button
                     type="button"
@@ -712,7 +724,7 @@ export default function LandingPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.96 }}
                   transition={{ duration: 0.45, delay: idx * 0.04, ease: EASE_AWWWARDS }}
-                  className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-5 space-y-3 shadow-sm"
+                  className="rounded-2xl bg-[#08231D] border border-[#17483D] p-6 space-y-3 shadow-sm"
                 >
                   <div className="flex items-center justify-between border-b border-[#123E34] pb-2">
                     <span className="text-xs font-mono font-bold text-[#E3EF26]">
@@ -749,7 +761,7 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.65, ease: EASE_AWWWARDS }}
-            className="rounded-2xl bg-[#0A2620] border border-amber-600/40 p-6 space-y-4 shadow-sm"
+            className="rounded-2xl bg-[#08231D] border border-amber-600/40 p-6 sm:p-7 space-y-4 shadow-sm"
           >
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400">
               <AlertTriangle className="w-4 h-4 shrink-0" />
@@ -809,10 +821,10 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: idx * 0.08, ease: EASE_AWWWARDS }}
-                  className={`rounded-xl p-5 border flex flex-col justify-between ${
+                  className={`rounded-2xl p-6 border flex flex-col justify-between shadow-sm transition-colors ${
                     isMain
-                      ? 'bg-[#0E332B] border-[#E3EF26]'
-                      : 'bg-[#0A2620] border-[#1E564A]'
+                      ? 'bg-[#0E332B] border-[#E3EF26]/80'
+                      : 'bg-[#08231D] border-[#17483D]'
                   }`}
                 >
                   <div className="space-y-3">
@@ -873,7 +885,7 @@ export default function LandingPage() {
               </div>
 
               {/* Official Contacts List */}
-              <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-5 space-y-3">
+              <div className="rounded-2xl bg-[#08231D] border border-[#17483D] p-6 space-y-4 shadow-sm">
                 <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#E3EF26]">
                   <Phone className="w-4 h-4" />
                   <span>WHATSAPP RESMI SANGGA KERJA</span>
@@ -911,7 +923,7 @@ export default function LandingPage() {
               </div>
 
               {/* Official Location */}
-              <div className="rounded-xl bg-[#0A2620] border border-[#1E564A] p-5 text-xs space-y-1.5">
+              <div className="rounded-2xl bg-[#08231D] border border-[#17483D] p-6 text-xs space-y-2 shadow-sm">
                 <div className="flex items-center gap-2 font-mono font-bold text-[#E3EF26]">
                   <MapPin className="w-4 h-4" />
                   <span>SEKRETARIAT PANITIA</span>
@@ -939,10 +951,10 @@ export default function LandingPage() {
                 return (
                   <div
                     key={idx}
-                    className={`rounded-xl border transition-colors ${
+                    className={`rounded-2xl border transition-colors ${
                       isOpen
-                        ? 'bg-[#0E332B] border-[#E3EF26]/60'
-                        : 'bg-[#0A2620] border-[#1E564A] hover:border-[#1E564A]'
+                        ? 'bg-[#0E332B] border-[#E3EF26]/60 shadow-sm'
+                        : 'bg-[#08231D] border-[#17483D] hover:border-[#1E564A]'
                     }`}
                   >
                     <button

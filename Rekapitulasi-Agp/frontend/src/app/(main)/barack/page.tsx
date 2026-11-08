@@ -113,13 +113,13 @@ export default function PublicBarackPage() {
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.65, delay: 0.08, ease: EASE_AWWWARDS }}
-        className="rounded-2xl bg-[#0A2620] border border-[#1E564A] p-6 sm:p-7 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-sm"
+        className="rounded-2xl bg-[#08231D] border border-[#17483D] p-6 sm:p-7 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-sm"
       >
         <div className="flex items-center gap-5">
           <img
             src="/images/landing/card-pionering.jpg"
             alt="Barack Zone"
-            className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border border-[#1E564A] shrink-0"
+            className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border border-[#17483D] shrink-0"
           />
           <div>
             <div className="text-xs font-mono font-semibold uppercase tracking-wider text-[#E3EF26] mb-1">
@@ -136,7 +136,7 @@ export default function PublicBarackPage() {
         </div>
 
         <div className="flex items-center gap-3 self-stretch sm:self-center">
-          <div className="px-5 py-3 rounded-xl bg-[#0E332B] border border-[#1E564A] text-center">
+          <div className="px-5 py-3 rounded-xl bg-[#051A15] border border-[#123E34] text-center">
             <div className="text-2xl font-black font-mono text-[#E3EF26]">
               {barackList.length}
             </div>
@@ -144,7 +144,7 @@ export default function PublicBarackPage() {
               REGU TERDAFTAR
             </div>
           </div>
-          <div className="px-5 py-3 rounded-xl bg-[#0E332B] border border-[#1E564A] text-center">
+          <div className="px-5 py-3 rounded-xl bg-[#051A15] border border-[#123E34] text-center">
             <div className="text-2xl font-black font-mono text-white">{uniqueRooms}</div>
             <div className="text-xs font-mono uppercase tracking-wider text-[#A7C7BE] mt-0.5">
               RUANG BARAK
@@ -224,7 +224,7 @@ export default function PublicBarackPage() {
                 exit={{ opacity: 0, scale: 0.96 }}
                 transition={{ duration: 0.45, delay: idx * 0.03, ease: EASE_AWWWARDS }}
                 whileHover={{ y: -3 }}
-                className="p-6 rounded-xl bg-[#0A2620] border border-[#1E564A] hover:border-[#E3EF26] flex flex-col justify-between transition-colors shadow-sm group"
+                className="p-6 rounded-2xl bg-[#08231D] border border-[#17483D] hover:border-[#E3EF26]/70 flex flex-col justify-between transition-colors shadow-sm group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">

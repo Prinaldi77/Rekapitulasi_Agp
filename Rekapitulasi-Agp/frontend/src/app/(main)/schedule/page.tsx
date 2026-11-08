@@ -172,7 +172,7 @@ export default function PublicSchedulePage() {
           className="grid grid-cols-1 lg:grid-cols-12 gap-5"
         >
           {/* Now Performing Card */}
-          <div className="lg:col-span-8 rounded-2xl bg-[#0A2620] border border-[#E3EF26]/60 p-6 sm:p-7 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative overflow-hidden">
+          <div className="lg:col-span-8 rounded-2xl bg-[#08231D] border border-[#E3EF26]/70 p-6 sm:p-7 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative overflow-hidden">
             <div className="relative z-10 flex items-center gap-5">
               <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-xl bg-[#E3EF26] text-[#0C342C] flex flex-col items-center justify-center font-mono shrink-0 shadow-sm">
                 <span className="text-xs font-bold uppercase tracking-wider opacity-85">
@@ -210,7 +210,7 @@ export default function PublicSchedulePage() {
           </div>
 
           {/* Next Standby Card */}
-          <div className="lg:col-span-4 rounded-2xl bg-[#0A2620] border border-[#1E564A] p-6 flex flex-col justify-between shadow-sm">
+          <div className="lg:col-span-4 rounded-2xl bg-[#08231D] border border-[#17483D] p-6 flex flex-col justify-between shadow-sm">
             <div className="flex items-center justify-between">
               <span className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[#E3EF26] font-bold">
                 <Hourglass className="w-4 h-4" />
@@ -316,12 +316,12 @@ export default function PublicSchedulePage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.45, delay: idx * 0.025, ease: EASE_AWWWARDS }}
-                  className={`p-5 sm:p-6 rounded-xl border transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 ${
+                  className={`p-5 sm:p-6 rounded-2xl border transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm ${
                     isPerforming
                       ? 'bg-[#0E332B] border-[#E3EF26]'
                       : isStandby
-                        ? 'bg-[#0A2620] border-[#E3EF26]/40'
-                        : 'bg-[#0A2620] border-[#1E564A] hover:border-[#1E564A]'
+                        ? 'bg-[#08231D] border-[#E3EF26]/50'
+                        : 'bg-[#08231D] border-[#17483D] hover:border-[#1E564A]'
                   }`}
                 >
                   <div className="flex items-start sm:items-center gap-4">
