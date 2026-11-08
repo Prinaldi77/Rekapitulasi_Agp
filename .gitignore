@@ -31,7 +31,7 @@ Thumbs.db
 # Video generation & test artifacts
 .agents/
 .claude/
-data/
+/data/
 anti-slop/
 my-video/
 Rekapitulasi-Agp/frontend/demo-out/
