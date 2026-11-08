@@ -158,7 +158,7 @@ export default function Navbar() {
                   ? isGrandMaster
                     ? 'Sekretaris Utama & Master Control'
                     : 'Operator Lapangan & Arena Control'
-                  : 'Rekapitulasi Nilai & Live Leaderboard'}
+                  : 'Rekapitulasi Nilai & Klasemen Langsung'}
               </p>
             </div>
           </Link>
@@ -213,7 +213,7 @@ export default function Navbar() {
                 }`}
               >
                 <ClipboardEdit className="w-3.5 h-3.5" />
-                Input Nilai Juri
+                Entri Nilai Juri
               </Link>
               <Link
                 href="/admin/leaderboard"
@@ -324,7 +324,7 @@ export default function Navbar() {
                 className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-[#ffffff] hover:bg-white/[0.04]"
               >
                 <Clock className="w-4 h-4 text-[#E3EF26]" />
-                Urutan Tampil Realtime
+                Urutan Tampil Lapangan
               </Link>
               <Link
                 href="/barack"
@@ -332,7 +332,7 @@ export default function Navbar() {
                 className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-[#ffffff] hover:bg-white/[0.04]"
               >
                 <Building2 className="w-4 h-4 text-[#E3EF26]" />
-                Transit Barak Room
+                Ruang Transit Barak
               </Link>
             </>
           ) : isGrandMaster ? (

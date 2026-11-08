@@ -271,8 +271,8 @@ export default function WinnerAnnouncementPage() {
             </motion.h1>
           </div>
           <p className="text-xs sm:text-sm text-[#C5E0D8] mt-2 max-w-xl leading-relaxed">
-            Daftar pemenang resmi terverifikasi Dewan Juri AGP-III SMKN 1 Soreang (Total 106 Trophy
-            Perebutan Juara Umum) beserta unduhan Surat Keputusan (SK) Penetapan Juara.
+            Daftar pemenang resmi terverifikasi Dewan Juri AGP-III SMKN 1 Soreang (total 106 kategori
+            piala kejuaraan umum) beserta unduhan Surat Keputusan (SK) Penetapan Juara.
           </p>
         </div>
 
@@ -381,7 +381,7 @@ export default function WinnerAnnouncementPage() {
           <div className="lg:col-span-5 relative min-h-[260px] sm:min-h-[320px] bg-[#061A15] overflow-hidden">
             <img
               src="/images/landing/card-trophy.jpg"
-              alt="AGP Championship Trophy"
+              alt="Piala Kejuaraan AGP"
               className="h-full w-full object-cover object-center"
             />
             <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-transparent via-transparent to-[#0A2620]" />
@@ -601,13 +601,13 @@ export default function WinnerAnnouncementPage() {
             </div>
           </div>
 
-          {/* Right 4 Cols: 106 Trophy Breakdown & Live Activity Feed */}
+          {/* Right 4 Cols: 106 Piala Breakdown & Live Activity Feed */}
           <div className="lg:col-span-4 space-y-6">
             <div className="rounded-2xl bg-[#0A2620] border border-[#1E564A] overflow-hidden shadow-sm">
               <div className="relative h-44 w-full bg-[#061A15]">
                 <img
                   src="/images/landing/card-trophy.jpg"
-                  alt="Trophy AGP"
+                  alt="Piala AGP"
                   className="h-full w-full object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A2620] via-transparent to-transparent" />

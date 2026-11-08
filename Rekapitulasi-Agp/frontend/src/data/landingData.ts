@@ -29,6 +29,7 @@ export interface PortalAccessCard {
   href: string;
   imageUrl: string;
   isDownload?: boolean;
+  actionLabel?: string;
 }
 
 export interface ShowcaseCardItem {
@@ -141,11 +142,12 @@ export const PORTAL_CARDS: PortalAccessCard[] = [
   {
     id: 'portal-1',
     code: 'PORTAL 01',
-    title: 'Live Urutan Tampil',
-    subtitle: 'Pantau antrean kavling 20x12m secara real-time',
+    title: 'Urutan Tampil Arena',
+    subtitle: 'Pantau antrean kavling 20x12 m secara langsung',
     badge: 'SEDANG TAMPIL',
     href: '/schedule',
     imageUrl: '/images/landing/card-lkbb.jpg',
+    actionLabel: 'Pantau Urutan Tampil',
   },
   {
     id: 'portal-2',
@@ -155,25 +157,28 @@ export const PORTAL_CARDS: PortalAccessCard[] = [
     badge: 'KUOTA 50 BASIS',
     href: '/barack',
     imageUrl: '/images/landing/card-pionering.jpg',
+    actionLabel: 'Cari Ruang Barak',
   },
   {
     id: 'portal-3',
     code: 'PORTAL 03',
     title: 'Klasemen & Nilai',
-    subtitle: 'Transparansi rekapitulasi nilai akhir & pengumuman juara',
+    subtitle: 'Transparansi rekapitulasi nilai akhir dan pengumuman juara',
     badge: 'NILAI RESMI',
     href: '/live-score',
     imageUrl: '/images/landing/card-trophy.jpg',
+    actionLabel: 'Buka Rekapitulasi Nilai',
   },
   {
     id: 'portal-4',
     code: 'JUKLAK RESMI',
     title: 'Unduh Juklak PDF',
-    subtitle: 'Petunjuk pelaksanaan & formulir pendaftaran resmi',
+    subtitle: 'Petunjuk pelaksanaan dan formulir pendaftaran resmi',
     badge: 'PDF 12 HALAMAN',
     href: JUKLAK_PDF_URL,
     imageUrl: '/images/landing/card-sandi.jpg',
     isDownload: true,
+    actionLabel: 'Unduh Berkas Juklak',
   },
 ];
 
@@ -413,7 +418,7 @@ export const TIMELINE_DATA: TimelineItem[] = [
     date: '06 Nov 2024 – 08 Feb 2025',
     title: 'Pendaftaran Basis & Lomba Foto Kreasi IG',
     description:
-      'Pendaftaran di Sekretariat SMKN 1 Soreang (Senin–Sabtu 10.00–16.00 WIB, kuota 50 Basis, Rp 350.000/Regu via BJB 0025448987100 a.n. Santika Yunita). Batas upload foto IG @kiranicrew_official sampai 14 Feb 2025.',
+      'Pendaftaran di Sekretariat SMKN 1 Soreang (Senin–Sabtu 10.00–16.00 WIB, kuota 50 Basis, Rp 350.000/Regu via BJB 0025448987100 a.n. Santika Yunita). Batas pengunggahan foto IG @kiranicrew_official sampai 14 Feb 2025.',
     status: 'Periode Awal',
   },
   {
@@ -429,7 +434,7 @@ export const TIMELINE_DATA: TimelineItem[] = [
     date: 'Sabtu, 15 Feb 2025 (09.00–15.00 WIB)',
     title: 'Periode I: Daftar Ulang Ke-1 & Penilaian Administrasi',
     description:
-      'Pengumpulan amplop kabinet Airmail No. 310 berisi 7 komponen administrasi lengkap (Formulir, Kwitansi, KTA, BPJS, Surat Mandat, Izin Orang Tua, Bumbung Kemanusiaan — Total bobot 100 Poin).',
+      'Pengumpulan amplop kabinet Airmail No. 310 berisi 7 komponen administrasi lengkap (Formulir, Kwitansi, KTA, BPJS, Surat Mandat, Izin Orang Tua, Bumbung Kemanusiaan dengan total bobot 100 poin).',
     status: 'Periode I',
   },
   {

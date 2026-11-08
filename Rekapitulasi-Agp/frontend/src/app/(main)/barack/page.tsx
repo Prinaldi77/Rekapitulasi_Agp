@@ -123,7 +123,7 @@ export default function PublicBarackPage() {
           />
           <div>
             <div className="text-xs font-mono font-semibold uppercase tracking-wider text-[#E3EF26] mb-1">
-              LOGISTIK, AKOMODASI &amp; EVALUASI BARAK (100 POIN)
+              FASILITAS TRANSIT &amp; EVALUASI KEBERSIHAN BARAK (100 POIN)
             </div>
             <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
               Pemetaan Ruang Kelas Transit Kontingen SMKN 1 Soreang

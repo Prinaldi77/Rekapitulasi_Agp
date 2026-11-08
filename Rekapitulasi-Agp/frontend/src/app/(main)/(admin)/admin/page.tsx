@@ -324,10 +324,10 @@ export default function AdminDashboard() {
             </h1>
             <p className="text-[#C5E0D8] text-xs sm:text-sm leading-relaxed">
               {userRole === 'SUPER_ADMIN'
-                ? 'Otoritas penuh sebagai Sekretaris Utama (Super Admin) untuk validasi rekapitulasi nilai 106 Trophy, penerbitan SK Juara AGP, dan konfigurasi sistem.'
+                ? 'Wewenang Sekretaris Utama untuk memvalidasi rekapitulasi nilai 106 piala, menerbitkan SK penetapan juara resmi, dan mengelola konfigurasi sistem.'
                 : userRole === 'ADMIN'
-                  ? 'Mengelola operasional master data kontingen peserta (Kuota 50 Basis), giliran tampil arena (8 Menit), serta alokasi ruangan barak SMKN 1 Soreang.'
-                  : 'Ruang kerja cepat Operator Entri Nilai (PJ Rekap) untuk tabulasi lembar nilai dewan juri Periode I–IV dan pemantauan klasemen.'}
+                  ? 'Mengelola data kontingen peserta (kuota 50 basis), jadwal giliran tampil arena (8 menit), serta alokasi ruangan barak SMKN 1 Soreang.'
+                  : 'Ruang kerja Operator Entri Nilai untuk mencatat lembar nilai dewan juri Periode I–IV dan memantau klasemen.'}
             </p>
           </div>
         </div>

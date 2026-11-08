@@ -202,7 +202,7 @@ export function printSuratKeputusanPDF(competitionName: string, leaderboard: any
             <th colspan="3">KATEGORI NILAI</th>
             <th rowspan="2" style="width: 45px;">PENALTI</th>
             <th rowspan="2" style="width: 55px;">JUMLAH</th>
-            <th rowspan="2" style="width: 140px;">KETERANGAN (106 TROPHY)</th>
+            <th rowspan="2" style="width: 140px;">KETERANGAN (106 PIALA)</th>
           </tr>
           <tr>
             <th class="sub-th" style="width: 55px;">PBB (70%)</th>

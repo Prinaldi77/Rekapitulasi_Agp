@@ -16,7 +16,7 @@ const QuickNav: React.FC = () => {
             Hasil Rekapitulasi &amp; SK Juara (PDF)
           </h2>
           <p className="text-sm text-gray-500 font-medium leading-relaxed mb-6 flex-1">
-            Lihat daftar resmi pemenang juara dan download dokumen SK Penetapan Juara resmi dalam format PDF.
+            Lihat daftar resmi pemenang juara dan unduh dokumen Surat Keputusan (SK) Juara format PDF.
           </p>
           <span className="text-xs font-bold text-green-600 group-hover:text-green-700 flex items-center gap-1.5 mt-auto">
             Lihat Hasil &amp; SK Juara <ArrowRight className="w-4 h-4" />
@@ -31,13 +31,13 @@ const QuickNav: React.FC = () => {
             <Clock className="w-6 h-6" />
           </div>
           <h2 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
-            Urutan Tampil Realtime
+            Urutan Tampil Lapangan
           </h2>
           <p className="text-sm text-gray-500 font-medium leading-relaxed mb-6 flex-1">
-            Cek peserta yang sedang tampil di lapangan, nomor standby, dan giliran berikutnya secara live.
+            Pantau peserta yang sedang tampil di arena, nomor giliran berikutnya, dan regu di Daerah Persiapan (DP).
           </p>
           <span className="text-xs font-bold text-blue-600 group-hover:text-blue-700 flex items-center gap-1.5 mt-auto">
-            Pantau Lapangan Live <ArrowRight className="w-4 h-4" />
+            Pantau Lapangan Langsung <ArrowRight className="w-4 h-4" />
           </span>
         </Card>
       </Link>

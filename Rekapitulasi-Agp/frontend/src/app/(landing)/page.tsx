@@ -262,7 +262,7 @@ export default function LandingPage() {
                   className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#E3EF26] text-[#0C342C] text-sm font-bold hover:bg-[#d8e420] transition-colors shadow-sm"
                 >
                   <Download className="w-4 h-4" />
-                  <span>Download Juklak Resmi (PDF)</span>
+                  <span>Unduh Juklak Resmi (PDF)</span>
                 </a>
 
                 <Link
@@ -407,7 +407,7 @@ export default function LandingPage() {
                   </div>
 
                   <div className="mt-5 pt-3 border-t border-[#123E34] flex items-center justify-between text-xs font-semibold text-[#E3EF26]">
-                    <span>Buka Layanan</span>
+                    <span>{card.actionLabel || 'Buka Layanan'}</span>
                     {card.isDownload ? (
                       <Download className="w-4 h-4" />
                     ) : (
@@ -635,7 +635,7 @@ export default function LandingPage() {
                       className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0E332B] border border-[#1E564A] text-xs font-semibold text-white hover:border-[#E3EF26]"
                     >
                       <Download className="w-4 h-4 text-[#E3EF26]" />
-                      <span>Juklak Lengkap (PDF)</span>
+                      <span>Unduh Juklak Lengkap (PDF)</span>
                     </a>
                   </div>
                 </motion.div>

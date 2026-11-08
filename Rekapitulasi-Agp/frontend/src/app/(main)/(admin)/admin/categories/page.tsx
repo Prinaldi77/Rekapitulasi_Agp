@@ -321,9 +321,9 @@ export default function CategoriesManagementPage() {
               onChange={(e) => setLevel(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-lg border border-white/[0.08] bg-[#061C18] text-xs font-medium text-white focus:border-[#56c2ff] outline-none"
             >
-              <option value="SD">Golongan A — Penggalang SD / MI Sederajat</option>
-              <option value="SMP">Golongan B — Penggalang SMP / MTs Sederajat</option>
-              <option value="SMA">Golongan C — Penegak SMA / SMK / MA Sederajat</option>
+              <option value="SD">Golongan A (Penggalang SD / MI Sederajat)</option>
+              <option value="SMP">Golongan B (Penggalang SMP / MTs Sederajat)</option>
+              <option value="SMA">Golongan C (Penegak SMA / SMK / MA Sederajat)</option>
             </select>
           </div>
 

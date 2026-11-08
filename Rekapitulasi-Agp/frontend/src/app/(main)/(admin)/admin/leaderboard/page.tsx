@@ -270,10 +270,10 @@ export default function GrandMasterLeaderboardPage() {
       {/* Selector Tabs */}
       <div className="flex flex-wrap gap-2 bg-[#082620] border border-white/[0.06] p-1.5 rounded-xl key-card">
         {[
-          { key: 'LKBB', label: 'REKAP LKBB (21 TROPHY)', icon: Target },
+          { key: 'LKBB', label: 'REKAP LKBB (21 PIALA)', icon: Target },
           { key: 'MATERI_LOMBA', label: 'REKAP MATERI PRAMUKA A-E (PA/PI)', icon: Award },
           { key: 'KHUSUS', label: 'REKAP KHUSUS (FASHION & ADMIN)', icon: FolderKanban },
-          { key: 'JUARA_UMUM', label: 'PIALA BERGILIR JUARA UMUM (106 TROPHY)', icon: Crown },
+          { key: 'JUARA_UMUM', label: 'PIALA BERGILIR JUARA UMUM (106 PIALA)', icon: Crown },
         ].map((tab) => {
           const IconComponent = tab.icon;
           const isActive = activeTab === tab.key;
@@ -499,7 +499,7 @@ export default function GrandMasterLeaderboardPage() {
                   </tbody>
                 </table>
               ) : activeTab === 'JUARA_UMUM' ? (
-                /* Akumulasi Piala Bergilir Juara Umum (106 Trophy) */
+                /* Akumulasi Piala Bergilir Juara Umum (106 Piala) */
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-white/[0.06] text-xs font-mono uppercase text-[#7AA89C] tracking-wider bg-[#061C18]">

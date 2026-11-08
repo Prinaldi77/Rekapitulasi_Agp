@@ -145,7 +145,7 @@ export default function ScoreOcrUploader({ criteriaNames = [], onConfirm, onClos
               </div>
               <div className="text-center">
                 <p className="text-sm font-medium text-[#ffffff]">Klik atau seret foto lembar nilai ke sini</p>
-                <p className="text-xs font-mono text-[#7AA89C] mt-1">JPG, PNG, WEBP — MAKS 10 MB</p>
+                <p className="text-xs font-mono text-[#7AA89C] mt-1">JPG, PNG, WEBP (maks. 10 MB)</p>
               </div>
             </>
           )}

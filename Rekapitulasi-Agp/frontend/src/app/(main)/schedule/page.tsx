@@ -83,21 +83,21 @@ export default function PublicSchedulePage() {
         return (
           <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold bg-[#E3EF26] text-[#0C342C] shadow-sm">
             <span className="w-2 h-2 rounded-full bg-[#0C342C] animate-ping" />
-            SEDANG TAMPIL (LIVE)
+            SEDANG TAMPIL DI ARENA
           </span>
         );
       case 'STANDBY':
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-[#0E332B] text-[#E3EF26] border border-[#E3EF26]/50">
             <Hourglass className="w-3.5 h-3.5" />
-            SIAGA GERBANG ARENA
+            DAERAH PERSIAPAN (DP)
           </span>
         );
       case 'NEXT':
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-[#0A2620] text-[#FFFFFF] border border-[#1E564A]">
             <ArrowRight className="w-3.5 h-3.5 text-[#E3EF26]" />
-            PERSIAPAN BERIKUTNYA
+            GILIRAN BERIKUTNYA
           </span>
         );
       case 'COMPLETED':
@@ -214,9 +214,9 @@ export default function PublicSchedulePage() {
             <div className="flex items-center justify-between">
               <span className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[#E3EF26] font-bold">
                 <Hourglass className="w-4 h-4" />
-                PERSIAPAN BERIKUTNYA
+                DAERAH PERSIAPAN (DP)
               </span>
-              <span className="text-xs font-mono text-[#A7C7BE]">GERBANG SIAGA</span>
+              <span className="text-xs font-mono text-[#A7C7BE]">NOMOR BERIKUTNYA</span>
             </div>
 
             {nextItem ? (
@@ -234,7 +234,7 @@ export default function PublicSchedulePage() {
               </div>
             ) : (
               <p className="text-xs text-[#A7C7BE] mt-4">
-                Belum ada antrean persiapan berikutnya di gerbang siaga.
+                Belum ada regu berikutnya di Daerah Persiapan (DP).
               </p>
             )}
           </div>
